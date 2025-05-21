@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Fraud Detection in Blockchain Transactions</title>
+    <style>
+        /* Color Variables */
+        :root {
+            --primary-color: #7b5cff;
+            --secondary-color: #ffb9e5;
+            --tertiary-color: #b4f0ff;
+            --accent-color: #ffcf70;
+            --background-color: #f9f7ff;
+            --container-bg: #ffffff;
+            --text-color: #333;
+            --heading-color: #5f4b8b;
+            --link-color: #6c63ff;
+            --shadow-color: rgba(123, 92, 255, 0.2);
+            --border-color: #e6e0ff;
+            --highlight-color: #ffedf6;
+            --sidebar-width: 250px;
+            --sidebar-collapsed-width: 50px;
+        }
+
+        /* Base Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            background-image: 
+                radial-gradient(var(--shadow-color) 1px, transparent 1px),
+                radial-gradient(var(--secondary-color) 0.5px, transparent 0.5px);
+            background-size: 30px 30px, 20px 20px;
+            background-position: 0 0, 15px 15px;
+        }
+
+        /* Decorative Blob */
+        body:before {
+            content: "";
+            position: fixed;
+            top: -400px;
+            right: -300px;
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+            opacity: 0.05;
+            z-index: -1;
+            animation: float 15s ease-in-out infinite;
+        }
+
+        body:after {
+            content: "";
+            position: fixed;
+            bottom: -350px;
+            left: -300px;
+            width: 700px;
+            height: 700px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            opacity: 0.05;
+            z-index: -1;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(15px, 15px) rotate(5deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        /* Floating Bubbles */
+        .bubble {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.1;
+            z-index: -1;
+            animation: bubble-float 20s linear infinite;
+        }
+
+        .bubble-1 {
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary-color);
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .bubble-2 {
+            width: 30px;
+            height: 30px;
+            background-color: var(--secondary-color);
+            top: 70%;
+            left: 15%;
+            animation-delay: 5s;
+        }
+
+        .bubble-3 {
+            width: 40px;
+            height: 40px;
+            background-color: var(--tertiary-color);
+            top: 40%;
+            right: 10%;
+            animation-delay: 10s;
+        }
+
+        .bubble-4 {
+            width: 25px;
+            height: 25px;
+            background-color: var(--accent-color);
+            top: 80%;
+            right: 20%;
+            animation-delay: 15s;
+        }
+
+        @keyframes bubble-float {
+            0% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-50px) translateX(20px); }
+            50% { transform: translateY(-100px) translateX(-20px); opacity: 0.2; }
+            75% { transform: translateY(-150px) translateX(20px); opacity: 0.1; }
+            100% { transform: translateY(-200px) translateX(0); opacity: 0; }
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100%;
+            background-color: var(--container-bg);
+            box-shadow: 3px 0 15px var(--shadow-color);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+            padding-top: 80px;
+            background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.95));
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1001;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-toggle:hover {
+            background-color: var(--secondary-color);
+            transform: scale(1.1);
+        }
+
+        .sidebar-toggle i {
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+            padding-top: 70px;
+        }
+
+        .sidebar.collapsed .nav-item-text,
+        .sidebar.collapsed .sidebar-title {
+            display: none;
+        }
+
+        .sidebar.collapsed .sidebar-toggle i {
+            transform: rotate(180deg);
+        }
+
+        .sidebar-title {
+            text-align: center;
+            padding: 0 15px 20px;
+            color: var(--primary-color);
+            font-size: 1.1em;
+            font-weight: 600;
+            border-bottom: 1px dashed var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            padding: 0;
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+
+        .nav-item a:hover {
+            background-color: rgba(123, 92, 255, 0.08);
+            border-left: 3px solid var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        .nav-item.active a {
+            background-color: rgba(123, 92, 255, 0.15);
+            border-left: 3px solid var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .nav-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+            font-size: 1.1em;
+            color: var(--primary-color);
+        }
+
+        .sub-menu {
+            list-style: none;
+            padding-left: 30px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .nav-item.open .sub-menu {
+            max-height: 500px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .sub-menu .nav-item a {
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+
+        .container {
+            width: 85%;
+            max-width: 1200px;
+            margin: 30px auto;
+            margin-left: calc(var(--sidebar-width) + 5%);
+            padding: 40px;
+            background-color: var(--container-bg);
+            box-shadow: 0 10px 30px var(--shadow-color);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            transition: margin-left 0.3s ease;
+        }
+
+        body.sidebar-collapsed .container {
+            margin-left: calc(var(--sidebar-collapsed-width) + 5%);
+        }
+
+        /* Decorative Corner Elements */
+        .container:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 60px;
+            height: 60px;
+            background: 
+                linear-gradient(45deg, var(--primary-color) 0%, transparent 70%),
+                linear-gradient(to right, var(--primary-color) 0%, transparent 70%);
+            opacity: 0.1;
+            border-top-left-radius: 20px;
+        }
+
+        .container:after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 60px;
+            height: 60px;
+            background: 
+                linear-gradient(225deg, var(--secondary-color) 0%, transparent 70%),
+                linear-gradient(to left, var(--secondary-color) 0%, transparent 70%);
+            opacity: 0.1;
+            border-bottom-right-radius: 20px;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            color: var(--heading-color);
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            padding-bottom: 15px;
+            position: relative;
+        }
+
+        h1:after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border-radius: 2px;
+        }
+
+        /* Decorative elements for h1 */
+        h1:before {
+            content: "✨";
+            position: absolute;
+            left: 25%;
+            bottom: -5px;
+            font-size: 0.8em;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+
+        h1:after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border-radius: 2px;
+        }
+
+        /* Additional decorative element for h1 */
+        h1 span.sparkle {
+            position: absolute;
+            right: 25%;
+            bottom: -5px;
+            font-size: 0.8em;
+            animation: twinkle 2s ease-in-out infinite 1s;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        h2 {
+            border-bottom: 3px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-top: 40px;
+            font-size: 1.8em;
+            color: var(--primary-color);
+            position: relative;
+        }
+
+        /* Decorative element for h2 */
+        h2:after {
+            content: "";
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(to right, var(--secondary-color), transparent);
+            animation: expand 3s ease-in-out infinite;
+        }
+
+        @keyframes expand {
+            0%, 100% { width: 60px; }
+            50% { width: 100px; }
+        }
+
+        h3 {
+            margin-top: 30px;
+            font-size: 1.5em;
+            color: var(--primary-color);
+            border-left: 4px solid var(--secondary-color);
+            padding-left: 15px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        h3:hover {
+            transform: translateX(5px);
+        }
+
+        h4 {
+            margin-top: 25px;
+            font-size: 1.3em;
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Decorative underlining for h4 */
+        h4:after {
+            content: "";
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, var(--secondary-color), transparent);
+            transform: scaleX(0.3);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        h4:hover:after {
+            transform: scaleX(1);
+        }
+
+        p, li {
+            margin-bottom: 15px;
+            font-size: 1.05em;
+        }
+
+        /* Lists */
+        ul, ol {
+            padding-left: 25px;
+        }
+
+        ul li, ol li {
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        ul li::before {
+            content: "•";
+            color: var(--secondary-color);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+
+        /* ChatGPT Label */
+        .research-label {
+            text-align: center;
+            font-size: 0.9em;
+            color: #888;
+            margin-bottom: 25px;
+            background-color: var(--highlight-color);
+            padding: 8px 15px;
+            border-radius: 50px;
+            display: inline-block;
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .research-label:hover {
+            transform: translateX(-50%) scale(1.05);
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Add sparkles around the research label */
+        .research-label:before, .research-label:after {
+            content: "✨";
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.9em;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+
+        .research-label:before {
+            left: -15px;
+            animation-delay: 0.5s;
+        }
+
+        .research-label:after {
+            right: -15px;
+            animation-delay: 1.5s;
+        }
+
+        /* Special Elements */
+        sup {
+            font-size: 0.7em;
+            vertical-align: super;
+            line-height: 0;
+            color: var(--primary-color);
+            transition: color 0.3s ease;
+        }
+
+        sup:hover {
+            color: var(--secondary-color);
+        }
+
+        a {
+            color: var(--link-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-bottom: 1px dotted var(--link-color);
+            position: relative;
+            z-index: 1;
+        }
+
+        a:hover {
+            color: var(--secondary-color);
+            border-bottom: 1px solid var(--secondary-color);
+        }
+
+        /* Add hover effect for links */
+        a:before {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background-color: rgba(255, 185, 229, 0.1);
+            z-index: -1;
+            transition: height 0.3s ease;
+        }
+
+        a:hover:before {
+            height: 100%;
+        }
+
+        /* References */
+        .references ol li {
+            margin-bottom: 18px;
+            background-color: var(--highlight-color);
+            padding: 10px 15px;
+            border-radius: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .references ol li:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 3px solid var(--secondary-color);
+        }
+
+        /* Code Blocks */
+        code {
+            background-color: #f0f0f0;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #e83e8c;
+            transition: all 0.3s ease;
+        }
+
+        code:hover {
+            background-color: #ffe6f2;
+            color: #d6246e;
+        }
+
+        /* Hide Page Break Info */
+        .page-break-info {
+            display: none;
+        }
+
+        /* Strong & Emphasis */
+        strong {
+            color: var(--primary-color);
+            font-weight: 600;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        strong:hover {
+            color: var(--secondary-color);
+        }
+
+        em {
+            font-style: italic;
+            color: #555;
+        }
+
+        /* Sections */
+        section {
+            margin-bottom: 40px;
+            border-radius: 15px;
+            padding: 25px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            scroll-margin-top: 30px; /* For smooth scrolling to sections */
+        }
+
+        section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px var(--shadow-color);
+            border-color: var(--secondary-color);
+        }
+
+        /* Add a decorative corner to sections */
+        section:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, transparent 50%, var(--secondary-color) 50%);
+            opacity: 0.2;
+            border-top-right-radius: 15px;
+        }
+
+        /* Scroll to top button */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 100;
+            font-size: 20px;
+            text-decoration: none;
+            border: none;
+        }
+
+        .scroll-top:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-5px);
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            :root {
+                --sidebar-width: 220px;
+            }
+
+            .container {
+                width: 90%;
+                padding: 30px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                width: var(--sidebar-collapsed-width);
+            }
+
+            .nav-item-text,
+            .sidebar-title {
+                display: none;
+            }
+
+            .container {
+                margin-left: calc(var(--sidebar-collapsed-width) + 5%);
+                width: 90%;
+            }
+
+            body.sidebar-expanded .sidebar {
+                width: var(--sidebar-width);
+            }
+
+            body.sidebar-expanded .nav-item-text,
+            body.sidebar-expanded .sidebar-title {
+                display: inline-block;
+            }
+
+            body.sidebar-expanded .container {
+                margin-left: calc(var(--sidebar-width) + 5%);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 20px;
+                margin-left: 5%;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+            
+            h3 {
+                font-size: 1.3em;
+            }
+
+            .bubble {
+                display: none;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                width: var(--sidebar-width);
+            }
+
+            .nav-item-text,
+            .sidebar-title {
+                display: inline-block;
+            }
+
+            body.sidebar-expanded .container {
+                margin-left: 5%;
+            }
+
+            body.sidebar-expanded .sidebar {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+            }
+
+            body.sidebar-expanded .sidebar-overlay {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+    </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Sidebar Overlay (for mobile) -->
+    <div class="sidebar-overlay"></div>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="sidebar-title">Table of Contents</div>
+        <ul class="sidebar-nav">
+            <li class="nav-item">
+                <a href="#introduction">
+                    <i class="fas fa-rocket"></i>
+                    <span class="nav-item-text">Introduction</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#background-literature-review">
+                    <i class="fas fa-book"></i>
+                    <span class="nav-item-text">Background & Literature</span>
+                </a>
+                <ul class="sub-menu">
+                    <li class="nav-item">
+                        <a href="#fraud-typologies">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span class="nav-item-text">Fraud Typologies</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#graph-approaches">
+                            <i class="fas fa-project-diagram"></i>
+                            <span class="nav-item-text">Graph Approaches</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#ml-approaches">
+                            <i class="fas fa-brain"></i>
+                            <span class="nav-item-text">ML Approaches</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a href="#data-sources-tools">
+                    <i class="fas fa-database"></i>
+                    <span class="nav-item-text">Data Sources & Tools</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#proposed-improvements">
+                    <i class="fas fa-lightbulb"></i>
+                    <span class="nav-item-text">Proposed Improvements</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#proposed-methodology">
+                    <i class="fas fa-tasks"></i>
+                    <span class="nav-item-text">Methodology & Plan</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#conclusion">
+                    <i class="fas fa-flag-checkered"></i>
+                    <span class="nav-item-text">Conclusion</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#references">
+                    <i class="fas fa-link"></i>
+                    <span class="nav-item-text">References</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Floating Bubbles -->
+    <div class="bubble bubble-1"></div>
+    <div class="bubble bubble-2"></div>
+    <div class="bubble bubble-3"></div>
+    <div class="bubble bubble-4"></div>
+
+    <div class="container">
+        <p class="research-label">By Sajan And Jaljala</p>
+        <h1>AI-Powered Fraud Detection in Blockchain Transactions<span class="sparkle">✨</span></h1>
+
+        <section id="introduction">
+            <h2>Introduction</h2>
+            <p>Blockchain networks have rapidly grown in adoption and transaction volume, creating new opportunities for financial innovation as well as new vectors for fraud. Decentralized finance (DeFi) platforms and cryptocurrencies are now targets of illicit activities ranging from money laundering and Ponzi schemes to phishing scams and exchange hacks. The rising prevalence of crypto-fraud is evidenced by substantial losses - the popularity of DeFi has resulted in losses of billions of dollars due to various types of fraud<sup>1</sup>. In fact, over 46,000 people lost more than $1 billion to cryptocurrency scams between 2021 and 2022<sup>2</sup>. The pseudonymous and borderless nature of blockchain transactions allows malicious actors to hide in plain sight: while blockchains are transparent and open, their anonymity and immutability enable scammers and criminals to conceal their identities while conducting fraudulent activities<sup>3</sup>. This paradox – an open ledger that is difficult to police – poses a significant challenge for fraud detection and financial security in the crypto ecosystem.</p>
+            <p>Traditional rule-based fraud controls and manual investigations struggle to keep up with the volume and complexity of blockchain transactions. This has spurred interest in AI-powered approaches that can learn patterns of illicit behavior and flag suspicious transactions or addresses automatically. Techniques from machine learning (ML) and graph analytics have shown promise in detecting anomalies in transaction networks that might indicate fraud or money laundering. At the same time, emerging tools like large language models (LLMs) offer new possibilities for interpreting blockchain data and assisting in fraud analysis.</p>
+            <p>This research draft focuses on designing an AI-driven fraud detection system for blockchain transactions, with an emphasis on the Solana blockchain (a high-throughput, account-based ledger). Solana's growing adoption (e.g. integration with platforms like Shopify and Visa for payments) makes it an interesting case for fraud detection. However, because Solana-specific labeled fraud datasets are scarce, our approach and discussion will also draw from experience on other blockchains, especially Ethereum, where more public data and prior research are available. The goal is to leverage <strong>graph-based machine learning</strong> and <strong>conventional ML models</strong>, along with novel integration of <strong>open-source LLMs</strong>, to build a system that can identify fraudulent activities on-chain with high accuracy, adaptability to new fraud tactics, and improved explainability.</p>
+            <p>In the sections that follow, we review existing literature on AI techniques for blockchain fraud detection (including graph neural networks and classical ML classifiers), highlight the data sources and tools commonly used in this domain, evaluate the achievements and limitations of current approaches, and propose improvements. We then outline a methodology for implementing an end-to-end fraud detection pipeline – from data collection and preprocessing, through model training (for both classification and anomaly detection), to evaluation and deployment considerations. The aim is to ground the project in a solid academic foundation while ensuring it is feasible for an undergraduate/graduate-level implementation. Throughout, we cite academic and industry sources to support the discussion and ensure the approach is state-of-the-art.</p>
+            <span class="page-break-info">End of OCR for page 1</span>
+        </section>
+
+        <section id="background-literature-review">
+            <h2>Background and Literature Review</h2>
+
+            <h3 id="fraud-typologies">Fraud Typologies in Blockchain Transactions</h3>
+            <p>Blockchain fraud can take many forms, often mirroring traditional financial crimes but with crypto-specific twists. Common fraud scenarios include: <strong>money laundering</strong> (using cryptocurrency to obscure the origin of funds), <strong>scams and phishing</strong> (tricking users into sending funds under false pretenses), <strong>Ponzi or pyramid schemes</strong> implemented via smart contracts, <strong>rug pulls</strong> and insider scams in token offerings, and <strong>exchange hacks or thefts</strong> of cryptocurrency. For example, on Solana, there have been incidents like fake token airdrops and <strong>manipulation of DeFi protocols (e.g. the Mango Markets exploit)</strong><sup>4</sup>, where attackers exploited smart contract vulnerabilities to steal funds. Ethereum has seen numerous phishing scams and Ponzi schemes leveraging smart contracts<sup>5</sup>. A key characteristic of many blockchain frauds is their reliance on complex transaction patterns – such as chains of transfers through many addresses, use of mixing/tumbler services to obfuscate flows, or sudden concentration of funds in new wallets – which can be difficult to detect with simple rules.</p>
+            <p>Because every transaction and address interaction on a public blockchain is recorded, it is natural to represent this data as a <strong>graph</strong> (network) and apply graph analytics to detect fraud patterns. In a transaction graph, nodes might represent addresses or transactions, and edges represent value transfers between them. Fraudulent behavior often leaves structural fingerprints in this graph: for instance, money laundering may produce hub-and-spoke patterns or long chains through intermediary addresses, while Ponzi schemes might show a tree of many contributors funneling funds to a single endpoint. These intuitions have driven researchers to apply graph-based machine learning to blockchain fraud detection. In parallel, researchers have explored <em>feature-driven ML models</em> that treat addresses or transactions as data points with a set of engineered features (e.g. counts of transactions, total value moved, time intervals between activities) and train classifiers to distinguish illicit vs. licit behavior.</p>
+
+            <h3 id="graph-approaches">Graph-Based Approaches in Research</h3>
+            <p>Graph-based AI techniques have become a prominent tool for analyzing blockchain transaction networks. A landmark study by Weber et al. (2019) introduced the <strong>Elliptic dataset</strong>, a large graph of Bitcoin transactions labeled as licit or illicit for anti-money laundering (AML) research<sup>6</sup>. The Elliptic data represents over 200,000 Bitcoin transactions (nodes) with 234,000 payment edges, and each transaction is annotated with <strong>166 features</strong> capturing local information (e.g. transaction amount, timestamps, participants degrees)<sup>6</sup>. Weber et al. applied a Graph Convolutional Network (GCN) on this data to classify illicit transactions, comparing its performance to baseline models like logistic regression, random forests (RF), and multilayer perceptrons. Interestingly, their results showed that a tuned <strong>Random Forest outperformed the GCN</strong> in terms of classification accuracy on this Bitcoin graph<sup>7</sup>. This outcome suggests that while graph neural networks can leverage relational structure, classical tree-based models with good feature engineering were very competitive. The authors noted that this invites research into <strong>combining the strengths of graph methods and traditional ML</strong><sup>8</sup> – for example, using graph algorithms to generate features or inform ensembles with tree models.</p>
+            <span class="page-break-info">End of OCR for page 2</span>
+
+            <p>Since that initial work, numerous graph-based models have been explored for crypto fraud detection. Variants of <strong>Graph Neural Networks (GNNs)</strong> such as GraphSAGE and Graph Attention Networks (GAT) have been applied to transaction graphs to improve detection of illicit entities<sup>9</sup>. For instance, Jiao et al. (2020) used a GAT-based model to identify illicit Bitcoin transactions and reported improved recall over simpler methods<sup>9</sup>. Recent studies have also introduced <strong>heterogeneous graph approaches</strong> that incorporate different node types (transactions vs. addresses) and edge types to capture more complex relationships. An extension of the Elliptic data called <strong>Elliptic++</strong> was released to facilitate this: it includes a graph of ~203k Bitcoin transactions <strong>and</strong> a linked graph of ~822k wallet addresses, allowing models to reason about address behavior as well as individual transactions<sup>10</sup>. In Elliptic++, each Bitcoin wallet address is linked via transactions, and addresses are labeled as licit or illicit when known. This dataset highlights the <strong>graph connectivity patterns</strong> of bad actors: it contains over 14k known illicit addresses and ~4.5k illicit transactions, but also hundreds of thousands of unlabeled entities<sup>11, 12</sup>, reflecting the reality that many entities remain unclassified. Graph-based learning is advantageous here because it can propagate information from the relatively few known labels through the network (via message-passing in a GNN or via spectral methods) to detect suspicious clusters of activity.</p>
+            <p>Graph algorithms have also been used in unsupervised or semi-supervised ways. For example, community detection or clustering on transaction graphs can identify groups of addresses that frequently transact with each other (potentially revealing mixers or fraud rings). Anomaly detection on graphs (such as identifying nodes with unexpected connectivity patterns or using graph autoencoders) is another avenue to flag outliers without requiring labeled training data. Such approaches are useful given the label scarcity problem – since only a small subset of addresses/transactions are definitively labeled as fraudulent by authorities, <strong>anomaly detection methods can help spot new emergent fraud patterns</strong> that were not seen in the training data.</p>
+
+            <h3 id="ml-approaches">Conventional Machine Learning Approaches</h3>
+            <p>Alongside graph-specific techniques, researchers have applied an array of conventional ML models to blockchain fraud detection, treating it as a standard classification problem on tabular data. In these approaches, one first <strong>extracts features</strong> for each entity of interest (e.g. each address or each transaction) and then trains classifiers (supervised ML) or detectors (unsupervised) on those feature vectors. Common features include: the <strong>total value</strong> an address has sent or received, the <strong>number of transactions</strong> it has participated in, the <strong>average time between transactions</strong>, the <strong>number of unique counterparties</strong> (how many other addresses it has interacted with), the proportion of funds moving through certain protocols or token types, etc. Temporal features (such as bursts of activity or periodic behavior) can also be engineered. For transactions, features might include the fee, size, number of inputs/outputs (for UTXO blockchains), or related smart contract addresses (for Ethereum token transfers).</p>
+            <p>A notable open dataset in this category is the <strong>Ethereum Fraud Dataset</strong> published on Kaggle<sup>13</sup>. This dataset provides a list of Ethereum addresses labeled as "fraudulent" or "legitimate," along with a rich set of aggregate features per address (derived from transaction history). For example, each address record includes statistics like the total Ether received, total Ether sent, count of incoming and outgoing transactions, interaction with smart contracts vs. externally owned accounts, and so on. The initial Kaggle data contained <strong>9,841 Ethereum addresses, of which 2,179 (~22%) were marked as fraud</strong> (these likely include phishing scammers, Ponzi schemers, etc.)<sup>14</sup>. The class imbalance is evident - fraud cases are relatively rare. Researchers have used <strong>resampling and data augmentation</strong> techniques to address this; for instance, one team augmented the fraudulent address list by crawling Etherscan's public labels of known phishing addresses, expanding the fraud count to ~4,339 out of ~9,400 total (roughly 46% fraud after augmentation)<sup>15</sup>. This combined dataset enabled training models on a more balanced set of 5,054 legitimate vs. 4,339 fraudulent addresses<sup>15</sup>.</p>
+            <span class="page-break-info">End of OCR for page 3</span>
+
+            <p>Using such datasets, a variety of classifiers have been evaluated. Simpler algorithms like <strong>Logistic Regression and Naïve Bayes</strong> have served as baselines, while more powerful ensemble methods like <strong>Random Forests, XGBoost, and LightGBM</strong> have shown strong performance on Ethereum fraud classification<sup>16</sup>. In many cases, <strong>tree-based models (e.g. gradient boosting machines)</strong> emerge as top performers due to their ability to handle heterogeneous features and capture nonlinear patterns<sup>17</sup>. For example, a recent study found that gradient boosting models achieved the highest accuracy in detecting fraudulent Ethereum accounts, outperforming deep neural networks in that task<sup>18</sup>. Neural network approaches (multi-layer perceptrons) and even <strong>deep autoencoders</strong> have also been tested: an autoencoder can be trained on a large set of "normal" accounts and then used to detect outliers that could be fraudulent. However, deep models may require more data and careful tuning to beat simpler models. The <strong>commendable performance of tree-based models</strong> noted in surveys indicates that with sufficient feature engineering, classical ML remains very effective for these problems<sup>17</sup>. This is likely because much of the signal in fraud detection comes from specific transactional patterns that can be captured by well-chosen features (e.g. a scam address might have a very high incoming transaction count with small values, followed by one large outgoing transaction – a pattern a decision tree can pick up).</p>
+            <p><strong>Hybrid approaches</strong> have also been explored: for example, using network metrics as additional features in a traditional classifier (bridging graph analytics with tabular ML). Metrics like an address's <strong>degree centrality, PageRank score</strong> in the transaction graph, or the <strong>community ID</strong> it belongs to can be fed into a model along with basic features. Conversely, some works inject features into GNN models (feature-enriched graph nodes). The integration of temporal features is another dimension – applying time-series analysis to transaction histories (e.g. using the <code>tsfresh</code> library to derive time-domain features<sup>19</sup>) and incorporating those into ML models has been shown to improve detection by capturing seasonal or bursty fraud behaviors.</p>
+
+            <h3>Summary of Findings from Literature</h3>
+            <p>Overall, the literature suggests that <strong>both graph-based and feature-based ML models have achieved promising results</strong> in blockchain fraud detection. Graph-based models (GCN, GAT, etc.) are powerful for capturing relational structures, and have been successfully applied to identify illicit transaction flows and clusters of bad actors. For instance, message-passing GNNs can learn to propagate "suspect" signals through connected nodes, potentially flagging not-yet-labeled accomplice addresses. On the other hand, <strong>conventional ML models with engineered features – especially tree ensembles – have exhibited high accuracy</strong> on benchmark datasets<sup>17</sup> and are often easier to train and interpret. Many studies report >90% recall or F1 scores in identifying known fraudulent entities under experimental conditions, demonstrating the potential of AI to substantially aid fraud detection.</p>
+            <p>However, it is important to note that these results are often achieved on historical data with known labels, and performance in the wild may be lower. Each approach has limitations (discussed in detail in the next section), and there remains significant room for improvement. In particular, <strong>label scarcity</strong> and <strong>evolving fraud tactics</strong> present ongoing challenges that current models struggle to handle. This motivates research into more adaptive and generalizable AI methods – including the use of new tools like large language models – to keep blockchain ecosystems safe and secure.</p>
+            <span class="page-break-info">End of OCR for page 4</span>
+        </section>
+
+        <section id="data-sources-tools">
+            <h2>Data Sources and Tools for Blockchain Fraud Detection</h2>
+            <p>To build and evaluate AI models for fraud detection, one must leverage a combination of datasets, platforms, and software tools. Here we outline the key resources and tools commonly used in this domain:</p>
+            <ul>
+                <li><strong>Labeled Fraud Datasets:</strong> Several public datasets have been curated to support research on crypto fraud. The <strong>Elliptic Bitcoin AML dataset</strong> is a premier example, providing a <strong>time-series transaction graph</strong> with ground truth labels for illicit vs. licit transactions<sup>6</sup>. Its extended version, <strong>Elliptic++</strong>, adds wallet address nodes and expands the labeled set (14k illicit addresses and 4.5k illicit transactions) to enable detection of both <strong>fraudulent transactions and illicit addresses</strong> in the Bitcoin network<sup>10</sup>. For Ethereum, the <strong>Ethereum Fraud Dataset</strong> (Kaggle) contains thousands of addresses labeled as fraudulent or not, along with features per address as described earlier. This dataset has been used in numerous studies and even enhanced by combining with <strong>Etherscan's lists of scam addresses</strong><sup>15</sup>. There are also smaller datasets focusing on specific scam types – e.g. lists of known Ponzi scheme smart contracts, or addresses involved in phishing campaigns (sometimes provided through community-driven sites like EtherScamDB or Etherscan labels). Another dataset worth noting is <strong>Bitcoin Heist</strong>, a Kaggle dataset of Bitcoin addresses labeled by illicit category (ransomware, Ponzi, etc.), used in some ML experiments (though it treats each address with tabular features, not in graph form).</li>
+                <li><strong>Blockchain Data Platforms:</strong> Beyond curated datasets, analysts often need to fetch raw blockchain data to construct custom datasets or update existing ones. <strong>Public blockchain APIs</strong> and <strong>node RPC endpoints</strong> are vital for this. For Ethereum, APIs like the <strong>Etherscan API</strong> or node providers (Infura, Alchemy) allow querying transactions, address balances, and event logs. Solana likewise offers an RPC API (through Solana Labs or providers like QuickNode and Alchemy) to fetch transactions and account state. Additionally, companies like <strong>Covalent</strong> and <strong>Alchemy</strong> provide unified APIs and SDKs to query blockchain data across multiple chains, which can simplify data collection. For large-scale data needs, <strong>Google BigQuery</strong> hosts public blockchain datasets (for example, Bitcoin and Ethereum transaction history in SQL tables) that can be queried with analytics SQL. If Solana's data is not natively on BigQuery, one might rely on Solana's <strong>Archive Nodes</strong> or third-party indexers to retrieve historical transactions and construct a transaction graph. Another emerging source is <strong>Dune Analytics</strong> and <strong>Flipside Crypto</strong>, which crowdsource and host blockchain data with labeled insights – these could potentially provide additional signals or labeled instances (though usage often requires writing SQL queries to extract the relevant data).</li>
+                <li><strong>Graph Construction and Analysis Tools:</strong> Given the importance of graph representations, tools for building and analyzing graphs are central. <strong>NetworkX</strong> (a Python library) is commonly used to construct transaction graphs for research when the data size is manageable, as it provides easy graph operations and computation of network statistics (e.g. centrality measures). For larger graphs (millions of nodes/edges), more scalable solutions like <strong>igraph</strong> or graph databases such as <strong>Neo4j</strong> and <strong>TigerGraph</strong> can be used to store and query relationships. In a fraud detection project, one might import blockchain transactions into Neo4j to run Cypher queries finding suspicious patterns (for example, cyclic money flows or shared characteristics among nodes). <strong>Graph visualization tools</strong> (Gephi, Cytoscape, or Python libraries like Matplotlib with NetworkX) are also useful for exploration and for creating explainable insights (e.g. plotting a subgraph of a fraud ring).</li>
+            <span class="page-break-info">End of OCR for page 5</span>
+                <li><strong>Machine Learning and GNN Libraries:</strong> For implementing AI models, standard ML frameworks are employed. <strong>Scikit-learn</strong> is often used for baseline models (logistic regression, SVM, random forest, etc.) and provides tools for model evaluation, cross-validation, and metrics. For gradient boosting, libraries like <strong>XGBoost</strong> or <strong>LightGBM</strong> are popular due to their efficiency and high performance on tabular data. On the deep learning side, <strong>PyTorch</strong> and <strong>TensorFlow</strong> are the go-to frameworks. In particular, <strong>PyTorch Geometric (PyG)</strong> and <strong>Deep Graph Library (DGL)</strong> are extensions that make it convenient to build and train Graph Neural Networks on graph data. Using PyTorch Geometric, for example, one can define a GCN or GraphSAGE model with a few lines of code and train it on the transaction network, leveraging GPU acceleration. Researchers have published example notebooks using PyG on the Elliptic dataset, demonstrating how to achieve strong predictive performance with GNNs on blockchain graphs. <strong>NetworkX</strong> can also be integrated with PyG (e.g. constructing a NetworkX graph then converting to a PyG data object for training). If applying GNNs to Solana data, one could use PyG to define a node classification task (labeling addresses as fraudulent or not) once the Solana transaction graph is prepared.</li>
+                <li><strong>Big Data and Streaming Tools:</strong> In an advanced implementation, handling blockchain data might require big-data tools. For instance, if one wants to continuously monitor transactions in real-time, a streaming data pipeline with tools like <strong>Apache Kafka</strong> or <strong>Apache Flink</strong> could be set up to ingest new blocks and feed them to the detection model. For batch analysis of very large datasets, one might use <strong>Apache Spark</strong> or Dask to distribute the workload of feature calculation across clusters. While these are likely beyond the scope of a student project, it's worth noting that such tools exist and are used in industry for production-scale blockchain analytics (for example, Chainalysis and similar firms use big data architectures to maintain and query huge blockchain graphs). Cloud services (AWS, GCP, Azure) also offer managed solutions for data pipelines and machine learning that could be utilized for deployment.</li>
+            </ul>
+            <p>In summary, a rich ecosystem of data sources and tools is available for blockchain fraud detection. In this project, we would leverage many of these: using open datasets like Elliptic or Kaggle Ethereum for training data (and label examples), querying blockchain APIs or BigQuery for additional Solana/Ethereum data, using graph libraries (NetworkX/PyG) to construct and analyze transaction networks, and applying ML frameworks (scikit-learn, PyTorch Geometric) to build the fraud detection models. The choice of specific tools will depend on the final scope – for example, if focusing on Solana, we may need to rely more on custom data extraction (since Solana labels are scarce) and possibly perform <strong>transfer learning</strong> from Ethereum data, as discussed below.</p>
+
+            <h2>Limitations of Existing Approaches</h2>
+            <p>Despite notable progress in applying AI to blockchain fraud detection, current approaches face several challenges and shortcomings that motivate further research:</p>
+            <ul>
+                <li><strong>Label Scarcity and Imbalanced Data:</strong> A fundamental issue is the lack of comprehensive labeled data for training supervised models. Ground truth in this domain usually comes from investigations, regulatory reports, or community efforts, which only cover a subset of fraudulent actors. For example, in the Elliptic Bitcoin dataset, the majority of transactions are labeled <strong>"unknown"</strong> (neither licit nor illicit) – about 157k out of 203k transactions have no label<sup>11</sup>. This reflects how only a small fraction of addresses/transactions have been linked to known illicit entities by the time of data collection. Similarly, the Ethereum scam address datasets have far fewer confirmed scam addresses than normal ones, making the positive class relatively rare<sup>14</sup>. Class imbalance can cause ML models to bias towards predicting the majority (legitimate) class, missing many fraud cases. Researchers address this with techniques like oversampling (e.g. SMOTE), downsampling, or cost-sensitive learning, but these are stopgaps. The scarcity of labels also means models might <strong>overfit to known fraud patterns</strong> and struggle to detect new, unlabeled schemes. It underscores the need for semi-supervised and anomaly detection methods that can work with limited labels.</li>
+            <span class="page-break-info">End of OCR for page 6</span>
+                <li><strong>Evolving and Adaptive Fraud Tactics:</strong> The crypto landscape is fast-moving, and fraudsters continually adapt to evade detection. A model trained on last year's scams might fail to recognize a new type of scam tomorrow. For instance, earlier AML models focused on Bitcoin may not transfer well to <strong>newer assets or techniques</strong> – recent reports indicate that criminal and terrorist networks have shifted from using primarily Bitcoin to using stablecoins like Tether (USDT) and other crypto assets to avoid detection<sup>20</sup>. Fraud tactics also evolve (e.g. use of privacy wallets, cross-chain bridges to launder funds, new DeFi exploit methods). Many existing AI models are static classifiers that do not update unless retrained on new data, making them <strong>less adaptable to novel fraud patterns</strong>. This results in declining detection accuracy over time if not addressed. A related challenge is adversarial behavior: sophisticated attackers might study the detection criteria and modify their behavior to "blend in" with normal users (for example, splitting a large transfer into many small ones to avoid anomaly flags). Current models can be vulnerable to such adversarial adaptation if they rely on a fixed set of features.</li>
+                <li><strong>Detection Accuracy and False Positives:</strong> While reported accuracies in controlled studies are high, in practice there is often a trade-off between catching all fraud (recall) and avoiding false alarms (precision). Fraud detection systems need to <strong>minimize false positives</strong>; otherwise, they could implicate innocent users or overload analysts with alerts. Some approaches, especially unsupervised anomaly detectors, may flag activities that are unusual but not actually malicious – for example, a legitimate whale investor moving large sums could be flagged as an "anomaly" even though it's not fraudulent. On the other hand, too conservative a model will miss actual fraud cases. The <strong>threshold tuning</strong> for alerts is tricky. Many academic works focus on maximizing F1-score or AUC, but in a deployment context, one might care more about precision at a certain high recall (e.g. ensuring, say, 90% of true scams are caught while keeping false positives manageable). Achieving that level of calibrated performance is challenging. In the Elliptic study, the best model (RF) still had to contend with a large "unknown" region where it could not confidently classify many transactions<sup>7</sup>. Ensuring robust accuracy on real streaming data – with concept drift and no clear IID distribution – remains an open issue.</li>
+                <li><strong>Transparency and Explainability:</strong> Another shortcoming is the <strong>black-box nature</strong> of many AI models used. Financial fraud detection in regulated environments often requires explanation: investigators or compliance officers need to understand <em>why</em> a particular transaction or address was flagged (to decide if it truly warrants action, and to potentially present evidence in legal proceedings). Models like GNNs or deep neural nets do not provide easy explanations for their outputs. A compliance team might be wary of an opaque AI that labels an address as "high risk" without rationale. This lack of interpretability hinders trust and adoption of AI in some institutions. There have been initial steps toward addressing this – for example, Weber et al. provided a simple visualization tool to navigate the transaction graph and observe where illicit activity concentrates over time<sup>21</sup>, which can help an analyst see patterns. But generally, explaining a GNN's decision is non-trivial (it could be due to subtle structural features). <strong>Tree-based models</strong> are somewhat more interpretable (one can extract feature importance or decision rules), but if they involve tens of features, it's still complex. The field of explainable AI (XAI) is starting to be applied here (e.g. using SHAP values to explain feature contributions to an address being classified as fraud). Nonetheless, improving transparency remains a priority – especially if regulators expect justification for why an account is frozen or investigated.</li>
+            <span class="page-break-info">End of OCR for page 7</span>
+                <li><strong>Scalability:</strong> A practical challenge is the sheer scale of blockchain data. Public chains like Ethereum handle millions of transactions, and newer chains like Solana handle even higher throughput. Graph-based algorithms can face performance bottlenecks on such data volumes; training a GNN on the full Ethereum transaction graph might be infeasible without downsampling or massive computing resources. Many research works validate their methods on snapshots or smaller subgraphs (e.g. Elliptic covers a specific time slice of Bitcoin). Deploying a fraud detection system that operates on live blockchain data means dealing with an ever-growing graph. Ensuring the system scales (both in data engineering and in model inference speed) is a non-trivial task. This is more of an engineering limitation than a conceptual one, but it influences what techniques are feasible to use in practice.</li>
+            </ul>
+            <p>In summary, existing approaches have demonstrated the viability of AI for crypto fraud detection but <strong>fall short in adaptability, generalization, and explainability</strong>. They often rely on limited labeled examples, assume the future will resemble the past, and act as black boxes. These limitations point toward the need for more robust solutions – ones that can incorporate new data on the fly, detect previously unseen fraud patterns (perhaps by learning more abstract representations of "suspicious behavior"), and provide human-interpretable outputs. In the next section, we discuss several improvements and novel contributions that could address these gaps, including the integration of open-source large language models to enhance analysis and interpretability.</p>
+            <span class="page-break-info">End of OCR for page 8</span>
+        </section>
+
+        <section id="proposed-improvements">
+            <h2>Proposed Improvements and Novel Contributions</h2>
+            <p>Building on the review above, we propose several improvements and novel directions for an AI-powered blockchain fraud detection system. These include methodological enhancements to boost accuracy and adaptability, as well as the use of <strong>open-source Large Language Models (LLMs)</strong> to augment the system's capabilities in analysis, explainability, and data processing.</p>
+
+            <h4>1. Advanced Graph Techniques and Hybrid Models:</h4>
+            <p>To improve detection accuracy, we suggest combining the strengths of graph-based and feature-based methods. One idea is a <strong>hybrid model</strong> where a Graph Neural Network and a gradient boosting model work in tandem. For example, a GNN could be used to compute a risk score for each node (address) by looking at its neighborhood connectivity (propagating known illicit labels through the graph), and that score can be used as an additional feature in a boosted trees classifier along with the address's engineered features. This way, relational information is incorporated without relying solely on the GNN. Conversely, features can be injected into a GNN (feature concatenation at the node embeddings) to give it more raw data to work with. Ensembling different model types can also yield robustness – for instance, a two-step approach where suspicious clusters are first identified via graph algorithms, and then within those clusters a fine-grained classification is done by a tree model. Prior work hinted at the potential to "<strong>combine the respective powers of RF and graph methods</strong>"<sup>8</sup>, and we aim to realize that through a carefully designed pipeline.</p>
+
+            <h4>2. Semi-Supervised and Unsupervised Learning:</h4>
+            <p>To tackle label scarcity and evolving fraud, the system should integrate <strong>anomaly detection</strong> and <strong>semi-supervised learning</strong>. We propose to include an <strong>unsupervised anomaly detection module</strong> that constantly monitors new transactions or addresses and flags those that deviate significantly from normal patterns (even if they are not flagged by the supervised classifier). Techniques like <strong>Isolation Forest, One-Class SVM, or autoencoder-based outlier detection</strong> can be trained on the bulk of unlabeled data (assumed to be mostly normal) to identify outliers. Additionally, a <strong>cluster analysis</strong> could group addresses by behavior and identify small clusters that look different (e.g. a cluster of addresses that all interact exclusively with each other and funnel value among themselves might indicate a mixer or laundering ring). When the classifier encounters data points with low confidence (e.g. an address that the model is unsure about), the system can fall back on anomaly scores or cluster membership to decide if it warrants investigation. Over time, feedback from analysts on these flagged cases can be used to <strong>continually update the model</strong> (active learning). Semi-supervised GNN techniques (such as label propagation or graph embeddings learned via unsupervised objectives) could also enrich the model: for instance, using <strong>node embeddings pre-trained on the transaction graph</strong> (via methods like DeepWalk or GraphSAGE in unsupervised mode) as input features to the classifier. This way, even addresses without labels get a representation that captures their network context.</p>
+            <span class="page-break-info">End of OCR for page 9</span>
+
+            <h4>3. Transfer Learning Across Blockchains:</h4>
+            <p>In line with the focus on Solana, we may leverage <strong>cross-chain transfer learning</strong>. If direct labeled data on Solana is lacking, we can train models on Ethereum or Bitcoin data (where labels exist) and then adapt them to Solana's data. Many fraud patterns are similar across chains (scammers and money launderers exhibit analogous behaviors). Using open-source tools, one could train a model on the Ethereum fraud dataset and then apply it to Solana by mapping relevant features (for example, features like "total value received" or "number of counterparties" have analogous meaning across chains, even if the asset is different). Fine-tuning can be done if we manage to obtain or label a small Solana dataset. The hackathon project <em>TrustNetAl</em> employed this strategy by <strong>training on Ethereum and fine-tuning on Solana</strong><sup>22</sup>. We can improve upon this by ensuring the model is generalizable: using representations that are chain-agnostic (like relative metrics rather than absolute values, which might differ in scale between chains) and possibly using an <strong>LLM to bridge context</strong> (explained next). Cross-chain learning could also be enhanced by <strong>meta-learning</strong> techniques that learn the underlying concept of fraud across multiple networks.</p>
+
+            <h4>4. Integration of Open-Source LLMs for Analysis and Explainability:</h4>
+            <p>A novel aspect of our proposal is to incorporate large language models into the fraud detection pipeline. LLMs (such as GPT-style models) are typically known for NLP tasks, but they can be surprisingly useful in blockchain analytics when used creatively. We outline a few roles for LLMs:</p>
+            <ul>
+                <li><strong>Preprocessing and Data Enrichment:</strong> LLMs can serve as powerful data preprocessors or feature extractors<sup>23, 24</sup>. For example, we could serialize an address's activity history into a textual or structured format and use an LLM to encode it. Recent work by Yu et al. demonstrated using a BERT-based model to convert raw blockchain transaction data into enriched token representations, which were then used by a downstream anomaly detector<sup>23</sup>. In our context, an open-source LLM (like a finetuned GPT-2 or LLaMA model) could be trained on sequences of transactions to produce an embedding capturing behavioral patterns. The idea is akin to treating an address's transaction list as a "sentence" and the address as conveying a "meaning" (legitimate or fraudulent) – the LLM can generate a contextual embedding that captures complex temporal patterns or interactions beyond what manual features do. This embedding can augment our model's input features, potentially improving detection of nuanced fraud behaviors. LLMs could also be used to parse unstructured external data: for instance, reading smart contract source code or metadata to detect suspicious attributes (like a smart contract function that looks like a honey pot), or parsing forum discussions for mentions of an address being a scam.</li>
+            <span class="page-break-info">End of OCR for page 10</span>
+                <li><strong>Automated Analysis and Reasoning:</strong> We can deploy an LLM agent to analyze flagged cases and even perform investigative reasoning. Given an address flagged as high risk, an LLM could be prompted with relevant data (its transactions, associated entities, historical context) and asked to output a summary or an opinion on why it might be fraudulent. This is inspired by the idea of <strong>LLM-based analytical agents</strong> for blockchain security<sup>25</sup>. For example, an LLM could examine two addresses that frequently interact and note: "Address A and B have conducted 50 transactions back-and-forth totaling X SOL, which is unusual for personal wallets. This could indicate a wash trading or self-transfer pattern." Such output can guide human investigators or even feed back into the system as a form of explanation. There is also research on using LLMs to <strong>directly detect fraud</strong> by reasoning over transaction traces. Gai et al. (2023) introduced <strong>BlockGPT</strong>, an approach where a pre-trained language model processes raw transaction sequences and directly flags anomalies<sup>26</sup>. Similarly, Hu et al. developed a transformer model called (in concept) "<strong>BERT4ETH</strong>" which uses masked address prediction to pre-train on Ethereum transactions and achieved superior performance in detecting phishing addresses compared to graph models<sup>27</sup>. These examples show that LLMs can function as <strong>comprehensive analytical engines</strong> for fraud detection, making sense of transaction histories and identifying suspicious patterns in an end-to-end manner<sup>26</sup>. In our project, we could experiment with an open-source LLM (such as a finetuned GPT-J or LLaMA) to see if it can take a raw sequence of transactions for an address and classify it as fraud or not. This might be ambitious, but even if not the primary detector, it could serve as a check or alternate viewpoint alongside the main models.</li>
+                <li><strong>Explainability and Reporting:</strong> One of the most promising uses of LLMs is to improve explainability. After our detection model (GNN/ML) flags an address or transaction as suspicious, we can prompt an LLM to <strong>explain the reasons in natural language</strong>, based on the data. For example, we can feed the LLM key facts: "Address X received 120 payments totaling 500 SOL from 120 different addresses in one day, and then sent 95% of it to a new address Y." The LLM can be asked to summarize why this pattern is indicative of fraud (it might output: "This pattern suggests a <strong>possible Ponzi scheme or laundering</strong>: X appears to have collected funds from many sources and quickly forwarded them to another address, which is common in scam exits."). Such a narrative can be extremely useful for analysts and increases trust in the system's alerts. We will leverage open-source LLMs (which can be run locally for privacy) for this purpose. The integration might involve template-based prompts or few-shot examples to teach the LLM how to generate explanations from data. Additionally, we can use LLMs to generate <strong>natural language reports</strong> for clusters of fraudulent activity, or to translate blockchain jargon into accessible language for compliance reports.</li>
+            </ul>
+            <p>Using LLMs in these ways aligns with emerging research that sees <strong>LLMs as a versatile tool for fraud detection across blockchain platforms</strong>, offering generalization and reasoning abilities beyond traditional models<sup>28</sup>. Notably, LLMs come pre-trained on vast amounts of knowledge, which could include information on known scams or typical fraud patterns, thus providing a form of transfer learning. By integrating an open-source LLM into our system, we hope to achieve a few things: improve the model's adaptability to new patterns (via enriched representations), provide better explanations for each alert, and create a more interactive tool (one that a human analyst could query or converse with to dig into a case).</p>
+
+            <h4>5. Improved Feature Engineering and Domain Knowledge:</h4>
+            <p>Apart from fancy models, we should not neglect the power of human insight in designing features and rules. We propose to incorporate some <strong>heuristics and domain-specific features</strong> that have proven effective. For example, detecting <strong>mixers/tumblers</strong> can be done by identifying transactions with multiple inputs and outputs in certain patterns<sup>29, 30</sup> – we can craft features to measure an address's involvement in such transactions. Another example: if focusing on DeFi fraud, one can track whether an address deployed a smart contract or interacted heavily with a known DeFi contract (e.g. a governance token contract) – some scams involve deploying contracts and thus those addresses may be high-risk. <strong>Time-based features</strong> like activity hours (does the address operate only during specific times, possibly aligning with a certain timezone associated with a scam group) could be relevant. We will also include <strong>relational features</strong> like the number of <strong>hops</strong> away from a known illicit address (if that information is available – e.g. how close in the graph is this address to a darknet market address?). By incorporating such expert features, we give the model more ammunition to distinguish fraud. If any open-source knowledge bases are available (like lists of known bad actors, or typical fraud patterns published by Chainalysis or Elliptic), we can use those to tag or score our data as additional signals.</p>
+            <span class="page-break-info">End of OCR for page 11</span>
+
+            <h4>6. Modularity and Extensibility:</h4>
+            <p>As a final contribution, we aim to design the system in a modular way so it can be <strong>extended to new fraud types and integrated with off-chain data</strong>. For instance, the system could have separate modules for "<strong>Phishing scam detection</strong>", "<strong>Rug pull detection</strong>", "<strong>Mixer detection</strong>" etc., which feed into a combined risk score. Off-chain data sources (like mentions on social media of an address being a scam) can be ingested through APIs and fed to the ML model or LLM for context. By modularizing, we ensure the system can adapt by plugging in a new detector if a new type of fraud emerges (e.g. an NFT wash trading detector). This goes somewhat beyond the immediate scope, but we envision the architecture to allow such growth.</p>
+            <p>In summary, the novel contributions we suggest include: a <strong>hybrid graph-ML model</strong> for improved accuracy, incorporation of <strong>anomaly detection</strong> for unseen frauds, <strong>cross-chain transfer learning</strong> to apply knowledge from Ethereum to Solana, and a pioneering use of <strong>LLMs for both enhancing detection and providing explainability</strong>. These improvements directly target the earlier noted shortcomings: they address adaptability (via continual learning and LLM general knowledge), tackle data scarcity (via transfer learning and semi-supervision), and boost transparency (via LLM-generated explanations and insights). Next, we outline how the system can be implemented end-to-end, bringing these ideas to practice.</p>
+        </section>
+
+        <section id="proposed-methodology">
+            <h2>Proposed Methodology and Implementation Plan</h2>
+            <p>To realize the above ideas in an undergraduate/graduate-level project, we propose the following end-to-end methodology. This section is structured as a step-by-step blueprint for implementing the AI-powered fraud detection system, from data acquisition to model deployment. We focus on Solana as the primary use case, but we note where Ethereum or other chain data would be used as a fallback or supplementary source.</p>
+
+            <h3>1. Data Collection and Preparation</h3>
+            <p><strong>Solana Data Extraction:</strong> We will first attempt to collect transaction and account data from the Solana blockchain. Solana's high throughput means a full history might be large, so we may target a specific timeframe or subset (for example, a few months of data or focusing on high-value transactions). We can use Solana's JSON RPC API or a service like <strong>Helius</strong> to fetch transactions. Specifically, we'll gather: a list of transactions (including details like sender, receiver, amount, timestamp, and any program interaction), and account information (balance changes, account creation, etc.). If available, we will also look for any <strong>publicly reported scam addresses on Solana</strong> (perhaps through Solana-focused forums or a block explorer that tags known frauds). In parallel, we will retrieve analogous data from Ethereum to use as a training base. Using <strong>Google BigQuery's cryptocurrency dataset</strong> (which contains Ethereum transactions), we can query all transactions involving known scam addresses (from the Kaggle Ethereum dataset or Etherscan's tagged addresses) to get a labeled set of Ethereum transactions and addresses. Additionally, we will likely utilize the <strong>Ethereum Fraud Dataset (Kaggle)</strong> directly for a structured set of features and labels to train initial models.</p>
+            <span class="page-break-info">End of OCR for page 12</span>
+
+            <p><strong>Graph Construction:</strong> Using the collected data, we will construct a <strong>transaction graph</strong> for each blockchain. For Solana, this might be an address-to-address directed graph where an edge from A to B indicates A sent funds to B (with edge weight possibly representing frequency or total amount). Solana's programmatic transactions (SPL token transfers, etc.) will be analyzed to ensure we capture value transfers, not just system messages. For Ethereum, a similar address graph can be built (which is simpler: each transaction has one from and one to, except contract creation). We may also build a <strong>bipartite graph (address-transaction graph)</strong> if using a GNN that requires it (as done in the Elliptic dataset). At this stage, we will label the nodes or edges in the graph where we have ground truth. For Ethereum, many addresses in our data will be labeled (fraud or not) from the dataset. For Solana, we may initially have very few labeled fraud addresses; so we might label indirectly – e.g. if an address on Solana has a very similar behavior profile to a known Ethereum scam address, we mark it as a potential positive (this is speculative and would be carefully validated).</p>
+            <p><strong>Feature Engineering:</strong> In parallel to graph building, we will create a feature table for addresses. Many features can be computed directly from the blockchain data:
+            <ul>
+                <li><em>Basic transactional features:</em> number of incoming transactions, number of outgoing transactions, total value received, total value sent, average value per transaction, current balance.</li>
+                <li><em>Time-based features:</em> account age (time since first transaction), average time between transactions, activity frequency (transactions per day or week), burstiness (e.g. max number of transactions in any 1-hour window).</li>
+                <li><em>Graph features:</em> degree (in-degree and out-degree in the address graph), PageRank or eigenvector centrality, clustering coefficient (to see if they transact within a closed group), number of unique counterparties.</li>
+                <li><em>Behavioral patterns:</em> e.g. % of funds that get cashed out quickly (if an address tends to forward almost everything it gets, that's suspicious), recurrence of counterparties (do they constantly interact with the same addresses or always new ones? Scammers often receive from many distinct victims).</li>
+                <li><em>Smart contract interactions:</em> (for Ethereum) whether the address is a contract, and if so code features or known contract type; for Solana, whether the address is a program account, a token account, or a system account (Solana's unique account types)<sup>31</sup> – note that on Solana, an end-user's wallet can have many sub-accounts; consolidating those might be needed. We might incorporate Chainalysis-style <strong>clustering of addresses</strong> that belong to the same user (e.g. if we identify multiple token accounts under one system account, treat them together), as this can prevent fragmentation of data<sup>32, 33</sup>.</li>
+                <li><em>Known entities:</em> if an address is known (e.g. tagged as an exchange or DeFi platform), that could factor into risk (perhaps exchanges are less likely to be fraud originators, but could be receivers).</li>
+                <li><em>Off-chain data:</em> if feasible, we might include a feature like "mentioned in scam reports" by doing a quick web search or looking at Twitter for the address (this might be manual or done for a few cases; automating it is more complex).</li>
+            </ul>
+            We will likely store these features in a Pandas DataFrame or a database table. Data preprocessing will also involve <strong>cleaning</strong>: removing obvious outliers (if any feature is extremely beyond normal range due to anomaly or data error, though in blockchain data errors are rare), handling missing values (e.g. if some addresses have incomplete history data), and scaling features as needed. If using tree-based models, scaling is less important; for neural nets, we will normalize features.</p>
+            <p><strong>Train-Test Split:</strong> To evaluate the models properly, we will split the data into training, validation, and test sets. A careful consideration is the temporal nature of fraud: ideally, we do a <strong>chronological split</strong> – e.g. train on data up to time T and test on data after T, to simulate detecting new fraud based on past patterns. This prevents overly optimistic evaluation where a model could be trained on data from the same timeframe as the test. For Ethereum data, we can split by block timestamp. For Solana (if mostly unlabeled), we might use Ethereum as training and recent Solana data as test for a domain-transfer evaluation. We will also ensure that if using graph-based models, our splits do not leak information (for instance, if a fraudster has multiple addresses and one is in train and one in test, that could leak label info through graph connectivity – we might need to isolate test subgraph or do techniques like training on an earlier subgraph snapshot).</p>
+            <span class="page-break-info">End of OCR for page 13</span>
+
+            <h3>2. Model Training Approaches</h3>
+            <p>We plan to implement and compare two main kinds of detection approaches: (a) <strong>Supervised classification models</strong> (for directly predicting fraud labels) and (b) <strong>Unsupervised anomaly detection models</strong> (for identifying outliers). Within supervised models, we will try both conventional ML and graph-based deep learning:</p>
+
+            <h4>(a) Supervised Classification Models:</h4>
+            <ul>
+                <li><strong>Gradient Boosting Tree Model:</strong> We will train an XGBoost or LightGBM classifier on the engineered feature set of addresses. The target label is fraud/not-fraud (binary classification). We choose gradient boosting due to its proven efficacy in prior work<sup>18</sup> and ability to handle mixed data. During training, we will use techniques to handle class imbalance, such as setting a higher loss weight for the fraud class or using balanced subsampling. Hyperparameters (number of trees, depth, learning rate, etc.) can be tuned via cross-validation on the training set. We expect this model to serve as a strong baseline.</li>
+                <li><strong>Graph Neural Network:</strong> We will use PyTorch Geometric to define a Graph Neural Network that can take the transaction graph as input and perform node classification (where nodes are addresses, for instance). One architecture to start with is a <strong>Graph Convolutional Network (GCN)</strong> with perhaps 2-3 convolutional layers and a final classification layer (Sigmoid or Softmax output for fraud vs. not). The input features to the GNN can be the same features we engineered (or a subset) attached to each node, plus possibly one-hot encodings of label if using semi-supervised learning on labeled nodes. An alternative is <strong>GraphSAGE</strong> (which is inductive and might generalize better to unseen nodes) or <strong>Graph Attention Network</strong> (to weight neighbors). We will train the GNN on the training subgraph using the known labels, using a loss like binary cross-entropy or focal loss (to help with class imbalance). The Elliptic dataset experiments can guide our hyperparameter choices. We need to be mindful of Solana's graph size – if it's huge, we might train on a sampled subgraph or use techniques like neighbor sampling in PyG to handle it. The output of the GNN will be a probability score for each node being illicit. We'll evaluate its performance on the test set nodes (taking care that we don't evaluate on completely disconnected new nodes if any – those might require inductive handling).</li>
+                <li><strong>MLP (Multilayer Perceptron):</strong> We might also train a simple feed-forward neural network on the same features as the tree model, just to see if it learns any different representation. However, given the typically limited size of labeled data, an MLP may not outperform XGBoost, but it could be useful if we integrate it with the graph (e.g. node features processed by an MLP before combination in a GNN, akin to a wide-and-deep model).</li>
+                <li><strong>Ensemble/Hybrid:</strong> Depending on how the above perform, we might create an ensemble that averages or learns a meta-model from the outputs of XGBoost and GNN. For example, use a logistic regression that takes as input the probability from XGBoost and the probability from GNN and outputs a final decision. This could potentially improve recall by catching cases one model sees and the other doesn't.</li>
+            </ul>
+            <span class="page-break-info">End of OCR for page 14</span>
+
+            <h4>(b) Unsupervised/Anomaly Detection Models:</h4>
+            <ul>
+                <li><strong>Isolation Forest:</strong> We will train an Isolation Forest using a large set of unlabeled addresses (which presumably are mostly normal) to establish what "normal" behavior looks like. The Isolation Forest will score addresses by how isolated (anomalous) they are in feature space. We expect fraud addresses to often get high anomaly scores if their feature combination is unlike the majority. We will validate this by checking if known fraud addresses indeed rank high.</li>
+                <li><strong>Autoencoder:</strong> Alternatively, we could train an autoencoder neural network on the features of known-good addresses (unsupervised), so it learns to reconstruct normal patterns. When fed an address's features, if the reconstruction error is high, that suggests the address is unusual. This requires careful tuning and enough data, but might capture nonlinear feature interactions that Isolation Forest might miss.</li>
+                <li><strong>One-Class SVM or Local Outlier Factor (LOF):</strong> These are simpler anomaly detectors we could try as well on the features. LOF, for instance, detects samples that have a substantially lower density than their neighbors – a fraudulent address might appear as an outlier in that sense.</li>
+            </ul>
+            <p>For the anomaly detectors, no labels are used in training; however, we will evaluate them by measuring how well they prioritize known frauds. For example, we can compute the precision@K: out of the top K anomalies flagged, how many are actual fraud addresses (using our test set labels). We can also integrate the anomaly scores with the classifier: e.g. any address that is scored as highly anomalous but not classified as fraud could be highlighted for manual review.</p>
+            <p><strong>LLM Integration:</strong> As discussed, we want to incorporate LLMs in the pipeline. For training, one use could be generating <strong>LLM-based embeddings</strong>. For instance, we might fine-tune a small language model on sequences of transactions. We can create a textual representation for each address, such as: "Addr [X] received [n_in] transactions totaling [val_in] SOL from [m] addresses and sent [n_out] transactions totaling [val_out] SOL to [k] addresses. Most frequent counterparties: A1, A2, ...; Time active: mostly 2023-01 to 2023-03; ..." – basically a description of its behavior. We feed this to an LLM model (like a transformer encoder) to get an embedding vector. This vector could then be concatenated to our feature vector or used in the GNN as initial node features. Training such an embedding might be beyond a small project's scope to do from scratch, but we could leverage a pre-trained LLM by prompting it and extracting some latent state. Another angle is we might not "train" the LLM in the classic sense, but rather use it in inference mode to assist (see next steps).</p>
+
+            <h3>3. Model Evaluation</h3>
+            <p>For each model, we will use appropriate evaluation metrics on the test set (and validation set during development):</p>
+            <ul>
+                <li><strong>Classification Metrics:</strong> We will compute metrics including <strong>Precision, Recall, F1-Score, and Accuracy</strong>. Given the class imbalance and the importance of catching fraud, <strong>Recall</strong> (sensitivity) is a key metric – we want a high recall for fraud cases (few false negatives). Precision should also be monitored to avoid too many false positives. We will likely prioritize <strong>Precision-Recall AUC</strong> or <strong>F1</strong> over simple accuracy, because an accuracy of 99% could be meaningless if it simply labels everyone as legitimate (since fraud cases are <1% in some settings). We can also set a threshold to target a certain recall (e.g. 90%) and then see what precision we get, as an operating point. The ROC AUC might be reported too, though ROC can be misleading with heavy imbalance.</li>
+            <span class="page-break-info">End of OCR for page 15</span>
+                <li><strong>Confusion Matrix and Error Analysis:</strong> We will produce confusion matrices to see how many false alarms vs misses each model yields. Error analysis will involve examining a few false negatives (fraud cases the model missed) and false positives (legitimate cases flagged) to understand patterns the model might be blind to. For instance, if we find the model misses all phishing scams but catches Ponzi schemes, that tells us something.</li>
+                <li><strong>Comparative Evaluation:</strong> We will compare the performance of the XGBoost model vs. the GNN vs. the ensemble. We expect possibly that XGBoost might have higher precision, while GNN might have higher recall for certain connected frauds, etc. If we have enough test data, statistical significance tests (like McNemar's test for classifier errors) could be done to see if differences are meaningful.</li>
+                <li><strong>Anomaly Detector Evaluation:</strong> As mentioned, for unsupervised methods we don't have a direct "accuracy". We will likely use <strong>Precision@K</strong> (for some K like 100 or 200 alerts) to see if a large fraction are true fraud. We can also plot the anomaly score distribution and see if known fraud cases lie in the tail. If ground truth allows, we might compute <strong>ROC AUC for the anomaly score</strong> treating it as a continuous classifier. Another technique: combine the anomaly scores with classifier output and see if a simple rule like "flag if classifier says fraud OR anomaly score above threshold" increases recall significantly with only a modest drop in precision.</li>
+                <li><strong>Cross-Chain Generalization Test:</strong> If we perform transfer learning (train on Ethereum, test on Solana), the evaluation there would be interesting. Since we may not have labels for Solana, one approach is to do a <strong>case study evaluation</strong>: take the top N addresses flagged on Solana by our model and manually investigate them (check if they appear in news or have suspicious patterns). Alternatively, if we simulate labels on Solana (like by injecting known scam addresses from Ethereum into the Solana dataset artificially), we could quantify how well the model transfers. This part might be more exploratory due to label gap.</li>
+                <li><strong>Resource Usage:</strong> We will also note the computational performance (training time, inference time, memory usage) of our models, to ensure the approach could be scaled. For example, how long does it take to run the GNN on the graph, how fast can XGBoost score new transactions, etc. This will inform deployment choices.</li>
+            </ul>
+            <p>All results will be documented, likely in tables or plots, to highlight the trade-offs. For instance, an ROC or PR curve comparing models, or a bar chart of F1 scores.</p>
+
+            <h3>4. Deployment and Integration Considerations</h3>
+            <p>Finally, we consider how this system could be deployed in a real-world or near-real-world setting, and outline a possible architecture for it:</p>
+            <p><strong>System Architecture:</strong> The fraud detection system could be structured as an automated pipeline with the following components:
+            <ul>
+                <li>A <strong>data ingestion layer</strong> that continuously fetches new blockchain data. For Solana, this might be a WebSocket subscription to new confirmed blocks or transactions via an RPC node. For Ethereum, similarly using a websocket or a service like Infura's subscription API.</li>
+                <li>A <strong>feature computation service</strong> that, for each new transaction or new address, updates the relevant features. For example, if a new transaction comes in, update the senders' and receivers' transaction counts, total values, etc., in our feature store. This could be done in real-time or in micro-batches. A simple deployment might run a scheduled job every hour to compute features for any addresses seen in that hour.</li>
+                <li>The <strong>ML inference service</strong> where our trained models reside. This could be a Python service using the trained XGBoost model and GNN (the GNN might be stored as a PyTorch model). When a new data point arrives (e.g. a new address or a new significant transaction), the service computes its features (from the feature store) and then feeds them into the model to get a fraud probability. We would have a threshold to decide if it's flagged. If using a GNN, one approach is to periodically retrain or update embeddings with new data, which is complex; but an online approach could be to treat new addresses initially with the anomaly detector until the GNN is retrained with them.</li>
+                <li>An <strong>alerting and explanation module</strong>. If an address or transaction is flagged as suspicious, this module can generate an alert record. Here we would invoke the <strong>LLM to produce an explanation</strong>: the module gathers the relevant info (e.g. "Address X was flagged with score 0.95. It has received 300 SOL from 50 new addresses in the past day and funneled them to one address Y.") and feeds that as a prompt to the language model, which returns a sentence or two explaining why this is problematic. This explanation is attached to the alert.</li>
+                <li>A <strong>user interface or dashboard</strong> for analysts/regulators. This could be a simple web dashboard listing the alerts, their risk scores, the LLM-generated explanation, and some key data points (perhaps a mini-graph of that address's connections). The UI could allow an analyst to give feedback (e.g. mark false positive or confirm true positive), which we can log for further model improvement.</li>
+                <li>A <strong>back-end database</strong> (SQL or NoSQL) to store historical data, the current state of features, and alert logs. We saw one reference architecture using MongoDB for off-chain data and PostgreSQL for on-chain data<sup>34, 35</sup>; we could do something similar (NoSQL for flexible storage of raw JSON transactions, and a relational DB for structured features and labels).</li>
+            </ul>
+            For the scope of the project, full deployment might be simulated rather than fully implemented. We might demonstrate a prototype where a batch of new transactions is processed and alerts printed out. If possible, using a streamlit or Flask app to show results could be a nice touch.</p>
+            <span class="page-break-info">End of OCR for page 16</span>
+
+            <p><strong>Deployment Tools:</strong> We can containerize the application using Docker, which would ease running the pipeline. If real-time performance is required, we might implement the core scoring in a lightweight language or ensure our Python code is optimized. However, since this is a prototype, Python should suffice. For the LLM part, using an open-source model (like running a 7B parameter LLaMA locally) might require a GPU; we will have to gauge if that's feasible. If not, we could use a smaller model or even call an API (though open-source was preferred, maybe use something like GPT-4 via API for demonstration of explanation if allowed – but open-source alternatives like GPT-NeoX could be tried).</p>
+            <p><strong>Monitoring and Maintenance:</strong> Once deployed, the system should be monitored for performance drift. New types of fraud might appear that slip past the model, so we'd need a process to update the model periodically. The modular design helps here: for example, if a new scam pattern is discovered, we can add a rule or new feature to catch it and retrain. Logging all scored transactions and their features will allow retrospective analysis to improve the model.</p>
+            <p><strong>Ethical/Privacy Considerations:</strong> Although blockchain data is public, we should be mindful that labeling someone as fraudulent is sensitive. False accusations can be problematic. Our system would ideally be used as a decision-support tool, with human analysts making the final judgment. We'd include disclaimers that flagged =\= guilty, it's just a risk score.</p>
+
+            <h3>5. Project Timeline (if applicable)</h3>
+            <p><em>(Though not explicitly asked, we can briefly mention how we'd phase the implementation in a project setting: data gathering -> model development -> integration -> evaluation.)</em></p>
+            <ol>
+                <li><strong>Week 1-2:</strong> Data collection from Ethereum (Kaggle dataset, BigQuery) and Solana (through RPC). Build initial feature set and simple classifier on Ethereum data to validate approach.</li>
+                <li><strong>Week 3-4:</strong> Construct graph and implement GNN model for Ethereum data; experiment with transfer to Solana (maybe label a few Solana cases manually for testing).</li>
+                <li><strong>Week 5:</strong> Integrate anomaly detection module; run combined model and tune thresholds.</li>
+                <li><strong>Week 6:</strong> Develop LLM-based explanation prototype (possibly using smaller models due to compute limits); generate explanations for a sample of alerts.</li>
+                <li><strong>Week 7:</strong> Final evaluation on test sets, performance measurement, and adjustments.</li>
+                <li><strong>Week 8:</strong> Compile results, finalize the research report and prepare a demo (if UI, etc.).</li>
+            </ol>
+            <p>This timeline ensures an iterative build-up, tackling easier parts first (Ethereum supervised model) then adding complexity (graph, Solana transfer, LLM).</p>
+            <span class="page-break-info">End of OCR for page 17</span>
+        </section>
+
+        <section id="conclusion">
+            <h2>Conclusion</h2>
+            <p>In this research draft, we explored an end-to-end strategy for an <strong>AI-powered fraud detection system</strong> in the context of blockchain transactions, with a particular focus on the Solana blockchain (and leveraging Ethereum-based knowledge where needed). We began with a review of the state-of-the-art: prior work has shown that both <strong>graph-based machine learning</strong> and <strong>conventional ML models</strong> can effectively detect illicit behavior on blockchains, each with their own advantages. Tree-based models like XGBoost have demonstrated high accuracy on curated datasets<sup>17</sup>, while graph neural networks offer a means to propagate risk and catch structural patterns of crime that feature-only models might miss. However, we also noted significant challenges – especially the paucity of labels, the cat-and-mouse evolution of fraud tactics, and the need for better explainability and adaptability.</p>
+            <p>To overcome these limitations, we proposed a set of improvements that form the core of our project's novelty. Key among them is the <strong>integration of open-source Large Language Models</strong> into the fraud detection pipeline, not as mere text generators but as multi-faceted assistants: enriching data representations<sup>23</sup>, providing cross-chain generalization<sup>28</sup>, and generating human-readable explanations for alerts. This, combined with a hybrid modeling approach (graph + feature-based ensemble) and semi-supervised anomaly detection, aims to create a system that is accurate, robust to new threats, and transparent in its operation. By incorporating domain knowledge and ensuring the methodology covers data from collection to deployment, we designed the project to be feasible yet reflective of real-world complexities.</p>
+            <p>Though the implementation details may evolve as we delve into coding and testing, the structured plan outlined – from building the Solana transaction graph, to training classification models and anomaly detectors, and finally deploying an alerting mechanism with explainable output – will guide the project's execution. The outcome we envision is a prototype system (or research tool) that can flag potentially fraudulent addresses or transactions on Solana in near real-time, backed by a thorough evaluation of its performance and limitations. Such a system could serve as a foundation for further academic research (e.g. exploring advanced GNN architectures or LLM reasoning in blockchain) or as a stepping stone toward a production-grade fraud monitoring solution for blockchain networks.</p>
+            <p>By leveraging cutting-edge AI techniques and adhering to a rigorous methodological framework, this project strives to contribute to the creation of a safer and more trustworthy crypto-economic ecosystem – one where large-scale transparent ledgers are coupled with equally powerful transparent analytics, so that the promise of blockchain can be realized without being undermined by criminal abuse. We believe this work will not only yield immediate insights and a working model for Solana/Ethereum fraud detection, but also highlight opportunities for future research at the intersection of graph AI, anomaly detection, and language models in the domain of decentralized finance.</p>
+            <span class="page-break-info">End of OCR for page 18</span>
+        </section>
+
+        <section id="references" class="references">
+            <h2>References</h2>
+            <ol>
+                <li><sup>1, 3, 17</sup> AI-powered Fraud Detection in Decentralized Finance: A Project Life Cycle Perspective<br>
+                <a href="https://arxiv.org/html/2308.15992v3">https://arxiv.org/html/2308.15992v3</a></li>
+
+                <li><sup>2, 14, 15, 16, 19</sup> GitHub - eltontay/Ethereum-Fraud-Detection: Detecting Fraudulent Blockchain Accounts on Ethereum with Supervised Machine Learning<br>
+                <a href="https://github.com/eltontay/Ethereum-Fraud-Detection">https://github.com/eltontay/Ethereum-Fraud-Detection</a></li>
+
+                <li><sup>4, 22</sup> GitHub - pavan178/AI_FOR_BLOCKCHAIN: Jupyter notebooks for ai fraud detection and tagging<br>
+                <a href="https://github.com/pavan178/AI_FOR_BLOCKCHAIN">https://github.com/pavan178/AI_FOR_BLOCKCHAIN</a></li>
+
+                <li><sup>5, 18</sup> Comprehensive Analysis and Detection of Fraud Schemes on the Ethereum Blockchain Using Machine Learning | SpringerLink<br>
+                <a href="https://link.springer.com/content/pdf/10.1007/978-3-031-85856-7_37">https://link.springer.com/content/pdf/10.1007/978-3-031-85856-7_37</a></li>
+
+                <li><sup>6, 7, 8, 21</sup> Anti-Money Laundering in Bitcoin: Experimenting with Graph Convolutional Networks for Financial Forensics<br>
+                <a href="https://ideas.repec.org/p/arx/papers/1908.02591.html">https://ideas.repec.org/p/arx/papers/1908.02591.html</a></li>
+
+                <li><sup>9</sup> Graph Network Models To Detect Illicit Transactions In Block Chain<br>
+                <a href="https://www.researchgate.net/publication/384811598_Graph_Network_Models_To_Detect_Illicit_Transactions_In_Block_Chain">https://www.researchgate.net/publication/384811598_Graph_Network_Models_To_Detect_Illicit_Transactions_In_Block_Chain</a></li>
+
+                <li><sup>10, 11, 12</sup> GitHub - git-disl/EllipticPlusPlus: Elliptic++ Dataset: A Graph Network of Bitcoin Blockchain Transactions and Wallet Addresses<br>
+                <a href="https://github.com/git-disl/EllipticPlusPlus">https://github.com/git-disl/EllipticPlusPlus</a></li>
+
+                <li><sup>13</sup> Ethereum Fraud Dataset - Kaggle<br>
+                <a href="https://www.kaggle.com/datasets/gescobero/ethereum-fraud-dataset">https://www.kaggle.com/datasets/gescobero/ethereum-fraud-dataset</a></li>
+
+                <li><sup>20</sup> How terrorist groups are exploiting crypto to raise funds and evade detection<br>
+                <a href="https://www.elliptic.co/blog/how-terrorist-organizations-are-exploiting-crypto-to-raise-funds-and-evade-detection">https://www.elliptic.co/blog/how-terrorist-organizations-are-exploiting-crypto-to-raise-funds-and-evade-detection</a></li>
+
+                <li><sup>23, 24, 26, 27, 28</sup> arxiv.org<br>
+                <a href="https://arxiv.org/pdf/2412.09640">https://arxiv.org/pdf/2412.09640</a></li>
+
+                <li><sup>25</sup> Blockchain Meets LLMs: A Living Survey on Bidirectional Integration<br>
+                <a href="https://www.promptlayer.com/research-papers/can-llms-supercharge-blockchain">https://www.promptlayer.com/research-papers/can-llms-supercharge-blockchain</a></li>
+            <span class="page-break-info">End of OCR for page 19</span>
+                <li><sup>29, 30, 34, 35</sup> 2024 Volume 8 Number 1 - HDIAC Journal<br>
+                <a href="https://hdiac.dtic.mil/wp-content/uploads/2024/06/HDIAC_2024_Vol_8_No_1_web_final.pdf">https://hdiac.dtic.mil/wp-content/uploads/2024/06/HDIAC_2024_Vol_8_No_1_web_final.pdf</a></li>
+
+                <li><sup>31, 32, 33</sup> How We Built Chainalysis' Robust Knowledge Graph for Solana Transactions - Chainalysis<br>
+                <a href="https://www.chainalysis.com/blog/solana-chainalysis/">https://www.chainalysis.com/blog/solana-chainalysis/</a></li>
+            </ol>
+        </section>
+
+    </div>
+
+    <!-- Scroll to top button -->
+    <a href="#" class="scroll-top" id="scrollTop">↑</a>
+
+    <script>
+        // Scroll to top functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const scrollTopBtn = document.getElementById('scrollTop');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.querySelector('.sidebar');
+            const body = document.body;
+            const overlay = document.querySelector('.sidebar-overlay');
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            // Scroll to top button
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    scrollTopBtn.classList.add('visible');
+                } else {
+                    scrollTopBtn.classList.remove('visible');
+                }
+            });
+            
+            scrollTopBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // Sidebar toggle
+            sidebarToggle.addEventListener('click', function() {
+                body.classList.toggle('sidebar-expanded');
+            });
+            
+            // Close sidebar when clicking overlay (on mobile)
+            overlay.addEventListener('click', function() {
+                body.classList.remove('sidebar-expanded');
+            });
+            
+            // Toggle submenu
+            navItems.forEach(item => {
+                const hasSubmenu = item.querySelector('.sub-menu');
+                if (hasSubmenu) {
+                    const link = item.querySelector('a');
+                    link.addEventListener('click', function(e) {
+                        if (window.innerWidth < 992) {
+                            e.preventDefault();
+                            item.classList.toggle('open');
+                        }
+                    });
+                }
+            });
+            
+            // Active section highlighting based on scroll
+            const sections = document.querySelectorAll('section');
+            
+            function setActiveNavItem() {
+                let currentSection = '';
+                
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (pageYOffset >= (sectionTop - 200)) {
+                        currentSection = section.getAttribute('id');
+                    }
+                });
+                
+                navItems.forEach(item => {
+                    item.classList.remove('active');
+                    const link = item.querySelector('a');
+                    if (link && link.getAttribute('href') === `#${currentSection}`) {
+                        item.classList.add('active');
+                        // Expand parent if it's a submenu item
+                        const parent = item.parentElement;
+                        if (parent.classList.contains('sub-menu')) {
+                            parent.parentElement.classList.add('open');
+                        }
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', setActiveNavItem);
+            
+            // Handle smooth scrolling for sidebar links
+            document.querySelectorAll('.sidebar-nav a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    if (this.getAttribute('href') !== '#') {
+                        e.preventDefault();
+                        
+                        const targetId = this.getAttribute('href');
+                        const targetElement = document.querySelector(targetId);
+                        
+                        if (targetElement) {
+                            window.scrollTo({
+                                top: targetElement.offsetTop - 20,
+                                behavior: 'smooth'
+                            });
+                            
+                            // Close sidebar on mobile after clicking
+                            if (window.innerWidth < 768) {
+                                body.classList.remove('sidebar-expanded');
+                            }
+                        }
+                    }
+                });
+            });
+            
+            // Initial active state
+            setActiveNavItem();
+        });
+    </script>
+</body>
+</html>
