@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# Data artefacts (large, regenerable)
+code/data/raw/*.csv
+code/data/raw/forta/*.csv
+code/data/interim/*.csv
+code/data/interim/*.json
+code/data/processed/*.parquet
+code/data/processed/*.pt
+code/data/processed/*.json
+code/data/processed/figures/*.png
+code/data/processed/checkpoints/*.pt
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# LaTeX build artefacts
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/*.synctex.gz
+paper/*.fls
+paper/*.fdb_latexmk
+paper/build/
+paper/main.pdf
+
+# Regenerable figures (produced by paper/figures/make_figures.py and the pipeline)
+paper/figures/architecture.pdf
+paper/figures/confusion_matrix.png

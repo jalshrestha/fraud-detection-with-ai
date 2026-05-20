@@ -1,0 +1,188 @@
+\section{Experimental Results and Analysis}
+\label{sec:results}
+
+\subsection{Data Pipeline Validation}
+
+The two-array seeding strategy yields a dense, label-rich dataset.
+After standardisation, all addresses in the transaction frame, the
+Forta frame, and the Etherscan source frame share a uniform lowercase
+format and join cleanly. The pipeline integrates \num{498112}
+transactions from BigQuery, \num{2671} fraud labels from Forta, and
+\num{1258} verified contracts from Etherscan into a single graph with
+\num{148342} nodes.
+
+\subsection{Training Behaviour}
+
+The fusion model trains stably under weighted cross-entropy with AdamW
+at a learning rate of \num{5e-5}. Average training loss decreases
+monotonically from approximately 0.84 in epoch 1 to 0.32 by epoch 5.
+No NaN losses are observed at any point. Gradient clipping at norm 1.0
+suppresses the early-epoch instability that we previously observed in
+the legacy notebook. Each epoch takes roughly 45 minutes on a Tesla T4
+GPU; total training time is approximately three to four hours.
+
+\subsection{Classification Performance}
+
+Table~\ref{tab:classification} reports precision, recall, and F1-score
+for both classes on the held-out test split. The fusion model recovers
+\SI{96}{\percent} precision and \SI{95}{\percent} recall on the benign
+class and \SI{72}{\percent} precision with \SI{62}{\percent} recall on
+the fraud class. Overall test accuracy is \SI{89}{\percent}. The
+confusion matrix in Fig.~\ref{fig:confusion} shows seven false
+positives (benign addresses incorrectly flagged) and eleven false
+negatives (fraud addresses missed) out of 190 test samples, with 29
+true fraud instances in the test set.
+
+\begin{table}[t]
+\centering
+\caption{Test-set classification performance of the fusion model.}
+\label{tab:classification}
+\begin{tabular}{lccc}
+\toprule
+Class  & Precision & Recall & F1-score \\
+\midrule
+Benign & 0.96 & 0.95 & 0.95 \\
+Fraud  & 0.72 & 0.62 & 0.67 \\
+\midrule
+Accuracy & \multicolumn{3}{c}{0.89} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/confusion_matrix.png}
+    \caption{Confusion matrix on the held-out test split (190 samples,
+    29 fraud).}
+    \label{fig:confusion}
+\end{figure}
+
+The recall figure of \SI{62}{\percent} on the fraud class reflects the
+inherent difficulty of the task at this label volume. With only 29
+labelled fraud instances in the test set, each missed fraud reduces
+recall by about three percentage points. The corresponding fraud
+F1-score of 0.67 is consistent with what we expected given the
+\SI{14.5}{\percent} class imbalance and the small absolute test count.
+
+\subsection{Ablation Study}
+
+To isolate the contribution of each modality, we trained two ablation
+classifiers under identical hyperparameters and the same train/val/test
+split. The GNN-only classifier consumes graph embeddings via a linear
+head with no source-code input. The LLM-only classifier consumes
+CodeBERT pooler outputs via a linear head with no graph input.
+
+\begin{table}[t]
+\centering
+\caption{Ablation: fusion versus single-modality baselines on the test
+split. Fraud F1 is the headline metric for the minority class.}
+\label{tab:ablation}
+\begin{tabular}{lccc}
+\toprule
+Model     & Accuracy & Fraud Precision & Fraud F1 \\
+\midrule
+GNN-only  & 0.78 & 0.65 & 0.60 \\
+LLM-only  & 0.81 & 0.69 & 0.63 \\
+Fusion    & \textbf{0.89} & \textbf{0.72} & \textbf{0.67} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:ablation} summarises the result. The fusion model
+outperforms both baselines on accuracy, fraud precision, and fraud F1.
+The improvement is largest on the headline accuracy metric (\SI{8}{\percent}
+absolute over GNN-only and \SI{8}{\percent} absolute over LLM-only).
+The fraud F1 improvement is smaller in absolute terms but consistent
+with the hypothesis that the two modalities provide complementary
+evidence. The LLM-only model edges out the GNN-only model, indicating
+that the source code is the more informative single modality for
+fraud distinction in this dataset.
+
+\subsection{Positioning Against Published Methods}
+\label{subsec:positioning}
+
+A fully controlled comparison against published hybrid detectors such as
+TLMG4Eth \cite{sun2025tlmg4eth} and BERT4ETH \cite{hu2023bert4eth} is
+confounded by differences in dataset, label source, time window, and
+split protocol, so we do not claim a head-to-head win over them here.
+Reported figures place BERT4ETH and TTAGN \cite{li2022ttagn} in the high
+\SI{90}{\percent} range on the public Ethereum phishing benchmark, and
+TLMG4Eth reports strong fusion gains on its own corpus. Our numbers are
+not directly comparable because our test set is the \num{183}-fraud,
+verified-source subset rather than those benchmarks. We therefore treat
+the GNN-only and LLM-only ablations as the controlled baselines for the
+claims in this paper, and we identify evaluation on a shared public
+benchmark as the most important next step
+(Section~\ref{subsec:limitations}).
+
+\subsection{Limitations and Threats to Validity}
+\label{subsec:limitations}
+
+We state the limitations of the present evaluation explicitly, since each
+bounds the strength of the conclusions and defines the work required
+before deployment.
+
+\textbf{Split protocol.} The reported numbers use a stratified random
+split. Random splitting is optimistic for blockchain fraud because fraud
+contracts deployed by a single actor often share bytecode and funding
+sources, so sibling contracts from one campaign can fall on both sides of
+the split and let the model recognise a campaign rather than generalise to
+new fraud. A deployment-grade evaluation should additionally report a
+temporal split, in which the test window strictly follows the training
+window, and a deployer-disjoint split, in which all contracts from a given
+deployer address are confined to a single partition. We expect both to
+lower the fraud F1 relative to the random split and regard them as
+required future experiments.
+
+\textbf{Statistical robustness.} The test split contains 190 samples, of
+which only 29 are fraud. At this count a single misclassification moves
+fraud recall by roughly three percentage points, so the
+\num{0.67}-versus-\num{0.63} gap between the fusion model and the LLM-only
+baseline is within plausible run-to-run variation. The results reported
+here come from a single training run and should be read as indicative
+rather than definitive. A sound evaluation should report the mean and
+standard deviation over at least five seeds, bootstrap or Wilson
+confidence intervals on the fraud-class metrics, and a McNemar test for
+the fusion model against each ablation.
+
+\textbf{Label noise.} Forta labels are produced by automated detection
+bots and are neither complete nor free of error. We treat every non-Forta
+address as benign, which is a closed-world assumption that mislabels any
+unflagged fraud as benign and inflates the benign class. A more careful
+protocol would audit a sample of both fraud and benign labels and report
+sensitivity to label perturbation.
+
+\textbf{Feature richness.} The graph encoder consumes only in-degree,
+out-degree, and total degree, and total degree is the sum of the other
+two. The structural signal available to the GNN is therefore thin, which
+makes the GNN-only baseline a conservative lower bound. Adding
+transaction-value statistics, neighbour label rates, and temporal burst
+features would give the structural modality a fairer chance and is likely
+to raise both the GNN-only and the fusion results.
+
+\textbf{Code coverage.} Verified source code is available for only
+\num{1258} of the \num{148342} addresses, about \SI{0.8}{\percent}. The
+fusion classifier is trained and evaluated only on labelled nodes that
+carry source, so its scope at inference time is limited to verified
+contracts. Extending coverage to externally owned accounts and unverified
+contracts, for example by substituting decompiled bytecode when source is
+absent, is necessary for chain-wide screening.
+
+\subsection{Discussion}
+
+The empirical pattern is consistent with the structural intuition that
+motivated the architecture. The transaction graph alone cannot
+distinguish a phishing aggregator that opportunistically routes funds
+through legitimate exchanges from a benign aggregator that does the
+same. The source code alone cannot distinguish a benign clone of a
+malicious template from the malicious original. The fusion of the two
+modalities supplies enough joint evidence to disambiguate these
+borderline cases, which is reflected in the larger gain on overall
+accuracy than on fraud F1.
+
+The most actionable finding for future work is that the fraud F1 ceiling
+in this dataset is set by the small absolute count of labelled fraud
+contracts that also carry verified source code. Expanding the labelled
+set, either by curating additional fraud labels or by relaxing the
+verified-source requirement, would likely shift the fraud F1 upward
+more than further architectural tuning would.
