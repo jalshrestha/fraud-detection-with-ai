@@ -12,6 +12,7 @@ from tqdm import tqdm
 
 from config import (
     ETHERSCAN_API_URL,
+    ETHERSCAN_CHAIN_ID,
     ETHERSCAN_RATE_LIMIT_SLEEP_S,
     ETHERSCAN_REQUEST_TIMEOUT_S,
 )
@@ -28,6 +29,7 @@ def fetch_source_code(address: str, api_key: str) -> Optional[str]:
     in a stable way that does not benefit from automatic retries.
     """
     params = {
+        "chainid": ETHERSCAN_CHAIN_ID,
         "module": "contract",
         "action": "getsourcecode",
         "address": address,

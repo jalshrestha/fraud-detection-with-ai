@@ -22,7 +22,8 @@ for p in PATHS.values():
 
 
 ETHERSCAN_API_KEY = os.environ.get("ETHERSCAN_API_KEY", "")
-ETHERSCAN_API_URL = "https://api.etherscan.io/api"
+ETHERSCAN_API_URL = "https://api.etherscan.io/v2/api"
+ETHERSCAN_CHAIN_ID = 1  # Ethereum mainnet
 
 FORTA_URLS = {
     "phishing_scams.csv": (

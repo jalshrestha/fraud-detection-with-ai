@@ -1,38 +1,85 @@
 """Seed list of fraudulent Ethereum contract addresses.
 
 This is the second of the two seed arrays that drive the data-collection
-pipeline. It corresponds to the paper's "Golden List": approximately two
-hundred contract addresses publicly attributed to phishing campaigns,
-Ponzi schemes, smart-contract exploits, or rug pulls.
+pipeline. Seeds are used only to bootstrap transaction graph discovery
+before the full Forta label set is available; they are NOT the training
+labels.
 
-The canonical, authoritative ground truth for fraud labels in this project
-is the Forta Network labelled-datasets release, which is downloaded at
-runtime by ``scripts/02_fetch_labels.py``. The hardcoded seed list below
-is used only to bootstrap transaction discovery before the Forta data is
-available, and is the union of:
+At import time this module tries to load a sample from the Forta
+labelled-datasets CSV that ``scripts/02_fetch_labels.py`` downloads.
+If that file is not yet present on disk, it falls back to a minimal
+hardcoded list of two well-documented, publicly post-mortemed exploit
+contracts (The DAO hack and the Ronin Bridge exploit).
 
-  - Historical reentrancy and bridge exploit contracts that have been
-    publicly attributed and post-mortemed in academic literature.
-  - A small sample of phishing scam addresses listed in the Forta
-    ``phishing_scams.csv`` release.
-  - A small sample of malicious smart contract addresses listed in the
-    Forta ``malicious_smart_contracts.csv`` release.
-
-Addresses are stored lowercased to match Forta and Etherscan conventions.
-After ``scripts/02_fetch_labels.py`` runs, the full Forta release becomes
-the active label source via ``src.collection.forta_labels.load_labels``.
+The canonical ground-truth for fraud labels is always the full Forta
+dataset loaded by ``src.collection.forta_labels.load_forta_labels``.
 """
 from __future__ import annotations
 
-FRAUD_ADDRESSES: list[str] = [
+import csv
+import logging
+import random
+from pathlib import Path
+
+log = logging.getLogger(__name__)
+
+_FALLBACK: list[str] = [
+    # The DAO (2016 reentrancy exploit — the most cited case in the literature)
     "0xbb9bc244d798123fde783fcc1c72d3bb8c189413",
-    "0x863df6bfa4469f3ead0be8f9f2aae51c91a907b4",
+    # Ronin Bridge / Axie Infinity (2022 validator-key compromise)
     "0x098b716b8aaf21512996dc57eb0615e2383e2f96",
-    "0x77eb19c7e95068b3a5b51a93a55a07e85c8d83b1",
-    "0x16348e16f0a4bbd9ec25d4baea75c19b97d28ad7",
-    "0xeb31973e0febf3e3d7058234a5ebbae1ab4b8c23",
-    "0x6f4e8eba4d337f874d59045ea3aaf2a55c5e6fda",
-    "0x957c9ab1f43e64ce5dad32baf91d6f7f0d5b9b0e",
-    "0x53e1c47b29be37b6f9f37a5dca5b1f0e7e91d1ae",
-    "0x9a4f4e9d05c1d39a3b2cc36ad5cf5f6c8de6b2e2",
 ]
+
+_SEED_SAMPLE_SIZE = 210
+_FORTA_DIR = Path(__file__).resolve().parents[2] / "data" / "raw" / "forta"
+
+
+def _load_from_forta(n: int = _SEED_SAMPLE_SIZE, seed: int = 42) -> list[str] | None:
+    """Return up to *n* addresses sampled from the downloaded Forta CSVs.
+
+    Returns None if no Forta CSV files are present yet.
+    """
+    csvs = list(_FORTA_DIR.glob("*.csv"))
+    if not csvs:
+        return None
+
+    addresses: list[str] = []
+    for path in csvs:
+        try:
+            with open(path, newline="", encoding="utf-8") as fh:
+                reader = csv.DictReader(fh)
+                addr_col = next(
+                    (c for c in (reader.fieldnames or []) if "address" in c.lower()),
+                    None,
+                )
+                if addr_col is None:
+                    continue
+                for row in reader:
+                    addr = row[addr_col].strip().lower()
+                    if addr.startswith("0x") and len(addr) == 42:
+                        addresses.append(addr)
+        except Exception as exc:
+            log.warning("Could not read Forta file %s: %s", path, exc)
+
+    if not addresses:
+        return None
+
+    rng = random.Random(seed)
+    sample = rng.sample(addresses, min(n, len(addresses)))
+    log.debug("Loaded %d fraud seed addresses from Forta CSVs", len(sample))
+    return sample
+
+
+def _resolve() -> list[str]:
+    forta_seeds = _load_from_forta()
+    if forta_seeds:
+        return forta_seeds
+    log.info(
+        "Forta CSV not found — using %d hardcoded fallback seeds. "
+        "Run scripts/02_fetch_labels.py to download the full Forta dataset.",
+        len(_FALLBACK),
+    )
+    return list(_FALLBACK)
+
+
+FRAUD_ADDRESSES: list[str] = _resolve()
