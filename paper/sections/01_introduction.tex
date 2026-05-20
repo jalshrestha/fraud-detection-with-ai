@@ -1,0 +1,77 @@
+\section{Introduction}
+\label{sec:intro}
+
+The rapid expansion of public blockchains, and of Ethereum in particular,
+has reshaped digital finance through decentralised applications and
+programmable smart contracts. The same expansion has opened new attack
+surfaces. Public reporting attributes more than one billion United States
+dollars in losses to cryptocurrency-related scams between 2021 and 2022
+alone \cite{chainalysis2023}. These losses arise from a recognisable set
+of fraud archetypes: phishing campaigns that exfiltrate private keys
+\cite{coinsmart2023}, Ponzi schemes that recycle inbound deposits to
+earlier participants \cite{agrawal2023}, smart-contract exploits that
+embed malicious behaviour beneath legitimate interfaces, and rug pulls in
+which developers withdraw liquidity and abandon their projects
+\cite{datavisor2022}.
+
+Defensive techniques from the cryptographic literature, such as threshold
+public-key management \cite{mosakheil2023}, multi-signature wallets
+\cite{drijvers2019,xiao2022}, and node-authentication schemes
+\cite{bao2018,a2chain2020}, reduce the risk of compromise but do not
+identify malicious counterparties before a transaction is signed. Earlier
+machine-learning detectors trained on tabular features
+\cite{ostapowicz2019,blanco2022,ashfaq2022,elmougy2023} achieve respectable
+accuracy on snapshots of the data but degrade as adversaries adapt.
+Graph-based detectors \cite{kim2023,zhou2021,ctgcn2024} capture
+relational anomalies between addresses, yet they overlook the semantic
+content of contract bytecode.
+
+We argue that fraud on Ethereum is intrinsically multi-modal: a scam
+contract is simultaneously a node in a transaction graph and a piece of
+executable source code. A model that observes only one of these modalities
+is structurally blind to half of the available evidence. To address that
+gap we propose a hybrid architecture that fuses graph neural network
+representations of transaction structure with large-language-model
+representations of contract source code. Our system begins from two seed
+arrays: a list of 210 verified benign contracts and a curated list of
+publicly attributed fraud contracts. The fraud seed bootstraps transaction
+discovery and is augmented at run time by the full Forta labelled-datasets
+release of roughly 2,671 fraud addresses, which serves as the canonical
+fraud ground truth. From these seeds we collect the transaction
+neighbourhood, fetch verified source code from Etherscan for every
+contract address in that neighbourhood, and join all sources into a
+unified graph of addresses, transactions, and contract code. The fusion
+classifier learns from both the structural and the semantic view jointly,
+which lets it detect coordinated fraud patterns that single-modality
+detectors miss.
+
+The contributions of this paper are as follows.
+
+\begin{itemize}
+    \item We define a needle-first data-collection pipeline that starts
+    from two clearly delineated seed arrays of benign and fraud contract
+    addresses, expanding outward through the transaction neighbourhood
+    rather than scanning the entire chain.
+    \item We design a fusion classifier that combines a two-layer
+    GraphSAGE encoder with a frozen CodeBERT encoder and report the
+    classifier's behaviour on a labelled Ethereum subset of \num{1258}
+    verified contracts, \num{183} of which are fraudulent.
+    \item We release a multi-file, reproducible implementation of the
+    pipeline that replaces a legacy single-notebook prototype, separating
+    data collection, preprocessing, modelling, training, evaluation, and
+    visualisation into independently testable modules.
+    \item We conduct an ablation study comparing the fusion model
+    against GNN-only and LLM-only baselines, demonstrating that the
+    fusion of modalities outperforms either modality in isolation.
+\end{itemize}
+
+The rest of the paper is organised as follows. Section~\ref{sec:motivation}
+states our motivation and the limitations of single-modality detectors.
+Section~\ref{sec:background} reviews related work along three streams:
+graph-centric, code-centric, and hybrid. Section~\ref{sec:methodology}
+specifies the architecture and the four-phase data pipeline.
+Section~\ref{sec:challenges} discusses the practical challenges encountered
+and the countermeasures applied. Section~\ref{sec:prototype} describes
+the prototype implementation. Section~\ref{sec:results} reports the
+experimental results, including the ablation study. Section~\ref{sec:conclusion}
+concludes and outlines future work.

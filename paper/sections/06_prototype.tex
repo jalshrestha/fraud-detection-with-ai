@@ -1,0 +1,55 @@
+\section{Prototype Design and Implementation}
+\label{sec:prototype}
+
+\subsection{Technology Stack}
+
+The system is implemented in Python 3.10. The deep-learning components
+use PyTorch 2.2.2; the graph layers use PyTorch Geometric 2.5.1; the
+language model loader uses Hugging Face Transformers 4.41.0. DuckDB is
+used as the in-process join engine. Pandas and NumPy handle tabular
+manipulation. Scikit-learn provides classification metrics. Matplotlib,
+seaborn, and NetworkX produce the figures. Etherscan source code is
+fetched through the public HTTP API; transaction data is sourced from
+the BigQuery public Ethereum dataset. Training is performed on a single
+NVIDIA Tesla T4 GPU.
+
+\subsection{Dataset Characteristics}
+
+After the pipeline runs, the resulting graph has \num{148342} unique
+addresses and \num{498112} transactions. Of these addresses, \num{1258}
+are publicly verified smart contracts, and of those, \num{183}
+(\SI{14.5}{\percent}) carry a Forta-derived fraud label. The supervised
+splits over the labelled-with-code subset are 879 training samples, 189
+validation samples, and 190 test samples (70/15/15).
+
+\subsection{Code Structure}
+
+The codebase is organised into nine top-level units under
+\texttt{code/}:
+
+\begin{enumerate}
+    \item \texttt{config.py}: paths, hyperparameters, and endpoints.
+    \item \texttt{data/addresses/}: the two seed arrays.
+    \item \texttt{src/collection/}: Etherscan, Forta, and BigQuery
+    transaction fetchers.
+    \item \texttt{src/preprocessing/}: address standardisation, DuckDB
+    join engine, PyG graph constructor.
+    \item \texttt{src/datasets/}: torch \texttt{Dataset} for tokenised
+    contract source with node-index pairing.
+    \item \texttt{src/models/}: \texttt{GraphEncoder} (GraphSAGE), the
+    CodeBERT loader, and \texttt{FusionClassifier}.
+    \item \texttt{src/training/}: weighted-CE loss construction and
+    training loop with gradient clipping.
+    \item \texttt{src/evaluation/}: metrics aggregation and ablation
+    classifiers.
+    \item \texttt{src/visualization/}: dataset summary plots and
+    subgraph rendering.
+\end{enumerate}
+
+A top-level \texttt{scripts/} directory contains eight executable
+scripts numbered 01 through 08, one per pipeline step, each of which
+calls into the corresponding library modules. Each script writes its
+outputs to a known location under \texttt{data/}, so that later steps
+can be re-run independently after their prerequisites exist. A unified
+\texttt{notebooks/pipeline.ipynb} wraps the eight scripts for users
+who prefer an interactive entry point.

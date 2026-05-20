@@ -1,0 +1,83 @@
+\section{Background and Related Work}
+\label{sec:background}
+
+Blockchain fraud detection has moved through three intellectual phases:
+heuristic rule sets, supervised tabular classifiers, and deep
+representation learning. We organise the recent deep-learning literature
+into three streams and position our contribution against each.
+
+\subsection{Graph-Centric Detection}
+
+Weber \emph{et al.} \cite{weber2019} provided an early proof of concept
+by applying graph convolutional networks to Bitcoin money-laundering
+detection over the Elliptic dataset, showing that topological features
+discriminate laundering rings from benign transfers. Huang \emph{et al.}
+\cite{huang2024peae} ported the approach to Ethereum with PEAE-GNN,
+which builds augmentation ego-graphs around known labelled accounts and
+scales graph-neural-network detection to chain-sized neighbourhoods.
+Chen \emph{et al.} \cite{chen2024dahgnn} confronted the class-imbalance
+problem with DA-HGNN, combining data augmentation with temporal and
+structural learning. Li \emph{et al.} \cite{li2025global,li2022ttagn}
+introduced Transformer-style attention over transaction graphs,
+capturing both local and global context. Ouyang \emph{et al.}
+\cite{ouyang2024bitchetg} extended the graph view to subgraph-level
+contrastive learning for coordinated laundering groups. Kanezashi
+\emph{et al.} \cite{kanezashi2022hetero} showed that explicitly typed
+heterogeneous graphs outperform homogeneous ones for Ethereum phishing
+detection.
+
+These methods share a common limitation: the textual content of the
+contracts at the graph's nodes is invisible to them. Two contracts that
+look identical in their transaction signature can have very different
+intent encoded in their bytecode.
+
+\subsection{Code-Centric Detection}
+
+A parallel line of work treats smart contracts as executable artefacts
+to be analysed statically or symbolically. Luu \emph{et al.}
+\cite{luu2016oyente} introduced Oyente, a symbolic execution engine
+that identifies reentrancy and transaction-ordering vulnerabilities.
+Tsankov \emph{et al.} \cite{tsankov2018securify} formalised the
+verification problem with Securify. Qian \emph{et al.}
+\cite{qian2020reentrancy} trained a bidirectional LSTM with attention
+to detect reentrancy directly from opcodes, eliminating the need for
+hand-crafted rules. Torres \emph{et al.} \cite{torres2019honeypots}
+specialised in honeypot detection. Zhang \emph{et al.}
+\cite{zhang2020txspector} pursued forensic analysis by replaying
+transaction traces with TXSPECTOR. Sun \emph{et al.}
+\cite{sun2024gptscan} hybridised large language models with static
+analysis in GPTScan. Kong \emph{et al.} \cite{kong2025uechecker}
+applied graph learning to call graphs of contract code with UEChecker,
+detecting unchecked external calls.
+
+Code-centric methods exploit the rich semantics of contract logic but
+typically discard the network context in which the contract operates.
+A subtly malicious contract that is functionally similar to a legitimate
+one is invisible to a code-only classifier without the relational
+context that reveals its abnormal counterparties.
+
+\subsection{Hybrid Detection}
+
+The recognition that neither stream is sufficient on its own has driven
+the recent emergence of hybrid detectors. Hu \emph{et al.}
+\cite{hu2023bert4eth} introduced BERT4ETH, applying Transformer
+pre-training to Ethereum transaction histories treated as sequences of
+behavioural tokens. Liang \emph{et al.} \cite{liang2025ponziguard}
+proposed PonziGuard, which constructs Contract Runtime Behaviour Graphs
+that combine contract logic with fund-flow dynamics. Sun \emph{et al.}
+\cite{sun2025tlmg4eth} developed TLMG4Eth, one of the first multi-modal
+fusion models that jointly learns from transaction semantics and graph
+representations. Wu \emph{et al.} \cite{wu2024tokenscout} built
+TokenScout, a temporal attributed multigraph for early scam-token
+detection. Galletta and Pinelli \cite{galletta2024ponzi} emphasised
+explainability with an interpretable Ponzi-scheme classifier. Camino
+\emph{et al.} \cite{camino2019honeypot} provided a feature-engineering
+counterpoint for honeypot detection.
+
+Our work falls within this hybrid stream. Compared to TLMG4Eth and
+PonziGuard, our design is intentionally smaller and more explicit: we
+keep the GNN component to two GraphSAGE layers, freeze a single
+off-the-shelf CodeBERT encoder, and concatenate their outputs through a
+128-dimensional bottleneck. The implementation is exposed as a small set
+of modules so that the contribution of each modality and each design
+decision can be reproduced and ablated in isolation.

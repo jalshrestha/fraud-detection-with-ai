@@ -1,0 +1,52 @@
+\section{Conclusion and Future Work}
+\label{sec:conclusion}
+
+We presented a hybrid GNN-LLM fusion architecture for Ethereum fraud
+detection that combines GraphSAGE structural embeddings with frozen
+CodeBERT semantic embeddings. The architecture is driven by a
+two-array seeding strategy that starts from explicit lists of benign
+and fraud contract addresses and expands outward through the
+transaction neighbourhood. On a Forta-labelled subset of \num{1258}
+verified contracts, the fusion classifier attains \SI{89}{\percent}
+accuracy and a fraud F1-score of 0.67, outperforming GNN-only and
+LLM-only baselines trained under identical conditions.
+
+The methodological contribution complements the empirical one. The
+released implementation replaces a single notebook with a multi-file
+library in which data collection, preprocessing, modelling, training,
+evaluation, and visualisation are independently testable modules. The
+two seed arrays are first-class citizens of the codebase, which makes
+the dataset definition both auditable and extensible.
+
+Four directions for future work follow naturally from the results.
+
+First, the evaluation protocol must be hardened before any deployment
+claim. As set out in Section~\ref{subsec:limitations}, the random split
+should be replaced by temporal and deployer-disjoint splits, results
+should be averaged over multiple seeds with confidence intervals, and the
+model should be evaluated on a shared public benchmark so that it can be
+compared directly against TLMG4Eth and BERT4ETH rather than against
+internal ablations alone.
+
+Second, the fraud F1 ceiling is bounded by the small absolute count of
+labelled fraud contracts with verified source code. Curating additional
+fraud labels, either through manual investigation of suspicious
+Etherscan listings or through automated screening of fresh BigQuery
+exports, would likely improve fraud recall more than additional
+architectural tuning.
+
+Third, the language encoder is currently frozen for compute reasons.
+Lightweight parameter-efficient fine-tuning, for example LoRA adapters,
+would allow CodeBERT to specialise on Solidity without exceeding the
+Tesla T4 memory budget.
+
+Fourth, the graph encoder ignores temporal ordering and transaction
+value, and its node features are limited to degree counts. Replacing
+GraphSAGE with a temporal graph network that consumes edge timestamps,
+transaction values, and richer neighbourhood features would let the model
+distinguish a fraud contract's bootstrapping phase from its run-out phase,
+which is currently invisible to the static-graph encoder.
+
+The combination of these directions, together with the reproducible
+pipeline released alongside the paper, provides a base on which the
+next generation of Ethereum fraud detectors can be built and compared.

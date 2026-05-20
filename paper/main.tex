@@ -1,0 +1,106 @@
+% A Hybrid GNN-LLM Fusion Architecture for Multi-Modal Fraud Detection in Ethereum Smart Contracts
+% Submitted to: IEEE Transactions / Conference (engineering and CS register)
+% Document class: IEEEtran (conference)
+
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+% Packages
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\sisetup{group-separator={,}, group-minimum-digits=4}
+\usepackage{url}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=black, citecolor=black, urlcolor=blue}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+
+% Title block
+\title{A Hybrid GNN-LLM Fusion Architecture for Multi-Modal Fraud Detection in Ethereum Smart Contracts}
+
+\author{
+    \IEEEauthorblockN{Anonymous Author(s)}
+    \IEEEauthorblockA{Department of Computer Science\\
+    Institution Name\\
+    City, Country\\
+    \texttt{anonymous@institution.edu}}
+}
+
+\maketitle
+
+\begin{abstract}
+Financial fraud on Ethereum has grown into a multi-billion-dollar problem
+that single-modality detectors cannot address. Graph-based detectors miss
+the semantic intent of malicious bytecode, while code-based detectors
+miss the relational patterns that surround coordinated scams. We present
+a hybrid fusion architecture that couples a two-layer GraphSAGE network
+over the Ethereum transaction graph with a frozen CodeBERT encoder over
+verified Solidity source code. A pipeline driven by two seed arrays, one
+of 210 verified benign contracts and one of curated fraud contracts that
+is augmented by the full Forta labelled-datasets release of roughly
+\num{2671} fraud addresses, expands into a neighbourhood of \num{498112}
+transactions across \num{148342} unique addresses, of which \num{1258}
+carry verified source code. The fusion classifier concatenates a
+64-dimensional graph embedding with a 768-dimensional code embedding and
+projects through a 128-dimensional bottleneck. On a held-out test split,
+the fusion model attains an accuracy of \SI{89}{\percent} and an
+F1-score of 0.67 on the minority fraud class, ahead of GNN-only (0.60)
+and LLM-only (0.63) baselines trained under identical conditions. We
+report these results with their statistical caveats and release a
+reproducible multi-file codebase, a documented two-array seeding
+strategy, and an ablation study that isolates the contribution of each
+modality.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Ethereum, fraud detection, graph neural networks, large language models,
+CodeBERT, GraphSAGE, smart contracts, multi-modal fusion.
+\end{IEEEkeywords}
+
+% Sections (each lives in /paper/sections)
+\input{sections/01_introduction}
+\input{sections/02_motivation}
+\input{sections/03_background}
+\input{sections/04_methodology}
+\input{sections/05_challenges}
+\input{sections/06_prototype}
+\input{sections/07_results}
+\input{sections/08_conclusion}
+
+% Reproducibility, ethics, disclosure
+\section*{Data and Code Availability}
+The full implementation, including the two seed arrays, the data-collection
+pipeline, the model definitions, the training and evaluation scripts, and
+the figure-generation code, is published at the project repository under
+the \texttt{code/} directory. The Forta labelled-datasets release is the
+canonical source of ground-truth fraud labels and is downloaded automatically
+at pipeline run time. Transaction data is sourced from Google BigQuery's
+public Ethereum dataset using the query in \texttt{code/data/raw/QUERY.sql}.
+
+\section*{Ethical Considerations}
+This work investigates publicly attributed fraud activity. No private
+or personally identifiable information is collected. The fusion model
+is intended as a decision-support tool. Production deployment should
+combine its predictions with human review to avoid penalising benign
+addresses that share behavioural signatures with phishing campaigns.
+
+\section*{AI Disclosure}
+The authors used a generative AI coding assistant for refactoring legacy
+notebook code into a modular library and for copy-editing draft text.
+All modelling decisions, dataset definitions, experimental results, and
+the final analysis were produced and verified by the authors.
+
+% Bibliography
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

@@ -1,0 +1,44 @@
+\section{Motivation}
+\label{sec:motivation}
+
+The growth of decentralised finance, cryptocurrency exchanges, and token
+launch platforms has opened practical avenues for sophisticated fraud at
+scale. Rug pulls during the 2021 token boom, recurring phishing campaigns
+targeting wallet holders, and Ponzi-style yield protocols continue to
+inflict losses on users who lack the technical tools to assess on-chain
+risk in advance. The need for automated, scalable, and accurate fraud
+detection is therefore practical rather than speculative.
+
+Three observations frame our design.
+
+First, fraud signals are split across two distinct data modalities. The
+transaction graph encodes who interacted with whom, in what direction,
+and at what frequency. The contract source code encodes what those
+interactions do at execution time. A detector that consumes only the
+graph confuses a phishing aggregator with a legitimate exchange; a
+detector that consumes only the code mislabels a benign token whose
+source has been copied from a known-malicious template. Both modalities
+must be available to disambiguate these cases.
+
+Second, the data pipeline determines the upper bound on detector quality.
+Random sampling across the chain produces a low signal-to-noise ratio
+because fraud addresses are rare in absolute terms. We adopt instead a
+needle-first strategy in which two seed arrays, one of verified benign
+contracts and one of publicly attributed fraud contracts, anchor the
+collection. The transaction neighbourhood of these seeds yields a dense
+subgraph in which every transaction touches at least one labelled
+endpoint. This design choice is reflected in the structure of our code:
+the two arrays live in their own module and are the entry point for
+every downstream step.
+
+Third, real-world adoption requires reproducibility. A model that
+exists only as an entangled notebook cannot be audited, extended, or
+retrained against fresh fraud labels. We therefore separate the
+implementation into independently testable modules with explicit data
+contracts between them. The motivation behind the present paper is as
+much methodological as it is empirical: we argue that a clean two-array
+data pipeline plus a modular fusion classifier provides a more honest
+baseline against which the next generation of detectors can be compared.
+
+The remainder of the paper develops this argument in detail. We begin by
+positioning the work against related research streams.
