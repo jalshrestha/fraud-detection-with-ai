@@ -1,0 +1,71 @@
+\section{Challenges and Countermeasures}
+\label{sec:challenges}
+
+Building a clean and reproducible Ethereum fraud detector requires
+overcoming a small number of recurring practical problems. We summarise
+the ones that mattered most for this work.
+
+\subsection{Address Format Inconsistency}
+Ethereum addresses appear lowercased in some sources and with EIP-55
+mixed-case checksums in others. Silent join failures caused by this
+inconsistency corrupted our earliest dataset attempts. The countermeasure
+is to lowercase every address on read at every collector entry point,
+implemented as a single utility in
+\texttt{src/preprocessing/addresses.py} that is reused everywhere. This
+also catches whitespace artefacts that occasionally appear in CSV
+exports.
+
+\subsection{Missing or Unverified Source Code}
+Most addresses in the transaction neighbourhood are wallets or
+unverified contracts and therefore have no Solidity source available.
+A naive pipeline that requires source code for every node would discard
+almost the entire graph. We instead allow nodes to enter the graph with
+an empty \texttt{contract\_text} field. The fusion classifier is trained
+only on nodes for which both source code and a label are present, but
+the graph encoder sees every node, including the unlabelled ones, when
+it computes neighbourhood embeddings. This keeps the relational
+information intact while preventing the trainer from being asked to
+ingest empty tokenised sequences.
+
+\subsection{Etherscan Rate Limits}
+The Etherscan free tier permits five requests per second. We enforce a
+\SI{250}{\milli\second} sleep between successive requests and wrap each
+request in a try/except block that logs and skips on any failure. Across
+the two seed lists and the Forta-flagged subset of the common-address
+pool, the source-code fetch runs in roughly thirty minutes, which is
+fast enough to refresh between experiments.
+
+\subsection{Class Imbalance}
+The labelled subset has a \SI{14.5}{\percent} fraud rate. Training under
+unweighted cross-entropy reproduces the prior and yields a model that
+optimises overall accuracy by predicting benign for every input. The
+weighted-loss countermeasure described in
+Section~\ref{subsec:training} ties the loss penalty for a missed fraud
+to the inverse class frequency, which is sufficient to recover useful
+recall on the minority class.
+
+\subsection{Dimensionality Mismatch}
+The graph encoder produces 64-dimensional embeddings; the language
+encoder produces 768-dimensional embeddings. We concatenate the two and
+project through a linear layer to a shared 128-dimensional bottleneck,
+which lets the optimiser learn the relative weighting of the two
+modalities rather than fixing it by hand.
+
+\subsection{Compute Budget}
+Training the fusion model end-to-end with CodeBERT unfrozen would not
+fit on a Tesla T4. We freeze CodeBERT entirely and treat its pooler
+output as a fixed feature extractor. This reduces trainable parameters
+by roughly two orders of magnitude and keeps each epoch under one hour.
+The frozen-encoder choice also stabilises training by eliminating
+gradient flow through a model with one hundred million parameters that
+was not designed for fine-tuning under our weighted loss.
+
+\subsection{Reproducibility of the Legacy Notebook}
+The original implementation was a single Jupyter notebook with eight
+cells, several of which re-implemented the same data-loading logic with
+small divergences. The countermeasure was a structural refactor into a
+multi-file library. The two seed arrays, the collectors, the
+preprocessing, the models, the trainer, the evaluator, and the
+visualisations now each live in their own module with explicit imports
+and a single executable script per pipeline step. This is the version
+that the paper describes and that the released codebase implements.
