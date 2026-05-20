@@ -39,3 +39,8 @@ paper/*.synctex.gz
 paper/*.fls
 paper/*.fdb_latexmk
 paper/build/
+paper/main.pdf
+
+# Regenerable figures (produced by paper/figures/make_figures.py and the pipeline)
+paper/figures/architecture.pdf
+paper/figures/confusion_matrix.png
