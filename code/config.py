@@ -34,6 +34,10 @@ FORTA_URLS = {
         "https://raw.githubusercontent.com/forta-network/labelled-datasets/"
         "main/labels/1/malicious_smart_contracts.csv"
     ),
+    "etherscan_malicious_labels.csv": (
+        "https://raw.githubusercontent.com/forta-network/labelled-datasets/"
+        "main/labels/1/etherscan_malicious_labels.csv"
+    ),
 }
 
 MODEL_CFG = {

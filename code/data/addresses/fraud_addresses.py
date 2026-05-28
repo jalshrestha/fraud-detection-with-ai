@@ -1,33 +1,81 @@
-"""Verified fraudulent Ethereum contract addresses from DeFiHackLabs.
+"""Seed list of fraudulent Ethereum contract addresses.
 
-All 115 addresses are victim protocol contracts extracted from DeFiHackLabs
-PoC files (// Vulnerable Contract comments pointing to etherscan.io).
-Each contract has verified Solidity source on Etherscan AND on-chain
-transaction history, satisfying both the CodeBERT and GraphSAGE encoders
-in the fusion model.
+This is the second of the two seed arrays that drive the data-collection
+pipeline. All addresses have verified Solidity source on Etherscan and
+confirmed fraud/exploit labels from at least one of the following sources:
 
-Source: https://github.com/SunWeb3Sec/DeFiHackLabs
-Verified: Etherscan API V2, 2026-05-20
+  - Manual verification (original 10 seed addresses).
+  - SmartBugs Wild dataset cross-referenced with Forta fraud labels.
+  - DeFiHackLabs PoC victim contracts (github.com/SunWeb3Sec/DeFiHackLabs),
+    verified via Etherscan API, 2026-05-20.
+
+Addresses are stored lowercased to match Forta and Etherscan conventions.
 """
 from __future__ import annotations
 
 FRAUD_ADDRESSES: list[str] = [
-    # --- 2017 ---
+    # --- Original manually verified seed ---
+    "0xbb9bc244d798123fde783fcc1c72d3bb8c189413",
+    "0x863df6bfa4469f3ead0be8f9f2aae51c91a907b4",
+    "0x098b716b8aaf21512996dc57eb0615e2383e2f96",
+    "0x77eb19c7e95068b3a5b51a93a55a07e85c8d83b1",
+    "0x16348e16f0a4bbd9ec25d4baea75c19b97d28ad7",
+    "0xeb31973e0febf3e3d7058234a5ebbae1ab4b8c23",
+    "0x6f4e8eba4d337f874d59045ea3aaf2a55c5e6fda",
+    "0x957c9ab1f43e64ce5dad32baf91d6f7f0d5b9b0e",
+    "0x53e1c47b29be37b6f9f37a5dca5b1f0e7e91d1ae",
+    "0x9a4f4e9d05c1d39a3b2cc36ad5cf5f6c8de6b2e2",
+
+    # --- SmartBugs Wild ∩ Forta labels ---
+    "0x0669398307efefb60030ff328a0cb6a3a840182c",
+    "0x203daffa152dafaf2a859029f729b364fc8540f8",
+    "0x219b9040eb7d8d8c2e8e84b87ce9ac1c83071980",
+    "0x22cff91f77a2ed675f3ab4aee16e15b27f6f275c",
+    "0x388cf3c02c034e7fe8ef164a2b414534fc212119",
+    "0x409de70d8ad0135e6fd91f343899b93d903c998b",
+    "0x46d1ebf7bb93044e078e0496e4661ec772607d9d",
+    "0x4711c198e6f04c02413794568990b6a835e8ead9",
+    "0x49358a824c66b64a2f0c8bb3c99dd73586afab16",
+    "0x4bf3e4d2378a1256cbe1cd1c2a8bc9857b811282",
+    "0x5f856630adbc27c0f5bc1de1961d4f0fb1805a29",
+    "0x7f30f5955b7605b96421e7c170edbbc45b373cd9",
+    "0x86035a913989d8d2bb631c0bd7657983666168d8",
+    "0x8fa86218ec14bb207b5ae404c60a836c3d7cbb3a",
+    "0x9e19462787be36e5e3676ad2428b26599bf9866c",
+    "0xa95171e49a7e187585c0d5cde0c209b76a5fd220",
+    "0xae6e3c7160af3c1f524572e5b29c81e6ff061d90",
+    "0xb331728743d45a6470b8798320f2c173d41e4bfb",
+    "0xb547027a4ccd46ec98199fa88aaedf5aa981db26",
+    "0xbfa82fbe0e66d8e2b7dcc16328db9ecd70533d13",
+    "0xc1e6e4d9fc0b7e555bb8634bcacc9a1067bec039",
+    "0xc25ab34e7f3a1eb2c6a3a23df851f351df0e712a",
+    "0xcde98f7fcaaf6d2d3c30ed41e32d40f91aecdb96",
+    "0xe0787aabbd6ee01e55f98647673552885d54eb06",
+    "0xe3d474f3686a831bf380498d1dbd57fdf972ca30",
+    "0xe7860fd151cbbad28141dfd4cc7cd6d090e4ead8",
+    "0xe8868e87aaa4a0d0751691f9f33b0e5da7127039",
+    "0xea7e05cb00b2430b486a2b866d4bb8adcf0eba64",
+    "0xeb411d5df13ac7020992306e78955fb7cba5f260",
+    "0xf0a924661b0263e5ce12756d07f45b8668c53380",
+    "0xf2bad87c0d0ea8bda69c722368df4f79d92ee6c9",
+
+    # --- DeFiHackLabs verified exploit contracts ---
+    # 2017
     "0xbec591de75b8699a3ba52f073428822d0bfc0d7e",  # Wallet (Parity first hack)
 
-    # --- 2018 ---
+    # 2018
     "0x55f93985431fc9304077687a35a1ba103dc1e081",  # SMT (SmartMesh)
     "0xf91546835f756da0c10cfa0cda95b15577b84aa7",  # LedgerChannel (SpankChain)
 
-    # --- 2020 ---
+    # 2020
     "0xb983e01458529665007ff7e0cddecdb74b967eb6",  # LoanToken (bzx)
     "0xde744d544a9d768e96c21b5f087fc54b776e9b25",  # LoanTokenLogicWeth (bzx)
 
-    # --- 2021 ---
+    # 2021
     "0xacd43e627e64355f1861cec6d3a6688b31a6f952",  # yVault (Yearn ydai)
     "0xc4ff55a4329f84f9bf0f5619998ab570481ebb48",  # SorbettoFragola (Popsicle)
 
-    # --- 2022 ---
+    # 2022
     "0x39360ac1239a0b98cb8076d4135d0f72b7fd9909",  # XNFT (XCarnival)
     "0xae461ca67b15dc8dc81ce7615e0320da1a9ab8d5",  # UniswapV2Pair
     "0xe39fd820b58f83205db1d9225f28105971c3d309",  # EFLeverVault
@@ -38,7 +86,7 @@ FRAUD_ADDRESSES: list[str] = [
     "0x8f9036732b9aa9b82d8f35e54b71faeb2f573e2f",  # DaoModule (XaveFinance)
     "0xf2919d1d80aff2940274014bef534f7791906ff2",  # JAY
 
-    # --- 2023 ---
+    # 2023
     "0x31a4f372aa891b46ba44dc64be1d8947c889e9c6",  # Shoco
     "0x765b8d7cd8ff304f796f4b6fb1bcf78698333f6d",  # ExchangeBetweenPools
     "0xaf274e912243b19b882f02d731dacd7cd13072d0",  # StrategyDAICurve (CompounderFinance)
@@ -79,7 +127,7 @@ FRAUD_ADDRESSES: list[str] = [
     "0x4b0e9a7da8bab813efae92a6651019b8bd6c0a29",  # TokenERC20 (TIME)
     "0x7f3fe9d492a9a60aebb06d82cba23c6f32cad10b",  # LoanToken (bZx)
 
-    # --- 2024 ---
+    # 2024
     "0x1bf68a9d1eaee7826b3593c20a0ca93293cb489a",  # EthVault (OrbitChain)
     "0x3a23f943181408eac424116af7b7790c94cb97a5",  # SocketGateway
     "0xcc5fda5e3ca925bd0bb428c8b2669496ee43067e",  # WrappedTokenSwapperImpl (SocketGateway)
@@ -118,7 +166,7 @@ FRAUD_ADDRESSES: list[str] = [
     "0x1e791527aea32cddbd7ceb7f04612db536816545",  # Action (CGT)
     "0x4095f064b8d3c3548a3bebfd0bbfd04750e30077",  # EthereumBundlerV2 (MorphoBlue)
 
-    # --- 2025 ---
+    # 2025
     "0x439cac149b935ae1d726569800972e1669d17094",  # IdolMain (IdolsNFT)
     "0x05641e33fd15baf819729df55500b07b82eb8e89",  # PumpToken (LAURA)
     "0x4e34dd25dbd367b1bf82e1b5527dbbe799fad0d0",  # UnilendV2Pool (Unilend)
@@ -141,7 +189,7 @@ FRAUD_ADDRESSES: list[str] = [
     "0x46f54d434063e5f1a2b2cc6d9aaa657b1b9ff82c",  # PrivilegedCheckpointCauldronV4 (MIMSpell3)
     "0x6a06707ab339bee00c6663db17ddb422301ff5e8",  # DRLVaultV3
 
-    # --- 2026 ---
+    # 2026
     "0x764c64b2a09b09acb100b80d8c505aa6a0302ef2",  # AdminUpgradeabilityProxy (Truebit)
     "0x4822d9172e5b76b9db37b75f5552f9988f98a888",  # AdminUpgradeabilityProxy (AlkemiEarn)
 ]
