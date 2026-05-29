@@ -3,53 +3,77 @@
 
 \subsection{Technology Stack}
 
-The system is implemented in Python 3.10. The deep-learning components
-use PyTorch 2.2.2; the graph layers use PyTorch Geometric 2.5.1; the
-language model loader uses Hugging Face Transformers 4.41.0. DuckDB is
-used as the in-process join engine. Pandas and NumPy handle tabular
-manipulation. Scikit-learn provides classification metrics. Matplotlib,
-seaborn, and NetworkX produce the figures. Etherscan source code is
-fetched through the public HTTP API; transaction data is sourced from
-the BigQuery public Ethereum dataset. Training is performed on a single
-NVIDIA Tesla T4 GPU.
+Table~\ref{tab:stack} summarises the technology stack.  The system is
+implemented entirely in Python 3.12 on both macOS and Linux (x86-64/ARM64), and
+is fully compatible with Linux CUDA environments for GPU-accelerated
+training.
+
+\begin{table}[t]
+\centering
+\caption{Technology stack.}
+\label{tab:stack}
+\begin{tabular}{ll}
+\toprule
+Component & Library / Service \\
+\midrule
+Deep learning       & PyTorch 2.2.2 \\
+Graph neural nets   & PyTorch Geometric 2.5.1 (SAGEConv, GCNConv, GATConv) \\
+Language model      & Hugging Face Transformers 4.41.0 (CodeBERT) \\
+Data integration    & DuckDB 0.10 \\
+Tabular processing  & pandas, NumPy $<$2.0 \\
+ML utilities        & scikit-learn 1.4 \\
+Transaction source  & Google BigQuery (public Ethereum dataset) \\
+Source-code source  & Etherscan API v2 \\
+Fraud labels        & Forta Network labelled-datasets \\
+Visualisation       & Matplotlib, seaborn \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Dataset Characteristics}
 
-After the pipeline runs, the resulting graph has \num{148342} unique
-addresses and \num{498112} transactions. Of these addresses, \num{1258}
-are publicly verified smart contracts, and of those, \num{183}
-(\SI{14.5}{\percent}) carry a Forta-derived fraud label. The supervised
-splits over the labelled-with-code subset are 879 training samples, 189
-validation samples, and 190 test samples (70/15/15).
+After the full pipeline executes, the resulting graph contains
+\num{85680} unique Ethereum addresses connected by \num{239742}
+transactions.  Of these addresses, \num{304} carry both verified Solidity
+source code and an explicit fraud/benign label---the eligible subset on
+which all models are trained and evaluated.  Within this subset, 95
+contracts are labelled as fraud (31.3\%) and 209 as benign.  The
+70/15/15 stratified split produces 212 training, 45 validation, and 47
+test samples.  Class weights are computed from the training split:
+$w_0 = 1.0$ (benign), $w_1 \approx 2.37$ (fraud).
 
-\subsection{Code Structure}
+\subsection{Code Structure and Reproducibility}
 
-The codebase is organised into nine top-level units under
-\texttt{code/}:
+The codebase is organised into nine top-level modules under \texttt{code/}:
 
 \begin{enumerate}
-    \item \texttt{config.py}: paths, hyperparameters, and endpoints.
-    \item \texttt{data/addresses/}: the two seed arrays.
-    \item \texttt{src/collection/}: Etherscan, Forta, and BigQuery
-    transaction fetchers.
-    \item \texttt{src/preprocessing/}: address standardisation, DuckDB
-    join engine, PyG graph constructor.
-    \item \texttt{src/datasets/}: torch \texttt{Dataset} for tokenised
-    contract source with node-index pairing.
-    \item \texttt{src/models/}: \texttt{GraphEncoder} (GraphSAGE), the
-    CodeBERT loader, and \texttt{FusionClassifier}.
-    \item \texttt{src/training/}: weighted-CE loss construction and
-    training loop with gradient clipping.
-    \item \texttt{src/evaluation/}: metrics aggregation and ablation
-    classifiers.
-    \item \texttt{src/visualization/}: dataset summary plots and
-    subgraph rendering.
+    \item \texttt{config.py}: single source of truth for paths,
+    hyperparameters, and API endpoints.
+    \item \texttt{data/addresses/}: the two seed arrays
+    (\texttt{BENIGN\_ADDRESSES}, \texttt{FRAUD\_ADDRESSES}).
+    \item \texttt{src/collection/}: Etherscan v2 source-code fetcher,
+    Forta label loader, BigQuery transaction reader.
+    \item \texttt{src/preprocessing/}: address standardiser, DuckDB
+    join engine, PyG graph constructor with eight-dimensional node
+    features.
+    \item \texttt{src/datasets/}: \texttt{ContractDataset} pairing
+    Base64-decoded Solidity tokens with graph node indices.
+    \item \texttt{src/models/}: \texttt{GraphEncoder} (GraphSAGE),
+    frozen \texttt{load\_codebert}, and \texttt{FusionClassifier}.
+    \item \texttt{src/training/}: AdamW + cosine-annealing loop
+    with early stopping on validation fraud F1, gradient clipping,
+    and best-checkpoint persistence.
+    \item \texttt{src/evaluation/}: \texttt{evaluate\_model} returning
+    precision, recall, F1, AUC-ROC, AUC-PR, and MCC; ablation
+    classifiers for GraphSAGE-only, GCN-only, GAT-only, CodeBERT-only,
+    attention-based fusion, and Random Forest baseline.
+    \item \texttt{src/visualization/}: confusion-matrix and loss-curve
+    plots for the paper figures.
 \end{enumerate}
 
-A top-level \texttt{scripts/} directory contains eight executable
-scripts numbered 01 through 08, one per pipeline step, each of which
-calls into the corresponding library modules. Each script writes its
-outputs to a known location under \texttt{data/}, so that later steps
-can be re-run independently after their prerequisites exist. A unified
-\texttt{notebooks/pipeline.ipynb} wraps the eight scripts for users
-who prefer an interactive entry point.
+A \texttt{scripts/} directory contains eight numbered scripts (01--08),
+one per pipeline step, each writing its outputs to a deterministic path
+under \texttt{data/} so that later steps can be re-run independently.
+The seed value 42 is set at both the Python and PyTorch levels before
+any randomised operation, ensuring full reproducibility given the same
+hardware and library versions.

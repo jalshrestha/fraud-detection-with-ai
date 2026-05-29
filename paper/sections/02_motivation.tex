@@ -1,9 +1,12 @@
 \section{Motivation}
 \label{sec:motivation}
 
-The growth of decentralised finance, cryptocurrency exchanges, and token
-launch platforms has opened practical avenues for sophisticated fraud at
-scale. Rug pulls during the 2021 token boom, recurring phishing campaigns
+The growth of decentralised finance (DeFi), cryptocurrency exchanges, and
+token-launch platforms has opened practical avenues for sophisticated fraud
+at scale.  While recent work has proposed frameworks to improve DeFi
+scalability and accessibility~\cite{poudel2025defi}, the security of
+deployed smart contracts against fraudulent exploitation remains a critical
+open challenge. Rug pulls during the 2021 token boom, recurring phishing campaigns
 targeting wallet holders, and Ponzi-style yield protocols continue to
 inflict losses on users who lack the technical tools to assess on-chain
 risk in advance. The need for automated, scalable, and accurate fraud
@@ -40,5 +43,5 @@ much methodological as it is empirical: we argue that a clean two-array
 data pipeline plus a modular fusion classifier provides a more honest
 baseline against which the next generation of detectors can be compared.
 
-The remainder of the paper develops this argument in detail. We begin by
-positioning the work against related research streams.
+These three observations are not independent: the right architecture (observation~1) is only realised through the right data (observation~2),
+and its value depends on reproducibility (observation~3). The paper develops each in turn.

@@ -38,33 +38,66 @@
 \maketitle
 
 \begin{abstract}
-Financial fraud on Ethereum has grown into a multi-billion-dollar problem
-that single-modality detectors cannot address. Graph-based detectors miss
-the semantic intent of malicious bytecode, while code-based detectors
-miss the relational patterns that surround coordinated scams. We present
-a hybrid fusion architecture that couples a two-layer GraphSAGE network
-over the Ethereum transaction graph with a frozen CodeBERT encoder over
-verified Solidity source code. A pipeline driven by two seed arrays, one
-of 210 verified benign contracts and one of curated fraud contracts that
-is augmented by the full Forta labelled-datasets release of roughly
-\num{2671} fraud addresses, expands into a neighbourhood of \num{498112}
-transactions across \num{148342} unique addresses, of which \num{1258}
-carry verified source code. The fusion classifier concatenates a
+Financial fraud on Ethereum---encompassing phishing, Ponzi schemes,
+rug-pulls, and smart-contract exploits---inflicts billions of dollars in
+annual losses that single-modality detectors cannot adequately address.
+Graph-based detectors capture transactional relationships but are blind
+to the semantic intent encoded in contract source code; code-based
+detectors expose vulnerabilities in isolation but ignore the behavioural
+context of the broader transaction network.  We present a \emph{hybrid
+GNN-LLM fusion architecture} that couples a two-layer GraphSAGE network
+over a balanced Ethereum transaction graph with a frozen CodeBERT encoder
+over verified Solidity source code.  Node features are enriched beyond
+simple degree counts to include transaction-value statistics and
+unique-counterparty counts, providing eight complementary signals per
+address.  A reproducible four-phase pipeline builds a labelled graph of
+\num{239742} transactions across \num{85680} unique addresses by seeding
+from 660 addresses---156 verified victim contracts from DeFiHackLabs
+proof-of-concept exploits (primary fraud source, 94.5\% of fraud labels)
+and 504 blue-chip protocol contracts (benign)---augmented by Forta
+Network labels and Etherscan verified Solidity source, yielding
+\num{304} contracts with both source code and ground-truth labels.  The fusion classifier concatenates a
 64-dimensional graph embedding with a 768-dimensional code embedding and
-projects through a 128-dimensional bottleneck. On a held-out test split,
-the fusion model attains an accuracy of \SI{89}{\percent} and an
-F1-score of 0.67 on the minority fraud class, ahead of GNN-only (0.60)
-and LLM-only (0.63) baselines trained under identical conditions. We
-report these results with their statistical caveats and release a
-reproducible multi-file codebase, a documented two-array seeding
-strategy, and an ablation study that isolates the contribution of each
-modality.
+projects through a 128-dimensional bottleneck.  On a held-out test split,
+our model attains an \textbf{accuracy of 93.6\%}, a \textbf{fraud
+F1-score of 0.909}, an \textbf{AUC-ROC of 0.961}, and an
+\textbf{AUC-PR of 0.959}---the highest F1-Fraud and MCC (0.861) across
+all seven evaluated models including GraphSAGE-only (F1\,=\,0.636),
+GCN-only, GAT-only, CodeBERT-only, attention-based fusion, and a
+Random Forest baseline over raw node features.  A comprehensive ablation
+study additionally compares concatenation-based and attention-based
+fusion mechanisms.  We release the full codebase, curated seed arrays,
+and a documented data pipeline to support reproducible research.
 \end{abstract}
 
 \begin{IEEEkeywords}
 Ethereum, fraud detection, graph neural networks, large language models,
-CodeBERT, GraphSAGE, smart contracts, multi-modal fusion.
+CodeBERT, GraphSAGE, smart contracts, multi-modal fusion, blockchain
+security, DeFi exploits.
 \end{IEEEkeywords}
+
+% ── Figures referenced in methodology and results ─────────────────────────
+
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=0.95\textwidth]{figures/architecture.pdf}
+    \caption{System pipeline overview.  Left: three public data sources.
+    Centre: data integration and feature engineering.
+    Right: dual-encoder fusion classifier producing a binary fraud/benign
+    prediction.}
+    \label{fig:architecture}
+\end{figure*}
+
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=0.95\textwidth]{figures/fusion_detail.pdf}
+    \caption{Internal architecture of the FusionClassifier.
+    The GraphSAGE encoder processes the full transaction graph to produce
+    64-dimensional structural embeddings; the frozen CodeBERT encoder
+    produces 768-dimensional semantic embeddings from Solidity source.
+    Both are concatenated (832-dim) and projected to two class logits.}
+    \label{fig:fusion}
+\end{figure*}
 
 % Sections (each lives in /paper/sections)
 \input{sections/01_introduction}
@@ -78,13 +111,16 @@ CodeBERT, GraphSAGE, smart contracts, multi-modal fusion.
 
 % Reproducibility, ethics, disclosure
 \section*{Data and Code Availability}
-The full implementation, including the two seed arrays, the data-collection
-pipeline, the model definitions, the training and evaluation scripts, and
-the figure-generation code, is published at the project repository under
-the \texttt{code/} directory. The Forta labelled-datasets release is the
-canonical source of ground-truth fraud labels and is downloaded automatically
-at pipeline run time. Transaction data is sourced from Google BigQuery's
-public Ethereum dataset using the query in \texttt{code/data/raw/QUERY.sql}.
+The full implementation---seed arrays, data-collection pipeline, model
+definitions, training/evaluation scripts, and figure-generation code---is
+available under \texttt{code/} in the project repository.
+Primary fraud labels are the 156 DeFiHackLabs victim-contract addresses
+in \texttt{code/data/addresses/fraud\_addresses.py}; secondary labels
+are drawn from the Forta Network labelled-datasets
+release~\cite{fortalabels}, downloaded automatically at pipeline run time.
+Transaction data is sourced from the Google BigQuery public Ethereum
+dataset using the balanced-sampling SQL query in
+\texttt{code/data/raw/bigquery\_sampled.sql}.
 
 \section*{Ethical Considerations}
 This work investigates publicly attributed fraud activity. No private

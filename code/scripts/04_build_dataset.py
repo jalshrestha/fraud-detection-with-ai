@@ -56,12 +56,20 @@ def main() -> None:
         subset="address", keep="last"
     )
 
+    # Use our curated fraud_contracts.csv addresses as ground-truth fraud labels.
+    # Forta labels are merged in as additional signal where available.
+    fraud_contracts_df = pd.read_csv(Path(args.fraud_csv))
+    fraud_contracts_df["address"] = fraud_contracts_df["address"].astype(str).str.lower()
     forta_labels = load_forta_labels()
+    combined_fraud_labels = pd.concat(
+        [fraud_contracts_df[["address"]], forta_labels[["address"]]],
+        ignore_index=True,
+    ).drop_duplicates(subset="address")
 
     con = build_node_edge_tables(
         transactions_df=transactions,
         source_code_df=source_code_df,
-        fraud_labels_df=forta_labels,
+        fraud_labels_df=combined_fraud_labels,
         benign_seed_addresses=BENIGN_ADDRESSES,
     )
     paths = export_tables(con, PATHS["processed"])

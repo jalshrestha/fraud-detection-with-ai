@@ -15,7 +15,7 @@ from config import MODEL_CFG, PATHS, TRAIN_CFG
 from src.datasets.contract_dataset import ContractDataset, split_dataset
 from src.models.fusion import FusionClassifier
 from src.models.language_encoder import load_codebert
-from src.training.trainer import save_checkpoint, train_model
+from src.training.trainer import load_checkpoint, save_checkpoint, train_model
 
 log = logging.getLogger("05_train")
 
@@ -25,6 +25,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--epochs", type=int, default=TRAIN_CFG["epochs"])
     p.add_argument("--batch-size", type=int, default=TRAIN_CFG["batch_size"])
     p.add_argument("--lr", type=float, default=TRAIN_CFG["lr"])
+    p.add_argument("--weight-decay", type=float, default=TRAIN_CFG["weight_decay"])
+    p.add_argument("--patience", type=int, default=TRAIN_CFG["early_stopping_patience"])
     return p.parse_args()
 
 
@@ -32,6 +34,8 @@ def main() -> None:
     args = parse_args()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     log.info("Training device: %s", device)
+
+    torch.manual_seed(TRAIN_CFG["seed"])
 
     nodes_df = pd.read_parquet(PATHS["processed"] / "nodes.parquet")
     graph_data = torch.load(PATHS["processed"] / "graph.pt", weights_only=False)
@@ -53,9 +57,11 @@ def main() -> None:
     )
 
     train_loader = DataLoader(
-        train_ds,
-        batch_size=args.batch_size,
-        shuffle=True,
+        train_ds, batch_size=args.batch_size, shuffle=True,
+        num_workers=TRAIN_CFG["num_workers"],
+    )
+    val_loader = DataLoader(
+        val_ds, batch_size=args.batch_size, shuffle=False,
         num_workers=TRAIN_CFG["num_workers"],
     )
 
@@ -71,22 +77,40 @@ def main() -> None:
     graph_data = graph_data.to(device)
 
     train_labels = [dataset.labels[i] for i in train_ds.indices]
+    log.info(
+        "Training: %d samples (%d fraud, %d benign) | Val: %d samples",
+        len(train_labels),
+        sum(l == 1 for l in train_labels),
+        sum(l == 0 for l in train_labels),
+        len(val_ds),
+    )
+
+    best_ckpt = PATHS["checkpoints"] / "fusion_best.pt"
     losses = train_model(
         model=model,
         train_loader=train_loader,
+        val_loader=val_loader,
         graph_data=graph_data,
         train_labels=train_labels,
         device=device,
         epochs=args.epochs,
         lr=args.lr,
+        weight_decay=args.weight_decay,
         grad_clip_norm=TRAIN_CFG["grad_clip_norm"],
+        early_stopping_patience=args.patience,
+        best_ckpt_path=best_ckpt,
     )
 
-    ckpt_path = PATHS["checkpoints"] / "fusion.pt"
-    save_checkpoint(model, ckpt_path)
+    # Also save final epoch checkpoint
+    save_checkpoint(model, PATHS["checkpoints"] / "fusion_last.pt")
+
+    # Load best checkpoint for evaluation
+    load_checkpoint(model, best_ckpt, device=device)
+    save_checkpoint(model, PATHS["checkpoints"] / "fusion.pt")
 
     losses_path = PATHS["processed"] / "loss_history.json"
     losses_path.write_text(json.dumps(losses, indent=2))
+    log.info("Training complete. Best checkpoint: %s", best_ckpt)
     log.info("Loss history written to %s", losses_path)
 
 

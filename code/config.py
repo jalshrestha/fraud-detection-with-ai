@@ -41,7 +41,7 @@ FORTA_URLS = {
 }
 
 MODEL_CFG = {
-    "gnn_in_dim": 3,
+    "gnn_in_dim": 8,  # in_deg, out_deg, total_deg, mean_in_val, mean_out_val, log_total_val, uniq_in, uniq_out
     "gnn_hidden_dim": 128,
     "gnn_out_dim": 64,
     "codebert_name": "microsoft/codebert-base",
@@ -53,13 +53,16 @@ MODEL_CFG = {
 }
 
 TRAIN_CFG = {
-    "lr": 5e-5,
-    "batch_size": 8,
-    "epochs": 5,
+    "lr": 1e-3,             # GNN+fusion only; CodeBERT is frozen
+    "weight_decay": 1e-4,
+    "batch_size": 16,
+    "epochs": 100,          # early stopping will terminate before this
     "grad_clip_norm": 1.0,
     "split": (0.70, 0.15, 0.15),
     "seed": 42,
     "num_workers": 0,
+    "early_stopping_patience": 20,   # stop if val F1-fraud doesn't improve
+    "lr_scheduler": "cosine",        # CosineAnnealingLR
 }
 
 ETHERSCAN_RATE_LIMIT_SLEEP_S = 0.25

@@ -1,52 +1,69 @@
 \section{Conclusion and Future Work}
 \label{sec:conclusion}
 
-We presented a hybrid GNN-LLM fusion architecture for Ethereum fraud
-detection that combines GraphSAGE structural embeddings with frozen
-CodeBERT semantic embeddings. The architecture is driven by a
-two-array seeding strategy that starts from explicit lists of benign
-and fraud contract addresses and expands outward through the
-transaction neighbourhood. On a Forta-labelled subset of \num{1258}
-verified contracts, the fusion classifier attains \SI{89}{\percent}
-accuracy and a fraud F1-score of 0.67, outperforming GNN-only and
-LLM-only baselines trained under identical conditions.
+We presented a hybrid GNN-LLM fusion architecture for Ethereum smart-contract
+fraud detection that combines a two-layer GraphSAGE network operating on an
+eight-dimensional node feature vector with a frozen CodeBERT encoder over
+verified Solidity source code.
+A reproducible four-phase pipeline---BigQuery transaction retrieval, DuckDB
+integration, PyTorch Geometric graph construction, and CodeBERT tokenisation---
+produces a dense, label-rich graph of \num{85680} nodes and \num{239742}
+transactions from which \num{304} contracts carry both verified source and an
+explicit fraud/benign label.
 
-The methodological contribution complements the empirical one. The
-released implementation replaces a single notebook with a multi-file
-library in which data collection, preprocessing, modelling, training,
-evaluation, and visualisation are independently testable modules. The
-two seed arrays are first-class citizens of the codebase, which makes
-the dataset definition both auditable and extensible.
+On the held-out test split, the concatenation-based fusion model attains
+\textbf{93.6\% accuracy}, a \textbf{fraud F1-score of 0.909},
+\textbf{AUC-ROC of 0.961}, and \textbf{AUC-PR of 0.959}---achieving the
+highest F1-Fraud and MCC (0.861) across all seven evaluated models.
+A comprehensive ablation study compared GraphSAGE-only (F1\,=\,0.636),
+GCN-only (F1\,=\,0.667), GAT-only (degenerate on small graphs),
+CodeBERT-only (F1\,=\,0.514), a Random Forest baseline (F1\,=\,0.889),
+and an attention-based fusion variant (F1\,=\,0.625) under identical
+conditions.  The Random Forest's strong AUC (0.988) validates the
+discriminative power of our eight-dimensional node features, while the
+fusion model's superior F1 and MCC confirm that code semantics provide
+complementary signal unavailable to any purely graph-based approach.
 
-Four directions for future work follow naturally from the results.
+The modular codebase released alongside the paper replaces an error-prone
+monolithic notebook with independently testable components, and the two
+explicit seed arrays make the dataset definition fully auditable and
+extensible.
 
-First, the evaluation protocol must be hardened before any deployment
-claim. As set out in Section~\ref{subsec:limitations}, the random split
-should be replaced by temporal and deployer-disjoint splits, results
-should be averaged over multiple seeds with confidence intervals, and the
-model should be evaluated on a shared public benchmark so that it can be
-compared directly against TLMG4Eth and BERT4ETH rather than against
-internal ablations alone.
+\textbf{Future work} should address the following priorities:
 
-Second, the fraud F1 ceiling is bounded by the small absolute count of
-labelled fraud contracts with verified source code. Curating additional
-fraud labels, either through manual investigation of suspicious
-Etherscan listings or through automated screening of fresh BigQuery
-exports, would likely improve fraud recall more than additional
-architectural tuning.
+\begin{enumerate}
+    \item \textbf{Evaluation hardening.}  Replace the random split with
+    temporal and deployer-disjoint splits; report mean $\pm$ std over at
+    least five seeds; evaluate on a shared public Ethereum phishing
+    benchmark to enable direct comparison with TTAGN~\cite{li2022ttagn},
+    BERT4ETH~\cite{hu2023bert4eth}, and TLMG4Eth~\cite{sun2025tlmg4eth}.
 
-Third, the language encoder is currently frozen for compute reasons.
-Lightweight parameter-efficient fine-tuning, for example LoRA adapters,
-would allow CodeBERT to specialise on Solidity without exceeding the
-Tesla T4 memory budget.
+    \item \textbf{Dataset expansion.}  The fraud F1 ceiling is set by the
+    small absolute count of labelled fraud contracts with verified source.
+    Curating additional DeFiHackLabs victim contracts, incorporating
+    bytecode decompilation for unverified contracts, and extending the
+    seed list to post-2026 exploits would likely improve recall more than
+    architectural tuning.
 
-Fourth, the graph encoder ignores temporal ordering and transaction
-value, and its node features are limited to degree counts. Replacing
-GraphSAGE with a temporal graph network that consumes edge timestamps,
-transaction values, and richer neighbourhood features would let the model
-distinguish a fraud contract's bootstrapping phase from its run-out phase,
-which is currently invisible to the static-graph encoder.
+    \item \textbf{Parameter-efficient LLM fine-tuning.}  LoRA
+    adapters~\cite{hu2022lora} would allow CodeBERT to specialise on
+    Solidity vulnerability patterns without exceeding the memory budget
+    of a consumer GPU.
+
+    \item \textbf{Temporal graph modelling.}  Replacing the static
+    GraphSAGE encoder with a temporal graph network that encodes edge
+    timestamps and transaction sequences would let the model capture
+    the bootstrapping phase of a fraud contract---the brief window
+    before funds are drained---which is invisible to the current
+    static-graph representation.
+
+    \item \textbf{Cross-chain generalisation.}  Applying the pipeline
+    to BNB Chain, Polygon, and Arbitrum would test whether the fusion
+    architecture generalises across EVM-compatible networks with
+    different transaction-fee structures and DeFi ecosystems.
+\end{enumerate}
 
 The combination of these directions, together with the reproducible
-pipeline released alongside the paper, provides a base on which the
-next generation of Ethereum fraud detectors can be built and compared.
+pipeline and curated seed arrays released with this paper, provides a
+solid foundation for the next generation of multi-modal Ethereum fraud
+detectors.

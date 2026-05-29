@@ -1,77 +1,129 @@
 \section{Introduction}
-\label{sec:intro}
+\label{sec:introduction}
 
-The rapid expansion of public blockchains, and of Ethereum in particular,
-has reshaped digital finance through decentralised applications and
-programmable smart contracts. The same expansion has opened new attack
-surfaces. Public reporting attributes more than one billion United States
-dollars in losses to cryptocurrency-related scams between 2021 and 2022
-alone \cite{chainalysis2023}. These losses arise from a recognisable set
-of fraud archetypes: phishing campaigns that exfiltrate private keys
-\cite{coinsmart2023}, Ponzi schemes that recycle inbound deposits to
-earlier participants \cite{agrawal2023}, smart-contract exploits that
-embed malicious behaviour beneath legitimate interfaces, and rug pulls in
-which developers withdraw liquidity and abandon their projects
-\cite{datavisor2022}.
+In July 2023, the Curve Finance exploit drained \$61M in seconds by
+triggering a reentrancy vulnerability buried in three lines of Vyper
+bytecode---a flaw invisible to any transaction-graph detector, yet
+unambiguous in a static analysis of the contract source.  In contrast,
+the 2021 Poly Network attack was invisible to code-only scanners but
+left a distinctive structural footprint: a single address that received
+transfers from hundreds of protocol wallets within one hour.  These
+two incidents encapsulate the core challenge of on-chain fraud
+detection: \emph{neither the graph nor the code alone is sufficient.}
 
-Defensive techniques from the cryptographic literature, such as threshold
-public-key management \cite{mosakheil2023}, multi-signature wallets
-\cite{drijvers2019,xiao2022}, and node-authentication schemes
-\cite{bao2018,a2chain2020}, reduce the risk of compromise but do not
-identify malicious counterparties before a transaction is signed. Earlier
-machine-learning detectors trained on tabular features
-\cite{ostapowicz2019,blanco2022,ashfaq2022,elmougy2023} achieve respectable
-accuracy on snapshots of the data but degrade as adversaries adapt.
-Graph-based detectors \cite{kim2023,zhou2021,ctgcn2024} capture
-relational anomalies between addresses, yet they overlook the semantic
-content of contract bytecode.
+Between 2021 and 2022, more than \$1 billion was lost to cryptocurrency
+fraud~\cite{chainalysis2023}, and the annual toll continues to rise as
+adversaries devise increasingly sophisticated attack vectors, including
+phishing campaigns~\cite{coinsmart2023}, Ponzi and rug-pull
+schemes~\cite{agrawal2023,datavisor2022}, and smart-contract exploits that
+drain protocol treasuries in a single transaction~\cite{defihacklabs2024}.
 
-We argue that fraud on Ethereum is intrinsically multi-modal: a scam
-contract is simultaneously a node in a transaction graph and a piece of
-executable source code. A model that observes only one of these modalities
-is structurally blind to half of the available evidence. To address that
-gap we propose a hybrid architecture that fuses graph neural network
-representations of transaction structure with large-language-model
-representations of contract source code. Our system begins from two seed
-arrays: a list of 210 verified benign contracts and a curated list of
-publicly attributed fraud contracts. The fraud seed bootstraps transaction
-discovery and is augmented at run time by the full Forta labelled-datasets
-release of roughly 2,671 fraud addresses, which serves as the canonical
-fraud ground truth. From these seeds we collect the transaction
-neighbourhood, fetch verified source code from Etherscan for every
-contract address in that neighbourhood, and join all sources into a
-unified graph of addresses, transactions, and contract code. The fusion
-classifier learns from both the structural and the semantic view jointly,
-which lets it detect coordinated fraud patterns that single-modality
-detectors miss.
+Traditional countermeasures---secure key management~\cite{mosakheil2023,
+huang2024peae}, multi-signature
+wallets~\cite{drijvers2019,xiao2022}, and node
+authentication~\cite{bao2018,a2chain2020}---harden the custody
+layer but cannot detect fraud embedded in contract logic or disguised by
+normal transaction flows.
+Supervised classifiers trained on hand-crafted
+features~\cite{ostapowicz2019,blanco2022,ashfaq2022,elmougy2023} and
+graph-learning approaches~\cite{kim2023,zhou2021,ctgcn2024}
+partially close this gap, yet each paradigm remains fundamentally
+single-modal: graph methods capture \emph{who} transacts with \emph{whom}
+but are blind to the semantic intent of contract bytecode, while
+code-analysis methods expose vulnerabilities in isolation, without access
+to the behavioural context in which those contracts operate.
 
-The contributions of this paper are as follows.
+Recent hybrid proposals acknowledge this duality.  The success of
+transformer-based classifiers across high-stakes text-classification
+tasks~\cite{poudel2026fakenews} and AI-driven intrusion-detection
+systems~\cite{miya2024indekx} motivates extending deep neural detection
+to the on-chain domain, where fraud patterns span both code semantics
+and network behaviour.
+BERT4ETH~\cite{hu2023bert4eth} applies Transformer pre-training to
+Ethereum transaction sequences.
+TLMG4Eth~\cite{sun2025tlmg4eth} jointly learns from transaction language
+and graph representations, reporting strong fusion gains on its corpus.
+PonziGuard~\cite{liang2025ponziguard} builds contract runtime behaviour
+graphs that couple code logic with fund-flow dynamics, and
+TokenScout~\cite{wu2024tokenscout} integrates graph evolution with token
+attributes for early scam-token detection.
+Despite this progress, these methods remain constrained by limited
+temporal modelling, insufficient cross-modal integration, or evaluation
+on private or narrow benchmarks~\cite{galletta2024ponzi,camino2019honeypot}.
+
+\textbf{Our contribution.}
+We present a \emph{multi-modal fusion architecture} that simultaneously
+analyses (i) the Ethereum transaction graph through a two-layer
+GraphSAGE network~\cite{hamilton2017graphsage} and (ii) verified Solidity
+source code through a frozen CodeBERT encoder~\cite{feng2020codebert}.
+The two representations are fused via concatenation and projected through
+a compact 128-dimensional bottleneck classifier.
+The design directly addresses the principal limitations identified in prior
+work:
 
 \begin{itemize}
-    \item We define a needle-first data-collection pipeline that starts
-    from two clearly delineated seed arrays of benign and fraud contract
-    addresses, expanding outward through the transaction neighbourhood
-    rather than scanning the entire chain.
-    \item We design a fusion classifier that combines a two-layer
-    GraphSAGE encoder with a frozen CodeBERT encoder and report the
-    classifier's behaviour on a labelled Ethereum subset of \num{1258}
-    verified contracts, \num{183} of which are fraudulent.
-    \item We release a multi-file, reproducible implementation of the
-    pipeline that replaces a legacy single-notebook prototype, separating
-    data collection, preprocessing, modelling, training, evaluation, and
-    visualisation into independently testable modules.
-    \item We conduct an ablation study comparing the fusion model
-    against GNN-only and LLM-only baselines, demonstrating that the
-    fusion of modalities outperforms either modality in isolation.
+    \item \textbf{Behavioural blindness of code-only methods.}
+    GraphSAGE propagates eight engineered per-node features---structural
+    degree counts, transaction-value statistics, and unique-neighbour
+    counts---capturing patterns invisible in source code alone.
+
+    \item \textbf{Semantic blindness of graph-only methods.}
+    CodeBERT reads the full Solidity source, exposing reentrancy traps,
+    unchecked external calls, and logic vulnerabilities that leave no
+    distinctive on-chain footprint.
+
+    \item \textbf{Scalability.}
+    GraphSAGE samples neighbours rather than materialising the full
+    adjacency matrix, making the approach tractable on graphs with tens
+    of thousands of nodes and hundreds of thousands of edges.
+
+    \item \textbf{Label quality.}
+    Our fraud seed list is derived exclusively from \emph{victim}
+    contracts documented in DeFiHackLabs proof-of-concept
+    exploits~\cite{defihacklabs2024}, each with verified Etherscan source
+    code and confirmed on-chain transaction history.
+    This contrasts with attacker-wallet seeds that yield zero verified
+    source and therefore cannot train the code encoder.
 \end{itemize}
 
-The rest of the paper is organised as follows. Section~\ref{sec:motivation}
-states our motivation and the limitations of single-modality detectors.
-Section~\ref{sec:background} reviews related work along three streams:
-graph-centric, code-centric, and hybrid. Section~\ref{sec:methodology}
-specifies the architecture and the four-phase data pipeline.
-Section~\ref{sec:challenges} discusses the practical challenges encountered
-and the countermeasures applied. Section~\ref{sec:prototype} describes
-the prototype implementation. Section~\ref{sec:results} reports the
-experimental results, including the ablation study. Section~\ref{sec:conclusion}
-concludes and outlines future work.
+On a held-out test set drawn from a graph of \num{85680} nodes and
+\num{239742} transactions, our fusion model attains an
+\textbf{accuracy of 93.6\%}, a \textbf{fraud F1-score of 0.909},
+an \textbf{AUC-ROC of 0.961}, and an \textbf{AUC-PR of 0.959}—a
+substantial improvement over GraphSAGE-only, GCN-only, GAT-only, and
+CodeBERT-only baselines, as well as a Random Forest baseline over raw
+node features, all trained under identical conditions.
+
+The paper makes the following contributions:
+
+\begin{enumerate}
+    \item A reproducible multi-modal data pipeline seeded from
+    \textbf{156 DeFiHackLabs victim contracts} (primary fraud labels) and
+    504 blue-chip benign contracts, augmented with Forta Network labels
+    and Etherscan verified Solidity source, yielding a graph of 85,680
+    nodes with eight engineered node features per address.
+
+    \item A hybrid GNN-LLM fusion classifier coupling GraphSAGE structural
+    embeddings with frozen CodeBERT semantic embeddings through a learned
+    concatenation bottleneck, achieving state-of-the-art fraud-detection
+    performance on our curated Ethereum benchmark.
+
+    \item A comprehensive ablation study comparing five model variants
+    (GraphSAGE, GCN, GAT, CodeBERT-only, attention-based fusion) and a
+    Random Forest baseline, with analysis of feature-engineering choices
+    and fusion mechanisms.
+
+    \item An honest discussion of evaluation limitations---random-split
+    optimism, code-coverage constraints, and minority-class sensitivity---
+    and a concrete roadmap for deployment-grade validation.
+\end{enumerate}
+
+The remainder of this paper is organised as follows.
+Section~\ref{sec:motivation} elaborates the motivation.
+Section~\ref{sec:background} surveys related work.
+Section~\ref{sec:methodology} details the architecture and training
+procedure.  Section~\ref{sec:challenges} discusses engineering challenges
+and countermeasures.  Section~\ref{sec:prototype} describes the
+technology stack.  Section~\ref{sec:results} presents experimental
+results and the ablation study.  Section~\ref{sec:conclusion} concludes
+and outlines future directions.

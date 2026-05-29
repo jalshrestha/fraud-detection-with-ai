@@ -1,153 +1,261 @@
 \section{System Architecture and Methodology}
 \label{sec:methodology}
 
-The system is organised as a four-phase pipeline: data collection,
-feature engineering, hybrid neural network training, and evaluation.
-Figure~\ref{fig:architecture} summarises the architecture.
+Our system is organised as a four-phase pipeline: multi-source data
+collection, feature engineering, hybrid neural-network training, and
+rigorous evaluation.  Figure~\ref{fig:architecture} provides an overview
+of the complete architecture.
 
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.95\linewidth]{figures/architecture.pdf}
-    \caption{Hybrid GNN-LLM architecture for smart-contract fraud
-    detection. The two seed arrays at the left drive the entire pipeline.}
-    \label{fig:architecture}
-\end{figure}
-
-\subsection{Phase 1: Two-Array Data Collection}
+% ─────────────────────────────────────────────────────────────────────────
+\subsection{Phase 1: Multi-Source Data Collection}
 \label{subsec:collection}
 
-The pipeline starts from two explicit Python arrays.
+\subsubsection{Seed Arrays and Transaction Neighbourhood}
+The pipeline starts from two explicit Python arrays stored in
+\texttt{code/data/addresses/}:
 
 \begin{itemize}
-    \item \texttt{BENIGN\_ADDRESSES}: 210 verified ERC-20 token and
-    blue-chip protocol contracts, sourced from the CoinGecko top-N
-    list and cross-checked against the Etherscan verified-contract
-    registry.
-    \item \texttt{FRAUD\_ADDRESSES}: 10 publicly attributed seed fraud
-    contracts that bootstrap the transaction collection, augmented at
-    run time with the full Forta Network labelled-datasets release of
-    approximately \num{2671} fraud addresses.
+    \item \texttt{BENIGN\_ADDRESSES}: 504 verified blue-chip Ethereum
+    contracts (ERC-20 tokens, DEX pools, lending protocols) sourced from
+    the CoinGecko top-N list and cross-validated against the Etherscan
+    verified-contract registry.
+
+    \item \texttt{FRAUD\_ADDRESSES}: 156 victim-protocol contracts
+    extracted from DeFiHackLabs proof-of-concept (PoC) Solidity
+    files~\cite{defihacklabs2024}.  Each address is identified by a
+    \texttt{// Vulnerable Contract : https://etherscan.io/} comment in
+    the PoC, verified to carry Solidity source code on Etherscan, and
+    confirmed to have on-chain transaction history---properties that are
+    essential for training both the graph encoder and the language
+    encoder.
 \end{itemize}
 
-Both arrays live in \texttt{code/data/addresses/} and are the entry
-point for every downstream step. From the union of these two arrays we
-pull the transaction neighbourhood for the calendar year 2022 from
-Google BigQuery's public Ethereum dataset, retaining only transactions
-in which at least one endpoint is a seed address. The resulting
-neighbourhood contains \num{498112} transactions across \num{148342}
-unique addresses.
+From the union of these two arrays we retrieve the transaction
+neighbourhood from Google BigQuery's public Ethereum
+dataset~\cite{bigquery2024}.  Our balanced sampling strategy allocates
+up to 2,000 most-recent transactions per fraud address and up to 300 per
+benign address, yielding a dense, label-rich graph of \num{239742}
+transactions across \num{85680} unique addresses while avoiding the
+extreme volume dominance of high-traffic benign contracts such as WETH
+and USDT.
 
-The Forta Network's labelled-datasets release \cite{fortalabels} is the
-canonical fraud ground truth. We download two CSVs,
-\texttt{phishing\_scams.csv} and \texttt{malicious\_smart\_contracts.csv},
-and lower-case the addresses on read. We then collapse all fraud
-sub-categories into a single fraud label ($y=1$) and treat all
-non-Forta addresses as benign ($y=0$), with the explicit-benign-seed
-list used to mark a positive-benign subset for the supervised splits.
+\subsubsection{Ground-Truth Labels}
+\label{subsubsec:labels}
 
-For each unique address in the transaction neighbourhood, we attempt to
-fetch the verified Solidity source code through the Etherscan API. We
-succeed for \num{1258} addresses that are publicly verified contracts;
-the remaining addresses are wallets, unverified contracts, or addresses
-whose source has not been published. The fetched source is Base64
-encoded for safe CSV storage.
+Our fraud labels come from two sources with deliberately different roles.
 
-\subsection{Phase 2: Feature Engineering and Preprocessing}
+\textbf{Primary source: DeFiHackLabs victim contracts.}
+Of the 156 DeFiHackLabs seed addresses, 130 appear in the transaction
+neighbourhood (26 were not captured by the balanced sampling); these
+contribute \textbf{121 of the 128 fraud-labelled nodes} (94.5\%) in the
+final graph.  Because each address was selected from a PoC repository that
+documents real exploits with on-chain evidence, these labels carry a very
+high degree of confidence.
+
+\textbf{Secondary augmentation: Forta Network labels.}
+We cross-reference all graph nodes against the Forta Network labelled-datasets
+release~\cite{fortalabels}, which provides community-verified fraud
+annotations covering phishing, Ponzi schemes, and malicious smart
+contracts.  This adds \textbf{7 additional fraud-labelled nodes} (5.5\%)
+not already covered by the DeFiHackLabs seeds.  All fraud sub-categories
+are collapsed into a single label ($y=1$).
+
+All remaining addresses receive $y=0$ (benign), subject to the
+closed-world assumption discussed in Section~\ref{subsec:limitations}.
+
+Table~\ref{tab:dataset} summarises the complete dataset statistics.
+
+\begin{table}[t]
+\centering
+\caption{Dataset statistics after full pipeline execution.}
+\label{tab:dataset}
+\begin{tabular}{lr}
+\toprule
+Statistic & Value \\
+\midrule
+\multicolumn{2}{l}{\textit{Seed arrays}} \\
+\ \ Fraud seeds (DeFiHackLabs victim contracts) & 156 \\
+\ \ Benign seeds (blue-chip protocol contracts) & 504 \\
+\ \ Total seed addresses & 660 \\
+\midrule
+\multicolumn{2}{l}{\textit{Transaction graph}} \\
+\ \ Total nodes (unique addresses) & 85,680 \\
+\ \ Total edges (transactions) & 239,742 \\
+\midrule
+\multicolumn{2}{l}{\textit{Fraud labels}} \\
+\ \ From DeFiHackLabs seeds & 121 (94.5\%) \\
+\ \ From Forta augmentation only & 7 (5.5\%) \\
+\ \ Total fraud-labelled nodes & 128 \\
+\midrule
+\multicolumn{2}{l}{\textit{Eligible for training (label + source code)}} \\
+\ \ Fraud contracts & 95 \\
+\ \ Benign contracts & 209 \\
+\ \ Total eligible & 304 \\
+\ \ Training / Validation / Test & 212 / 45 / 47 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Source Code Retrieval}
+For each unique address in the neighbourhood, we query the Etherscan
+API v2~\cite{etherscanapi} for verified Solidity source code.  Source
+is successfully retrieved for \num{304} addresses; the remainder are
+externally-owned accounts or unverified contracts.  All source strings
+are Base64-encoded for safe CSV storage and later decoded at tokenisation
+time.
+
+% ─────────────────────────────────────────────────────────────────────────
+\subsection{Phase 2: Feature Engineering}
 \label{subsec:features}
 
-The integration step runs through DuckDB, an in-process analytical
-database. We register the transaction frame, the fetched source-code
-frame, the Forta fraud frame, and the unique-address frame as views,
-then materialise two tables: \texttt{nodes} and \texttt{edges}. The
-\texttt{nodes} table has columns \texttt{address}, \texttt{contract\_text}
-(Base64 source if available, empty otherwise), \texttt{y} (0 or 1),
-and \texttt{is\_labeled} (true if the address appears in either the
-Forta fraud list or the benign seed list). The \texttt{edges} table
-has columns \texttt{src}, \texttt{dst}, \texttt{value}, and
-\texttt{tx\_hash}.
+\subsubsection{Graph Integration via DuckDB}
+All three data frames (transactions, Forta labels, Etherscan source) are
+registered as views in an in-process DuckDB~\cite{duckdb2019} instance.
+A sequence of \texttt{LEFT JOIN} operations materialises two output
+tables: \texttt{nodes} (address, contract\_text, label $y$, is\_labeled)
+and \texttt{edges} (src, dst, value, tx\_hash).  All addresses are
+lower-cased before any join, eliminating the silent mismatches that arise
+from EIP-55 checksummed addresses in Forta exports versus lowercase
+BigQuery output.
 
-Address standardisation is the single most important preprocessing
-step. The same Ethereum address can appear lowercased in transaction
-data, with EIP-55 mixed-case checksums in Forta exports, or in either
-form on Etherscan responses. Without standardisation, join keys silently
-miss and labelled addresses disappear from the graph. We therefore
-lowercase every address on read at every entry point of the pipeline,
-implemented once in \texttt{src/preprocessing/addresses.py} and reused
-by every collector.
+\subsubsection{Node Feature Engineering}
+\label{subsubsec:features}
 
-Graph node features are computed via PyTorch Geometric. For each node we
-record three values: \texttt{in\_degree}, \texttt{out\_degree}, and
-\texttt{total\_degree}. These three numbers capture the gross structural
-signature of an address, sufficient as input to the GraphSAGE layers
-that then propagate them through the local neighbourhood. Source code
-tokens are produced by the CodeBERT tokenizer with truncation and
-padding at a maximum length of 512 tokens.
+For each node $v$ we compute eight features that capture both structural
+position and transactional value flow:
 
+\begin{equation}
+\mathbf{f}_v = \bigl[
+  d^{\text{in}}_v,\;
+  d^{\text{out}}_v,\;
+  d^{\text{in}}_v + d^{\text{out}}_v,\;
+  \bar{w}^{\text{in}}_v,\;
+  \bar{w}^{\text{out}}_v,\;
+  \log(1 + W_v),\;
+  u^{\text{in}}_v,\;
+  u^{\text{out}}_v
+\bigr]^\top \in \mathbb{R}^8,
+\label{eq:features}
+\end{equation}
+
+where $d^{\text{in}}_v$ and $d^{\text{out}}_v$ are in- and out-degrees;
+$\bar{w}^{\text{in}}_v$ and $\bar{w}^{\text{out}}_v$ are the mean
+incoming and outgoing transaction values (in Wei); $W_v$ is the total
+Wei volume; and $u^{\text{in}}_v$, $u^{\text{out}}_v$ are the counts of
+unique counterparty addresses for incoming and outgoing transactions,
+respectively.  Value features are log-compressed to reduce the
+multi-order-of-magnitude spread in Ethereum transaction sizes.
+
+These features encode complementary fraud signals: phishing addresses
+typically exhibit high $d^{\text{in}}_v$ (many victims) relative to
+$d^{\text{out}}_v$ (few recipients), whereas Ponzi contracts show
+characteristic value-flow patterns~\cite{liang2025ponziguard}.
+
+\subsubsection{Source-Code Preprocessing}
+Solidity source strings are decoded from Base64 and tokenised using the
+CodeBERT tokenizer with a maximum length of 512 tokens.  Sequences
+exceeding the limit are truncated; shorter sequences are padded.  This
+pre-processing is performed lazily inside \texttt{ContractDataset}
+at batch-construction time.
+
+% ─────────────────────────────────────────────────────────────────────────
 \subsection{Phase 3: Hybrid Neural Network Architecture}
 \label{subsec:network}
 
-The fusion classifier combines a graph encoder, a frozen language
-encoder, and a fusion head.
+Figure~\ref{fig:fusion} illustrates the internal architecture of the
+fusion classifier.
 
-\textbf{Graph Encoder.} A two-layer GraphSAGE network
-\cite{hamilton2017graphsage} maps the three-dimensional node features
-into a 64-dimensional latent space. Layer 1 is \texttt{SAGEConv(3, 128)}
-with ReLU and Dropout(0.5). Layer 2 is \texttt{SAGEConv(128, 64)} without
-activation; its output flows directly into the fusion head. GraphSAGE
-samples neighbours rather than processing the full adjacency matrix,
-which is necessary to keep the memory footprint feasible on the
-\num{148342}-node graph and which generalises inductively to unseen
-addresses.
+\subsubsection{Graph Encoder}
+A two-layer GraphSAGE network~\cite{hamilton2017graphsage} maps the
+8-dimensional node features into a 64-dimensional latent space:
 
-\textbf{Language Encoder.} We load \texttt{microsoft/codebert-base}
-\cite{feng2020codebert} via Hugging Face Transformers, freeze all
-parameters, and use the 768-dimensional \texttt{pooler\_output} as the
-contract representation. Freezing CodeBERT keeps training memory
-within the budget of a single Tesla T4 GPU and isolates the fusion
-head as the only trainable bridge between the modalities.
+\begin{align}
+\mathbf{h}_v^{(1)} &= \sigma\!\Bigl(
+  \mathbf{W}_1 \cdot \mathrm{MEAN}\!\bigl(\{\mathbf{f}_u : u \in \mathcal{N}(v)\cup\{v\}\}\bigr)
+\Bigr), \label{eq:sage1} \\
+\mathbf{h}_v^{(2)} &= \mathbf{W}_2 \cdot \mathrm{MEAN}\!\bigl(
+  \{\mathbf{h}_u^{(1)} : u \in \mathcal{N}(v)\cup\{v\}\}\bigr),
+  \label{eq:sage2}
+\end{align}
 
-\textbf{Fusion Head.} The 64-dimensional graph embedding and the
-768-dimensional code embedding are concatenated to form an
-832-dimensional vector. We pass it through Dropout(0.5), a linear layer
-to 128 dimensions with ReLU, another Dropout(0.5), and a final linear
-projection to two class logits. The fusion bottleneck forces the model
-to discover a small joint representation rather than memorising the
-individual modalities.
+where $\sigma$ is ReLU, $\mathbf{W}_1 \in \mathbb{R}^{128 \times 8}$,
+and $\mathbf{W}_2 \in \mathbb{R}^{64 \times 128}$.  Dropout($p=0.5$) is
+applied after the first layer.  GraphSAGE is \emph{inductive}: it learns
+aggregation functions that generalise to nodes unseen during training,
+which is essential for screening newly deployed contracts.
 
-Formally, given a node $v$ with graph embedding $h_v^{\text{GNN}} \in
-\mathbb{R}^{64}$ and code embedding $h_v^{\text{LLM}} \in \mathbb{R}^{768}$,
-the class logits are
+\subsubsection{Language Encoder}
+We load \texttt{microsoft/codebert-base}~\cite{feng2020codebert} from
+Hugging Face Transformers, freeze all 125M parameters, and extract the
+768-dimensional \texttt{pooler\_output} as the contract representation.
+Freezing CodeBERT bounds training memory within a single GPU and isolates
+the fusion head as the sole trainable bridge between modalities, allowing
+the model to learn how to combine---rather than re-learn---the pre-trained
+code semantics.  Prior work on fine-tuning LLMs for classification
+tasks~\cite{poudel2026fakenews} demonstrates that frozen pre-trained
+representations already provide strong signals, validating this design
+choice; parameter-efficient fine-tuning (e.g.\ LoRA~\cite{hu2022lora})
+is deferred to future work.
+
+\subsubsection{Fusion Classifier}
+\label{subsubsec:fusion}
+
+The 64-dimensional graph embedding $\mathbf{h}_v^{\text{GNN}}$ and the
+768-dimensional code embedding $\mathbf{h}_v^{\text{LLM}}$ are
+concatenated to form an 832-dimensional joint representation.  The
+classification head then computes:
 
 \begin{equation}
-\hat{y}_v = W_2 \, \sigma\!\left( W_1 \, [h_v^{\text{GNN}};\, h_v^{\text{LLM}}] + b_1 \right) + b_2,
+\hat{y}_v = \mathbf{W}_4 \, \sigma\!\Bigl(
+  \mathbf{W}_3 \,[\mathbf{h}_v^{\text{GNN}};\, \mathbf{h}_v^{\text{LLM}}] + \mathbf{b}_3
+\Bigr) + \mathbf{b}_4,
 \label{eq:fusion}
 \end{equation}
 
-where $[\cdot;\,\cdot]$ denotes concatenation, $\sigma$ is the ReLU
-non-linearity, $W_1 \in \mathbb{R}^{128 \times 832}$, and
-$W_2 \in \mathbb{R}^{2 \times 128}$.
+where $\mathbf{W}_3 \in \mathbb{R}^{128 \times 832}$ is the fusion
+projection, $\mathbf{W}_4 \in \mathbb{R}^{2 \times 128}$ is the
+classifier, and Dropout($p=0.5$) is inserted before each linear layer.
+Total trainable parameter count is \num{124226}; the remaining
+$\sim$124.6M parameters belong to frozen CodeBERT.
 
-\subsection{Phase 4: Training and Evaluation}
+The concatenation bottleneck forces the model to discover a compact joint
+embedding rather than memorising individual modalities.
+Section~\ref{subsec:ablation_module} compares this with an
+attention-based fusion alternative.
+
+% ─────────────────────────────────────────────────────────────────────────
+\subsection{Phase 4: Training Strategy}
 \label{subsec:training}
 
-Of the \num{1258} contracts with verified source code, \num{183} are
-labelled as fraudulent (a \SI{14.5}{\percent} fraud rate). To prevent the
-classifier from collapsing to the majority class, we train under
-weighted cross-entropy loss with class weights
-$[1.0,\, n_{\text{neg}} / n_{\text{pos}}]$, computed only over the
-training split. The optimiser is AdamW \cite{loshchilov2019adamw} with a
-learning rate of \num{5e-5} and a batch size of 8, chosen to fit the
-Tesla T4 memory budget. We train for five epochs and apply gradient
-clipping at norm 1.0 to suppress the exploding-gradient pathology that
-arises early in training.
+\subsubsection{Class-Weighted Loss}
+Of the 304 labelled contracts, 95 are fraud (31.3\%).  We address the
+resulting imbalance with weighted cross-entropy:
+\begin{equation}
+\mathcal{L} = -\sum_v \bigl[
+  w_0(1-y_v)\log\hat{p}_{v,0} + w_1 y_v \log\hat{p}_{v,1}
+\bigr],
+\label{eq:loss}
+\end{equation}
+where $w_0 = 1.0$ and $w_1 = n_{\text{neg}} / n_{\text{pos}} \approx
+2.37$ (computed from the training split).
 
-The labelled subset is split 70/15/15 into train, validation, and test
-partitions. The split is a stratified random partition over the subset of
-nodes that carry both verified source code and an explicit label, seeded
-at 42 and serialised once at dataset construction time so that the fusion
-run and both ablation runs see exactly the same partition. We report
-precision, recall, and F1-score for each class on the test split, along
-with the confusion matrix. Section~\ref{subsec:limitations} discusses why
-a stratified random split is an optimistic protocol for this task and
-specifies the temporal and deployer-disjoint splits that a deployment-grade
-evaluation should additionally report.
+\subsubsection{Optimiser and Scheduler}
+We use AdamW~\cite{loshchilov2019adamw} with learning rate $10^{-3}$ and
+weight decay $10^{-4}$.  A cosine annealing
+schedule~\cite{loshchilov2017cosine} decays the learning rate to
+$10^{-5}$ over a 100-epoch budget.  Gradient clipping at norm 1.0
+suppresses early-epoch instability.
+
+\subsubsection{Early Stopping and Model Selection}
+Training halts when the validation fraud F1-score fails to improve for
+20 consecutive epochs.  The checkpoint with the highest validation fraud
+F1 is reloaded before test-set evaluation; only this checkpoint is
+reported.  Our fusion model early-stopped at epoch 41 (best checkpoint at epoch 21) with best
+validation F1 = 0.966.
+
+\subsubsection{Data Split}
+The 304 eligible contracts (those with both verified source and an
+explicit label) are partitioned 70/15/15 into train (212), validation
+(45), and test (47) sets using a stratified random split seeded at 42.
+The identical split is used for all ablation baselines, ensuring
+controlled comparisons.
