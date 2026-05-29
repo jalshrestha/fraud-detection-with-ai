@@ -79,63 +79,68 @@ def _arrow(ax, x1, y1, x2, y2):
 # Fig 1  Architecture pipeline
 # ─────────────────────────────────────────────────────────────────────────
 def make_architecture() -> None:
-    fig, ax = plt.subplots(figsize=(12, 4.8))
-    ax.set_xlim(-0.1, 12.1)
+    # wider canvas so arrows have room
+    fig, ax = plt.subplots(figsize=(14, 4.8))
+    ax.set_xlim(-0.1, 14.1)
     ax.set_ylim(-0.1, 4.9)
     ax.axis("off")
 
-    # column headers
-    for cx, lbl in [(1.0, "Data Sources"), (3.0, "Integration"),
-                    (5.2, "Features"),     (7.2, "Encoders"),
-                    (9.8, "Fusion"),       (11.4, "Output")]:
+    # column headers — adjusted to new x positions
+    for cx, lbl in [(1.0, "Data Sources"), (3.1, "Integration"),
+                    (5.3, "Features"),     (7.5, "Encoders"),
+                    (10.8, "Fusion"),      (13.3, "Output")]:
         ax.text(cx, 4.55, lbl, ha="center", fontsize=8,
                 color=GRAY, style="italic")
 
-    # ── data sources ──────────────────────────────────────────────────────
-    _box(ax, 0.05, 3.3, 1.9, 0.65, "BigQuery\nTransactions", shade=LGRAY)
-    _box(ax, 0.05, 2.35, 1.9, 0.65, "Forta\nFraud Labels", shade=LGRAY)
-    _box(ax, 0.05, 1.4, 1.9, 0.65, "Etherscan\nSource Code", shade=LGRAY)
+    # ── data sources ─────────────────────────────────────────────────────
+    _box(ax, 0.05, 3.3, 2.0, 0.65, "BigQuery\nTransactions", shade=LGRAY)
+    _box(ax, 0.05, 2.35, 2.0, 0.65, "Forta\nFraud Labels",   shade=LGRAY)
+    _box(ax, 0.05, 1.4,  2.0, 0.65, "Etherscan\nSource Code", shade=LGRAY)
 
-    # ── integration ───────────────────────────────────────────────────────
-    _box(ax, 2.15, 1.7, 1.7, 1.4, ["DuckDB", "Join +", "Normalise"],
+    # ── integration ──────────────────────────────────────────────────────
+    _box(ax, 2.35, 1.7, 1.8, 1.4, ["DuckDB", "Join +", "Normalise"],
          shade=LBLUE, border=BLUE)
-    _arrow(ax, 1.95, 3.62, 2.15, 2.75)
-    _arrow(ax, 1.95, 2.67, 2.15, 2.45)
-    _arrow(ax, 1.95, 1.72, 2.15, 2.15)
+    _arrow(ax, 2.05, 3.62, 2.35, 2.75)
+    _arrow(ax, 2.05, 2.67, 2.35, 2.45)
+    _arrow(ax, 2.05, 1.72, 2.35, 2.15)
 
-    # ── features ──────────────────────────────────────────────────────────
-    _box(ax, 4.15, 2.7, 1.7, 0.7, ["8-dim Node", "Features"],
+    # ── features ─────────────────────────────────────────────────────────
+    _box(ax, 4.45, 2.7, 1.7, 0.7, ["8-dim Node", "Features"],
          shade=LBLUE, border=BLUE)
-    _box(ax, 4.15, 1.7, 1.7, 0.7, ["Tokenised", "Source (512)"],
+    _box(ax, 4.45, 1.7, 1.7, 0.7, ["Tokenised", "Source (512)"],
          shade=LBLUE, border=BLUE)
-    _arrow(ax, 3.85, 2.6, 4.15, 3.05)
-    _arrow(ax, 3.85, 2.1, 4.15, 2.05)
+    _arrow(ax, 4.15, 2.6, 4.45, 3.05)
+    _arrow(ax, 4.15, 2.1, 4.45, 2.05)
 
-    # ── encoders ──────────────────────────────────────────────────────────
-    _box(ax, 6.1, 2.7, 1.9, 0.7, ["GraphSAGE", "8->128->64"],
+    # ── encoders ─────────────────────────────────────────────────────────
+    _box(ax, 6.4, 2.7, 2.0, 0.7, ["GraphSAGE", "8 -> 128 -> 64"],
          shade=LBLUE, border=BLUE)
-    _box(ax, 6.1, 1.7, 1.9, 0.7, ["CodeBERT", "(frozen, 768-dim)"],
+    _box(ax, 6.4, 1.7, 2.0, 0.7, ["CodeBERT", "(frozen)  768-dim"],
          shade=LBLUE, border=BLUE)
-    _arrow(ax, 5.85, 3.05, 6.1, 3.05)
-    _arrow(ax, 5.85, 2.05, 6.1, 2.05)
+    _arrow(ax, 6.15, 3.05, 6.4, 3.05)
+    _arrow(ax, 6.15, 2.05, 6.4, 2.05)
 
-    # ── fusion ────────────────────────────────────────────────────────────
-    _box(ax, 8.3, 1.8, 2.3, 1.5,
-         ["Concat [64 || 768]", "= 832-dim", "", "Linear 832->128",
-          "Linear 128->2"],
-         shade=LBLUE, border=BLUE)
-    # arrows with dimension labels
-    _arrow(ax, 8.0, 3.05, 8.3, 3.0)
-    _arrow(ax, 8.0, 2.05, 8.3, 2.15)
-    ax.text(8.14, 3.14, "64", fontsize=7.5, color=BLUE, ha="center",
-            fontweight="bold")
-    ax.text(8.14, 2.22, "768", fontsize=7.5, color=BLUE, ha="center",
-            fontweight="bold")
+    # ── LONG arrows encoder -> fusion, with dimension labels mid-arrow ──
+    # encoder right edge = 6.4 + 2.0 = 8.4   fusion left edge = 9.6
+    # arrow length = 1.2 units — clearly visible
+    _arrow(ax, 8.4, 3.05, 9.6, 3.05)
+    _arrow(ax, 8.4, 2.05, 9.6, 2.05)
+    # dim labels at midpoint x = 9.0
+    ax.text(9.0, 3.22, "64-dim", fontsize=8.5, color=BLUE,
+            ha="center", fontweight="bold")
+    ax.text(9.0, 2.22, "768-dim", fontsize=8.5, color=BLUE,
+            ha="center", fontweight="bold")
 
-    # ── output ────────────────────────────────────────────────────────────
-    _box(ax, 10.85, 2.35, 1.1, 0.7, ["Fraud", "/ Benign"],
+    # ── fusion ───────────────────────────────────────────────────────────
+    _box(ax, 9.6, 1.75, 2.8, 1.55,
+         ["Concat  [64 || 768] = 832-dim", "", "Linear  832 -> 128",
+          "Linear  128 -> 2"],
+         shade=LBLUE, border=BLUE)
+
+    # ── output ───────────────────────────────────────────────────────────
+    _box(ax, 12.65, 2.3, 1.3, 0.75, ["Fraud", "/ Benign"],
          shade=LGRAY, border=GRAY)
-    _arrow(ax, 10.6, 2.7, 10.85, 2.7)
+    _arrow(ax, 12.4, 2.7, 12.65, 2.68)
 
     fig.tight_layout(pad=0.2)
     _save(fig, "architecture.pdf")
@@ -145,55 +150,62 @@ def make_architecture() -> None:
 # Fig 2  FusionClassifier internals
 # ─────────────────────────────────────────────────────────────────────────
 def make_fusion_detail() -> None:
-    fig, ax = plt.subplots(figsize=(10, 4.5))
-    ax.set_xlim(-0.1, 10.1)
-    ax.set_ylim(-0.3, 4.6)
+    # wider canvas: encoders end at ~4.5, concat starts at 6.0 → 1.5-unit arrows
+    fig, ax = plt.subplots(figsize=(12, 4.5))
+    ax.set_xlim(-0.1, 12.1)
+    ax.set_ylim(-0.35, 4.6)
     ax.axis("off")
 
-    # inputs
-    _box(ax, 0.1, 2.85, 1.9, 0.85, ["Transaction", "Graph [N, 8]"],
+    # ── inputs ───────────────────────────────────────────────────────────
+    _box(ax, 0.1, 2.85, 2.1, 0.85, ["Transaction", "Graph  [N, 8]"],
          shade=LGRAY)
-    _box(ax, 0.1, 1.55, 1.9, 0.85, ["Solidity", "Source [B, 512]"],
+    _box(ax, 0.1, 1.55, 2.1, 0.85, ["Solidity", "Source  [B, 512]"],
          shade=LGRAY)
 
-    # encoders
-    _box(ax, 2.35, 2.85, 1.85, 0.85,
-         ["GraphSAGE", "8->128->64-dim"], shade=LBLUE, border=BLUE)
-    _box(ax, 2.35, 1.55, 1.85, 0.85,
-         ["CodeBERT", "frozen, 768-dim"], shade=LBLUE, border=BLUE)
-    _arrow(ax, 2.0, 3.27, 2.35, 3.27)
-    _arrow(ax, 2.0, 1.97, 2.35, 1.97)
+    # ── encoders ─────────────────────────────────────────────────────────
+    # right edge of encoders = 2.5 + 2.0 = 4.5
+    _box(ax, 2.5, 2.85, 2.0, 0.85,
+         ["GraphSAGE", "8 -> 128 -> 64"], shade=LBLUE, border=BLUE)
+    _box(ax, 2.5, 1.55, 2.0, 0.85,
+         ["CodeBERT", "frozen  768-dim"], shade=LBLUE, border=BLUE)
+    _arrow(ax, 2.2, 3.27, 2.5, 3.27)
+    _arrow(ax, 2.2, 1.97, 2.5, 1.97)
 
-    # dimension labels on encoder outputs
-    ax.text(2.18, 3.38, "64-dim",  fontsize=7.5, color=BLUE, ha="center")
-    ax.text(2.18, 2.08, "768-dim", fontsize=7.5, color=BLUE, ha="center")
+    # ── LONG arrows  encoder output -> concat (1.5 unit gap) ─────────────
+    # encoder right edge = 4.5,  concat left edge = 6.0
+    _arrow(ax, 4.5, 3.27, 6.0, 3.27)
+    _arrow(ax, 4.5, 1.97, 6.0, 1.97)
+    # dim labels at midpoint x = 5.25, clearly above the arrow lines
+    ax.text(5.25, 3.46, "64-dim", fontsize=9, color=BLUE,
+            ha="center", fontweight="bold")
+    ax.text(5.25, 2.16, "768-dim", fontsize=9, color=BLUE,
+            ha="center", fontweight="bold")
 
-    # concat
-    _box(ax, 4.55, 2.1, 1.2, 1.35,
+    # ── concat ───────────────────────────────────────────────────────────
+    _box(ax, 6.0, 2.1, 1.5, 1.45,
          ["Concat", "[64 || 768]", "= 832-dim"], shade=LBLUE, border=BLUE)
-    _arrow(ax, 4.2, 3.27, 4.75, 3.25)
-    _arrow(ax, 4.2, 1.97, 4.75, 2.3)
 
-    # fusion layers
-    _box(ax, 6.1, 2.9, 3.3, 0.65,
+    # ── fusion head ──────────────────────────────────────────────────────
+    # concat right edge = 7.5,  fusion box starts at 7.9
+    _arrow(ax, 7.5, 2.82, 7.9, 2.82)
+    _box(ax, 7.9, 2.5, 3.8, 0.65,
          "Linear(832->128)  +  ReLU  +  Dropout(0.5)",
-         shade=LBLUE, border=BLUE, fs=8)
-    _arrow(ax, 5.75, 2.77, 6.1, 3.22)
+         shade=LBLUE, border=BLUE, fs=8.5)
 
-    _box(ax, 6.1, 1.95, 3.3, 0.65,
+    _box(ax, 7.9, 1.6, 3.8, 0.65,
          "Linear(128->2)   =>   2 class logits",
-         shade=LBLUE, border=BLUE, fs=8)
-    _arrow(ax, 7.75, 2.9, 7.75, 2.6)
+         shade=LBLUE, border=BLUE, fs=8.5)
+    _arrow(ax, 9.8, 2.5, 9.8, 2.25)
 
-    # output
-    _box(ax, 7.05, 0.85, 1.4, 0.7, "Fraud / Benign",
+    # ── output ───────────────────────────────────────────────────────────
+    _box(ax, 9.0, 0.55, 1.6, 0.7, "Fraud / Benign",
          shade=LGRAY, border=GRAY)
-    _arrow(ax, 7.75, 1.95, 7.75, 1.55)
+    _arrow(ax, 9.8, 1.6, 9.8, 1.25)
 
-    # params note — placed at bottom with enough vertical room
-    ax.text(5.0, -0.2,
-            "Trainable: 124 K   |   Frozen (CodeBERT): 125 M",
-            ha="center", fontsize=8, color=GRAY, style="italic")
+    # ── params note ──────────────────────────────────────────────────────
+    ax.text(6.0, -0.22,
+            "Trainable: 124 K params   |   Frozen (CodeBERT): 125 M params",
+            ha="center", fontsize=8.5, color=GRAY, style="italic")
 
     fig.tight_layout(pad=0.2)
     _save(fig, "fusion_detail.pdf")
