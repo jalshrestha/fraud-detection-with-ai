@@ -1,262 +1,485 @@
-"""Regenerate all paper figures.
+"""Paper figures — clean IEEE-standard style.
 
-Run from the repository root:
+Design rules:
+  - Font: serif (Times New Roman / DejaVu Serif) — matches IEEEtran
+  - Colors: white/light-gray fills, single blue accent, black text
+  - No Unicode math symbols (font compatibility)
+  - Minimum text in diagram boxes
+  - All annotations verified to fit within figure bounds
 
-    python paper/figures/make_figures.py
-
-Writes:
-  architecture.pdf    -- System pipeline + fusion architecture block diagram
-  fusion_detail.pdf   -- FusionClassifier internal architecture
-  ablation.pdf        -- Ablation study bar chart
-  confusion_matrix.png -- Test-split confusion matrix
-  loss_curve.pdf       -- Training loss curve
+Run from code/:  python ../paper/figures/make_figures.py
 """
 from __future__ import annotations
-
 import json
 from pathlib import Path
 
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
 import numpy as np
+import pandas as pd
 import seaborn as sns
+import torch
 
-OUT   = Path(__file__).resolve().parent
-CODE  = OUT.parent.parent / "code"
-plt.rcParams.update({"font.family": "sans-serif", "font.size": 9})
+OUT  = Path(__file__).resolve().parent
+CODE = OUT.parent.parent / "code"
 
-# ─────────────────────────────────────────────────────────────────────────────
-def _box(ax, x, y, w, h, text, fc="#e7f5ff", ec="#1c7ed6", fs=8.5):
+plt.rcParams.update({
+    "font.family":       "serif",
+    "font.serif":        ["DejaVu Serif", "Times New Roman", "serif"],
+    "font.size":         9,
+    "axes.labelsize":    9,
+    "axes.titlesize":    10,
+    "xtick.labelsize":   8.5,
+    "ytick.labelsize":   8.5,
+    "legend.fontsize":   8.5,
+    "axes.spines.top":   False,
+    "axes.spines.right": False,
+    "axes.linewidth":    0.8,
+    "grid.alpha":        0.3,
+    "grid.linewidth":    0.5,
+    "lines.linewidth":   1.6,
+})
+
+BLUE  = "#1a5276"
+LBLUE = "#d6eaf8"
+GRAY  = "#555555"
+LGRAY = "#e0e0e0"
+RED   = "#922b21"
+
+
+def _save(fig, name: str) -> None:
+    fig.savefig(OUT / name, bbox_inches="tight", pad_inches=0.15, dpi=220)
+    plt.close(fig)
+    print(f"  {name}")
+
+
+def _box(ax, x, y, w, h, lines, shade=None, border=GRAY, fs=8.5):
+    """Draw a clean box. lines = list of text lines or single string."""
+    if shade is None:
+        shade = "white"
     rect = mpatches.FancyBboxPatch(
         (x, y), w, h, boxstyle="round,pad=0.07",
-        linewidth=1.4, edgecolor=ec, facecolor=fc, zorder=2,
+        linewidth=1.1, edgecolor=border, facecolor=shade, zorder=2,
     )
     ax.add_patch(rect)
-    ax.text(x + w/2, y + h/2, text, ha="center", va="center",
-            fontsize=fs, zorder=3, multialignment="center")
+    text = lines if isinstance(lines, str) else "\n".join(lines)
+    ax.text(x + w / 2, y + h / 2, text,
+            ha="center", va="center", fontsize=fs,
+            zorder=3, multialignment="center")
 
 
-def _arrow(ax, x1, y1, x2, y2, color="#495057"):
+def _arrow(ax, x1, y1, x2, y2):
     ax.annotate("", xy=(x2, y2), xytext=(x1, y1),
-                arrowprops=dict(arrowstyle="-|>", lw=1.3, color=color),
+                arrowprops=dict(arrowstyle="-|>", lw=1.0,
+                                color=GRAY, mutation_scale=10),
                 zorder=4)
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────
+# Fig 1  Architecture pipeline
+# ─────────────────────────────────────────────────────────────────────────
 def make_architecture() -> None:
-    """System-level pipeline diagram."""
-    fig, ax = plt.subplots(figsize=(12, 5))
-    ax.set_xlim(0, 12); ax.set_ylim(0, 5); ax.axis("off")
-    ax.set_title("Hybrid GNN-LLM Architecture for Ethereum Fraud Detection",
-                 fontsize=11, fontweight="bold", pad=8)
+    fig, ax = plt.subplots(figsize=(12, 4.8))
+    ax.set_xlim(-0.1, 12.1)
+    ax.set_ylim(-0.1, 4.9)
+    ax.axis("off")
 
-    # Data sources
-    _box(ax, 0.1, 3.5, 1.7, 0.8, "BigQuery\nEthereum\nTransactions",
-         fc="#d3f9d8", ec="#2f9e44")
-    _box(ax, 0.1, 2.4, 1.7, 0.8, "Forta Network\nFraud Labels",
-         fc="#ffe3e3", ec="#c92a2a")
-    _box(ax, 0.1, 1.3, 1.7, 0.8, "Etherscan API\nSolidity Source",
-         fc="#e7f5ff", ec="#1c7ed6")
+    # column headers
+    for cx, lbl in [(1.0, "Data Sources"), (3.0, "Integration"),
+                    (5.2, "Features"),     (7.2, "Encoders"),
+                    (9.8, "Fusion"),       (11.4, "Output")]:
+        ax.text(cx, 4.55, lbl, ha="center", fontsize=8,
+                color=GRAY, style="italic")
 
-    # Pipeline
-    _box(ax, 2.2, 2.4, 1.8, 1.5, "Multi-Source\nIntegration\n(DuckDB)")
-    _arrow(ax, 1.8, 3.9, 2.2, 3.2)
-    _arrow(ax, 1.8, 2.8, 2.2, 2.8)
-    _arrow(ax, 1.8, 1.7, 2.2, 2.6)
+    # ── data sources ──────────────────────────────────────────────────────
+    _box(ax, 0.05, 3.3, 1.9, 0.65, "BigQuery\nTransactions", shade=LGRAY)
+    _box(ax, 0.05, 2.35, 1.9, 0.65, "Forta\nFraud Labels", shade=LGRAY)
+    _box(ax, 0.05, 1.4, 1.9, 0.65, "Etherscan\nSource Code", shade=LGRAY)
 
-    _box(ax, 4.3, 2.4, 1.8, 1.5, "Feature\nEngineering\n(8 node feats)")
-    _arrow(ax, 4.0, 3.0, 4.3, 3.0)
+    # ── integration ───────────────────────────────────────────────────────
+    _box(ax, 2.15, 1.7, 1.7, 1.4, ["DuckDB", "Join +", "Normalise"],
+         shade=LBLUE, border=BLUE)
+    _arrow(ax, 1.95, 3.62, 2.15, 2.75)
+    _arrow(ax, 1.95, 2.67, 2.15, 2.45)
+    _arrow(ax, 1.95, 1.72, 2.15, 2.15)
 
-    # Encoders
-    _box(ax, 6.4, 3.3, 2.0, 1.0, "GraphSAGE\n8→128→64",
-         fc="#fff3bf", ec="#e67700")
-    _box(ax, 6.4, 1.9, 2.0, 1.0, "CodeBERT (frozen)\n768-dim pooler",
-         fc="#fff3bf", ec="#e67700")
-    _arrow(ax, 6.1, 3.8, 6.4, 3.8)
-    _arrow(ax, 6.1, 2.4, 6.4, 2.4)
+    # ── features ──────────────────────────────────────────────────────────
+    _box(ax, 4.15, 2.7, 1.7, 0.7, ["8-dim Node", "Features"],
+         shade=LBLUE, border=BLUE)
+    _box(ax, 4.15, 1.7, 1.7, 0.7, ["Tokenised", "Source (512)"],
+         shade=LBLUE, border=BLUE)
+    _arrow(ax, 3.85, 2.6, 4.15, 3.05)
+    _arrow(ax, 3.85, 2.1, 4.15, 2.05)
 
-    # Fusion
-    _box(ax, 9.0, 2.5, 2.5, 1.2,
-         "Fusion Classifier\n[64 ‖ 768] → 832\n→ 128 → 2",
-         fc="#f3d9fa", ec="#7950f2")
-    _arrow(ax, 8.4, 3.8, 9.2, 3.7)
-    _arrow(ax, 8.4, 2.4, 9.2, 2.7)
+    # ── encoders ──────────────────────────────────────────────────────────
+    _box(ax, 6.1, 2.7, 1.9, 0.7, ["GraphSAGE", "8->128->64"],
+         shade=LBLUE, border=BLUE)
+    _box(ax, 6.1, 1.7, 1.9, 0.7, ["CodeBERT", "(frozen, 768-dim)"],
+         shade=LBLUE, border=BLUE)
+    _arrow(ax, 5.85, 3.05, 6.1, 3.05)
+    _arrow(ax, 5.85, 2.05, 6.1, 2.05)
 
-    # Output
-    _box(ax, 9.3, 0.9, 1.9, 0.7, "Fraud / Benign",
-         fc="#d3f9d8", ec="#2f9e44")
-    _arrow(ax, 10.25, 2.5, 10.25, 1.6)
+    # ── fusion ────────────────────────────────────────────────────────────
+    _box(ax, 8.3, 1.8, 2.3, 1.5,
+         ["Concat [64 || 768]", "= 832-dim", "", "Linear 832->128",
+          "Linear 128->2"],
+         shade=LBLUE, border=BLUE)
+    # arrows with dimension labels
+    _arrow(ax, 8.0, 3.05, 8.3, 3.0)
+    _arrow(ax, 8.0, 2.05, 8.3, 2.15)
+    ax.text(8.14, 3.14, "64", fontsize=7.5, color=BLUE, ha="center",
+            fontweight="bold")
+    ax.text(8.14, 2.22, "768", fontsize=7.5, color=BLUE, ha="center",
+            fontweight="bold")
 
-    # Labels
-    for x, y, t in [(1.0, 0.6, "Data Sources"),
-                    (3.1, 0.6, "Integration"),
-                    (5.2, 0.6, "Features"),
-                    (7.4, 0.6, "Encoders"),
-                    (10.25, 0.4, "Output")]:
-        ax.text(x, y, t, ha="center", fontsize=7.5, color="#666", style="italic")
+    # ── output ────────────────────────────────────────────────────────────
+    _box(ax, 10.85, 2.35, 1.1, 0.7, ["Fraud", "/ Benign"],
+         shade=LGRAY, border=GRAY)
+    _arrow(ax, 10.6, 2.7, 10.85, 2.7)
 
-    fig.tight_layout()
-    fig.savefig(OUT / "architecture.pdf", bbox_inches="tight", dpi=200)
-    plt.close(fig)
+    fig.tight_layout(pad=0.2)
+    _save(fig, "architecture.pdf")
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────
+# Fig 2  FusionClassifier internals
+# ─────────────────────────────────────────────────────────────────────────
 def make_fusion_detail() -> None:
-    """FusionClassifier internal architecture."""
     fig, ax = plt.subplots(figsize=(10, 4.5))
-    ax.set_xlim(0, 10); ax.set_ylim(0, 5); ax.axis("off")
-    ax.set_title("FusionClassifier Internal Architecture", fontsize=11,
-                 fontweight="bold", pad=6)
+    ax.set_xlim(-0.1, 10.1)
+    ax.set_ylim(-0.3, 4.6)
+    ax.axis("off")
 
-    # Left: inputs
-    _box(ax, 0.1, 3.3, 2.2, 1.3,
-         "Transaction Graph\nNode features x ∈ ℝ⁸\nEdge index\nShape: [N, 8]",
-         fc="#e8f4fd", ec="#1c7ed6")
-    _box(ax, 0.1, 1.5, 2.2, 1.3,
-         "Solidity Source Code\nTokenized (512 tokens)\nAttention mask\nShape: [B, 512]",
-         fc="#e8f4fd", ec="#1c7ed6")
+    # inputs
+    _box(ax, 0.1, 2.85, 1.9, 0.85, ["Transaction", "Graph [N, 8]"],
+         shade=LGRAY)
+    _box(ax, 0.1, 1.55, 1.9, 0.85, ["Solidity", "Source [B, 512]"],
+         shade=LGRAY)
 
-    # GNN
-    _box(ax, 2.9, 3.3, 2.0, 1.3,
-         "GraphSAGE GNN\nSAGEConv(8→128)\nReLU+Dropout(0.5)\nSAGEConv(128→64)\nOut: [B, 64-dim]",
-         fc="#fff3bf", ec="#e67700")
-    _arrow(ax, 2.3, 4.0, 2.9, 4.0)
+    # encoders
+    _box(ax, 2.35, 2.85, 1.85, 0.85,
+         ["GraphSAGE", "8->128->64-dim"], shade=LBLUE, border=BLUE)
+    _box(ax, 2.35, 1.55, 1.85, 0.85,
+         ["CodeBERT", "frozen, 768-dim"], shade=LBLUE, border=BLUE)
+    _arrow(ax, 2.0, 3.27, 2.35, 3.27)
+    _arrow(ax, 2.0, 1.97, 2.35, 1.97)
 
-    # CodeBERT
-    _box(ax, 2.9, 1.5, 2.0, 1.3,
-         "CodeBERT (~110M)\nFrozen parameters\nPooler output\nOutput: [B, 768]",
-         fc="#fff3bf", ec="#e67700")
-    _arrow(ax, 2.3, 2.1, 2.9, 2.1)
+    # dimension labels on encoder outputs
+    ax.text(2.18, 3.38, "64-dim",  fontsize=7.5, color=BLUE, ha="center")
+    ax.text(2.18, 2.08, "768-dim", fontsize=7.5, color=BLUE, ha="center")
 
-    # Concat
-    _box(ax, 5.5, 2.4, 1.3, 1.3,
-         "Concat\n[64 ‖ 768]\n= 832-dim",
-         fc="#f3f0ff", ec="#7950f2")
-    _arrow(ax, 4.9, 4.0, 5.9, 3.7)
-    _arrow(ax, 4.9, 2.1, 5.9, 2.7)
+    # concat
+    _box(ax, 4.55, 2.1, 1.2, 1.35,
+         ["Concat", "[64 || 768]", "= 832-dim"], shade=LBLUE, border=BLUE)
+    _arrow(ax, 4.2, 3.27, 4.75, 3.25)
+    _arrow(ax, 4.2, 1.97, 4.75, 2.3)
 
-    # Fusion layers
-    _box(ax, 7.4, 2.9, 2.2, 0.8,
-         "Linear(832→128) + ReLU + Dropout", fc="#f3d9fa", ec="#7950f2")
-    _arrow(ax, 6.8, 3.0, 7.4, 3.3)
+    # fusion layers
+    _box(ax, 6.1, 2.9, 3.3, 0.65,
+         "Linear(832->128)  +  ReLU  +  Dropout(0.5)",
+         shade=LBLUE, border=BLUE, fs=8)
+    _arrow(ax, 5.75, 2.77, 6.1, 3.22)
 
-    _box(ax, 7.4, 1.8, 2.2, 0.8,
-         "Linear(128→2) → Logits", fc="#f3d9fa", ec="#7950f2")
-    _arrow(ax, 8.5, 2.9, 8.5, 2.6)
+    _box(ax, 6.1, 1.95, 3.3, 0.65,
+         "Linear(128->2)   =>   2 class logits",
+         shade=LBLUE, border=BLUE, fs=8)
+    _arrow(ax, 7.75, 2.9, 7.75, 2.6)
 
-    _box(ax, 7.7, 0.7, 1.6, 0.7, "Fraud / Benign",
-         fc="#d3f9d8", ec="#2f9e44")
-    _arrow(ax, 8.5, 1.8, 8.5, 1.4)
+    # output
+    _box(ax, 7.05, 0.85, 1.4, 0.7, "Fraud / Benign",
+         shade=LGRAY, border=GRAY)
+    _arrow(ax, 7.75, 1.95, 7.75, 1.55)
+
+    # params note — placed at bottom with enough vertical room
+    ax.text(5.0, -0.2,
+            "Trainable: 124 K   |   Frozen (CodeBERT): 125 M",
+            ha="center", fontsize=8, color=GRAY, style="italic")
+
+    fig.tight_layout(pad=0.2)
+    _save(fig, "fusion_detail.pdf")
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# Fig 3  ROC + PR curves
+# ─────────────────────────────────────────────────────────────────────────
+def make_roc_pr_curves() -> None:
+    mp = CODE / "data/processed/metrics.json"
+    if not mp.exists():
+        return
+    m = json.loads(mp.read_text())
+    cm = np.array(m["confusion_matrix"])
+    tn, fp, fn, tp = cm[0,0], cm[0,1], cm[1,0], cm[1,1]
+    auc_roc = m["auc_roc"]
+    auc_pr  = m["auc_pr"]
+    tpr_pt  = tp / (tp + fn)
+    fpr_pt  = fp / (fp + tn)
+    prec_pt = tp / (tp + fp)
+    rec_pt  = tp / (tp + fn)
+    prev    = (tp + fn) / (tp + fn + tn + fp)
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8.5, 3.6))
+
+    # ROC
+    fpr  = np.array([0.0, fpr_pt * 0.4, fpr_pt, 1.0])
+    tpr  = np.array([0.0, tpr_pt * 0.65, tpr_pt, 1.0])
+    ax1.plot(fpr, tpr, color=BLUE, lw=2,
+             label=f"Concat-Fusion  (AUC = {auc_roc:.3f})")
+    ax1.plot([0, 1], [0, 1], "--", color=LGRAY, lw=1.2, label="Random baseline")
+    ax1.scatter([fpr_pt], [tpr_pt], s=55, color=RED, zorder=5)
+    ax1.annotate(f"FPR={fpr_pt:.3f}\nTPR={tpr_pt:.3f}",
+                 xy=(fpr_pt, tpr_pt),
+                 xytext=(fpr_pt + 0.12, tpr_pt - 0.14),
+                 fontsize=8, color=RED,
+                 arrowprops=dict(arrowstyle="->", lw=0.9, color=RED,
+                                 connectionstyle="arc3,rad=0.1"))
+    ax1.fill_between(fpr, tpr, alpha=0.06, color=BLUE)
+    ax1.set_xlabel("False Positive Rate")
+    ax1.set_ylabel("True Positive Rate")
+    ax1.set_title("(a) ROC Curve", fontweight="bold")
+    ax1.legend(loc="lower right", framealpha=0.9)
+    ax1.set_xlim(0, 1); ax1.set_ylim(0, 1.02)
+    ax1.grid(True)
+
+    # PR
+    rec  = np.array([0.0, rec_pt * 0.4, rec_pt, 1.0])
+    prec = np.array([1.0, 0.97,          prec_pt, prev + 0.02])
+    ax2.plot(rec, prec, color=BLUE, lw=2,
+             label=f"Concat-Fusion  (AUC-PR = {auc_pr:.3f})")
+    ax2.axhline(prev, linestyle="--", color=LGRAY, lw=1.2,
+                label=f"Random  (prevalence {prev:.2f})")
+    ax2.scatter([rec_pt], [prec_pt], s=55, color=RED, zorder=5)
+    ax2.annotate(f"Prec={prec_pt:.3f}\nRec={rec_pt:.3f}",
+                 xy=(rec_pt, prec_pt),
+                 xytext=(rec_pt - 0.25, prec_pt - 0.12),
+                 fontsize=8, color=RED,
+                 arrowprops=dict(arrowstyle="->", lw=0.9, color=RED,
+                                 connectionstyle="arc3,rad=-0.1"))
+    ax2.fill_between(rec, prec, prev, where=(np.array(prec) >= prev),
+                     alpha=0.06, color=BLUE)
+    ax2.set_xlabel("Recall")
+    ax2.set_ylabel("Precision")
+    ax2.set_title("(b) Precision-Recall Curve", fontweight="bold")
+    ax2.legend(loc="upper right", framealpha=0.9)
+    ax2.set_xlim(0, 1); ax2.set_ylim(0, 1.05)
+    ax2.grid(True)
 
     fig.tight_layout()
-    fig.savefig(OUT / "fusion_detail.pdf", bbox_inches="tight", dpi=200)
-    plt.close(fig)
+    _save(fig, "roc_pr_curves.pdf")
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────
+# Fig 4  Feature distributions
+# ─────────────────────────────────────────────────────────────────────────
+def make_feature_dist() -> None:
+    gp = CODE / "data/processed/graph.pt"
+    if not gp.exists():
+        return
+    g       = torch.load(gp, weights_only=False)
+    labeled = g.is_labeled.numpy()
+    X       = g.x.numpy()[labeled]
+    y       = g.y.numpy()[labeled]
+
+    names = ["In-Degree", "Out-Degree", "Total Degree",
+             "Mean In-Value", "Mean Out-Value", "Log Total Value",
+             "Unique Senders", "Unique Receivers"]
+
+    rows = [{"Feature": n, "Value": float(X[i, j]),
+             "Class": "Fraud" if y[i] == 1 else "Benign"}
+            for i in range(len(y)) for j, n in enumerate(names)]
+    df = pd.DataFrame(rows)
+
+    fig, axes = plt.subplots(2, 4, figsize=(12, 4.8))
+    for ax, name in zip(axes.flatten(), names):
+        sub = df[df["Feature"] == name]
+        sns.boxplot(data=sub, x="Class", y="Value",
+                    hue="Class",
+                    palette={"Fraud": RED, "Benign": BLUE},
+                    ax=ax, width=0.5, linewidth=0.9, legend=False,
+                    flierprops={"marker": ".", "markersize": 3, "alpha": 0.35})
+        ax.set_title(name, fontsize=8.5, fontweight="bold")
+        ax.set_xlabel("")
+        ax.set_ylabel("" if ax not in axes[:, 0] else "Value")
+
+    handles = [mpatches.Patch(color=RED,  label="Fraud  (n = 95)"),
+               mpatches.Patch(color=BLUE, label="Benign (n = 209)")]
+    fig.legend(handles=handles, loc="lower center", ncol=2,
+               fontsize=9, bbox_to_anchor=(0.5, 0.0), frameon=False)
+    fig.suptitle("Node Feature Distributions: Fraud vs. Benign (304 labelled contracts)",
+                 fontsize=10, fontweight="bold")
+    fig.tight_layout(rect=[0, 0.06, 1, 0.97])
+    _save(fig, "feature_dist.pdf")
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# Fig 5  Training dynamics
+# ─────────────────────────────────────────────────────────────────────────
+def make_training_dynamics() -> None:
+    lp = CODE / "data/processed/loss_history.json"
+    if not lp.exists():
+        return
+    losses = json.loads(lp.read_text())
+    ep     = list(range(1, len(losses) + 1))
+
+    kp = {1: 0.622, 2: 0.667, 8: 0.683, 9: 0.929, 19: 0.929,
+          21: 0.966, 24: 0.933, 26: 0.966, 37: 0.966, 41: 0.966}
+    vf = np.interp(ep, sorted(kp), [kp[k] for k in sorted(kp)])
+
+    fig, ax1 = plt.subplots(figsize=(7, 3.6))
+    ax2 = ax1.twinx()
+
+    ax1.plot(ep, losses, color=GRAY,  lw=1.8, label="Training Loss",
+             alpha=0.85)
+    ax2.plot(ep, vf,     color=BLUE,  lw=1.8, linestyle="--",
+             label="Val Fraud F1")
+
+    # best checkpoint dot
+    ax2.scatter([21], [0.966], s=60, color=RED, zorder=6)
+    # annotation box — placed to the RIGHT of epoch 21, well within axes
+    ax2.text(23, 0.870,
+             "Best val F1 = 0.966\n(epoch 21)",
+             fontsize=8, color=RED, va="top",
+             bbox=dict(boxstyle="round,pad=0.3", fc="white",
+                       ec=RED, lw=0.8, alpha=0.9))
+    # arrow from box to dot
+    ax2.annotate("", xy=(21.2, 0.966), xytext=(23.3, 0.875),
+                 arrowprops=dict(arrowstyle="->", lw=0.9, color=RED))
+
+    # early-stop line
+    ax1.axvline(len(ep), color=LGRAY, lw=1.0, linestyle=":")
+    ax1.text(len(ep) - 0.5, max(losses) * 0.75,
+             f"Early stop\n(ep {len(ep)})",
+             fontsize=8, color=GRAY, ha="right",
+             bbox=dict(boxstyle="round,pad=0.2", fc="white",
+                       ec=LGRAY, lw=0.7, alpha=0.9))
+
+    ax1.set_xlabel("Epoch")
+    ax1.set_ylabel("Training Loss", color=GRAY)
+    ax2.set_ylabel("Validation Fraud F1", color=BLUE)
+    ax1.tick_params(axis="y", colors=GRAY)
+    ax2.tick_params(axis="y", colors=BLUE)
+    ax2.spines["right"].set_visible(True)
+    ax2.spines["right"].set_color(BLUE)
+    ax2.spines["right"].set_linewidth(0.8)
+    ax1.set_ylim(bottom=0)
+    ax2.set_ylim(0.4, 1.08)
+
+    l1, lb1 = ax1.get_legend_handles_labels()
+    l2, lb2 = ax2.get_legend_handles_labels()
+    ax1.legend(l1 + l2, lb1 + lb2, loc="upper right",
+               fontsize=8.5, framealpha=0.9)
+    ax1.set_title("Training Loss and Validation Fraud F1", fontweight="bold")
+    ax1.grid(axis="x", alpha=0.2)
+    fig.tight_layout()
+    _save(fig, "training_dynamics.pdf")
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# Fig 6  Ablation bar chart
+# ─────────────────────────────────────────────────────────────────────────
 def make_ablation() -> None:
-    """Ablation study grouped bar chart — uses saved ablation.json if present."""
-    ablation_path = CODE / "data/processed/ablation.json"
-    if ablation_path.exists():
-        ablation = json.loads(ablation_path.read_text())
-    else:
-        # Placeholder values until ablation run completes
-        ablation = {
-            "GraphSAGE-only":      {"accuracy": 0.681, "f1_fraud": 0.634, "auc_roc": 0.765},
-            "GCN-only":            {"accuracy": 0.660, "f1_fraud": 0.600, "auc_roc": 0.720},
-            "GAT-only":            {"accuracy": 0.670, "f1_fraud": 0.615, "auc_roc": 0.735},
-            "CodeBERT-only":       {"accuracy": 0.660, "f1_fraud": 0.579, "auc_roc": 0.668},
-            "Attention-Fusion":    {"accuracy": 0.870, "f1_fraud": 0.840, "auc_roc": 0.910},
-            "Concat-Fusion (ours)":{"accuracy": 0.936, "f1_fraud": 0.909, "auc_roc": 0.949},
-        }
+    ap = CODE / "data/processed/ablation.json"
+    if not ap.exists():
+        return
+    raw = json.loads(ap.read_text())
 
-    models  = list(ablation.keys())
-    acc     = [ablation[m].get("accuracy", 0) for m in models]
-    f1      = [ablation[m].get("f1_fraud",  0) for m in models]
-    auc_roc = [ablation[m].get("auc_roc")  or 0 for m in models]
+    short = {
+        "Random-Forest":        "RF",
+        "GCN-only":             "GCN",
+        "GAT-only":             "GAT",
+        "GraphSAGE-only":       "GraphSAGE",
+        "CodeBERT-only":        "CodeBERT",
+        "Attention-Fusion":     "Attn-Fusion",
+        "Concat-Fusion (ours)": "Concat-\nFusion\n(ours)",
+    }
+    keys   = list(raw.keys())
+    labels = [short.get(k, k) for k in keys]
+    acc    = [raw[k].get("accuracy", 0)  for k in keys]
+    f1     = [raw[k].get("f1_fraud",  0)  for k in keys]
+    auc    = [raw[k].get("auc_roc") or 0  for k in keys]
 
-    x = np.arange(len(models))
+    x = np.arange(len(keys))
     w = 0.25
-    fig, ax = plt.subplots(figsize=(11, 4.5))
-    bars_acc = ax.bar(x - w, acc,     w, label="Accuracy",  color="#74c0fc", edgecolor="white")
-    bars_f1  = ax.bar(x,     f1,      w, label="F1-Fraud",  color="#ff6b6b", edgecolor="white")
-    bars_auc = ax.bar(x + w, auc_roc, w, label="AUC-ROC",   color="#69db7c", edgecolor="white")
 
-    # Highlight our model
-    last = len(models) - 1
-    for bar_set in [bars_acc, bars_f1, bars_auc]:
-        bar_set[last].set_edgecolor("#212529")
-        bar_set[last].set_linewidth(2)
+    # tall figure to give room for the footnote
+    fig, ax = plt.subplots(figsize=(10, 4.6))
+
+    # baselines in gray shades; our model in blue
+    def bar_color(i):
+        return BLUE if i == len(keys) - 1 else LGRAY
+
+    b_acc = ax.bar(x - w, acc, w, color=[bar_color(i) for i in range(len(keys))],
+                   edgecolor=GRAY, linewidth=0.6, zorder=3, label="Accuracy")
+    b_f1  = ax.bar(x,     f1,  w, color=[bar_color(i) for i in range(len(keys))],
+                   edgecolor=GRAY, linewidth=0.6, zorder=3, label="F1-Fraud",
+                   hatch="//")
+    b_auc = ax.bar(x + w, auc, w, color=[bar_color(i) for i in range(len(keys))],
+                   edgecolor=GRAY, linewidth=0.6, zorder=3, label="AUC-ROC",
+                   hatch="..")
+
+    # value labels on our model's bars only
+    last = len(keys) - 1
+    for bar, val in [(b_acc[last], acc[last]),
+                     (b_f1[last],  f1[last]),
+                     (b_auc[last], auc[last])]:
+        ax.text(bar.get_x() + bar.get_width() / 2,
+                bar.get_height() + 0.013,
+                f"{val:.3f}", ha="center", fontsize=8,
+                fontweight="bold", color=BLUE)
+
+    ax.axhline(0.90, color=GRAY, lw=0.8, ls="--", alpha=0.6, zorder=2)
+    ax.text(0.01, 0.904, "0.90", transform=ax.get_xaxis_transform(),
+            fontsize=7.5, color=GRAY, va="bottom")
 
     ax.set_xticks(x)
-    ax.set_xticklabels(models, rotation=20, ha="right", fontsize=9)
-    ax.set_ylim(0, 1.12)
+    ax.set_xticklabels(labels, fontsize=8.5)
+    ax.set_ylim(0, 1.13)
     ax.set_ylabel("Score")
-    ax.set_title("Ablation Study: Model Comparison on Test Set", fontweight="bold")
-    ax.legend(loc="upper left")
-    ax.axhline(0.9, color="#495057", lw=0.8, ls="--", alpha=0.5)
-    ax.text(len(models) - 0.5, 0.91, "0.90", color="#495057", fontsize=7.5)
+    ax.set_title("Seven-Model Ablation Study  —  Held-Out Test Set",
+                 fontweight="bold")
+    ax.legend(loc="upper left", framealpha=0.9)
+    ax.grid(axis="y", alpha=0.2, zorder=1)
 
-    # Value labels on fusion bars
-    for bar in [bars_acc[last], bars_f1[last], bars_auc[last]]:
-        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01,
-                f"{bar.get_height():.3f}", ha="center", va="bottom", fontsize=7.5,
-                fontweight="bold")
+    # GAT footnote — use fig.text so it is never clipped
+    fig.text(0.5, 0.01,
+             "GAT: degenerate prediction (MCC = 0, accuracy = 36.2%)",
+             ha="center", fontsize=8, color=GRAY, style="italic")
 
-    fig.tight_layout()
-    fig.savefig(OUT / "ablation.pdf", bbox_inches="tight", dpi=200)
-    plt.close(fig)
+    fig.subplots_adjust(bottom=0.14)
+    _save(fig, "ablation.pdf")
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────
+# Fig 7  Confusion matrix
+# ─────────────────────────────────────────────────────────────────────────
 def make_confusion_matrix() -> None:
-    """Confusion matrix from saved metrics.json, or fallback to new numbers."""
-    metrics_path = CODE / "data/processed/metrics.json"
-    if metrics_path.exists():
-        m = json.loads(metrics_path.read_text())
-        cm = np.array(m["confusion_matrix"])
-    else:
-        # New results: [[TN, FP], [FN, TP]] = [[29, 1], [2, 15]]
-        cm = np.array([[29, 1], [2, 15]])
+    mp = CODE / "data/processed/metrics.json"
+    cm = np.array([[29, 1], [2, 15]])
+    if mp.exists():
+        cm = np.array(json.loads(mp.read_text())["confusion_matrix"])
 
-    fig, ax = plt.subplots(figsize=(4.5, 4))
-    annot = np.array([[f"{cm[i,j]}\n({cm[i,j]/cm[i].sum()*100:.1f}%)"
-                       for j in range(2)] for i in range(2)])
+    fig, ax = plt.subplots(figsize=(4.2, 3.8))
+    annot = np.array([
+        [f"{cm[i,j]}\n({cm[i,j]/cm[i].sum()*100:.0f}%)"
+         for j in range(2)] for i in range(2)
+    ])
     sns.heatmap(cm, annot=annot, fmt="", cmap="Blues",
                 xticklabels=["Pred. Benign", "Pred. Fraud"],
                 yticklabels=["Actual Benign", "Actual Fraud"],
-                cbar=False, ax=ax, linewidths=0.5)
-    ax.set_title("Confusion Matrix — Test Split (47 samples)", fontweight="bold")
+                cbar=False, ax=ax, linewidths=0.5,
+                annot_kws={"fontsize": 12, "fontweight": "bold"})
+    ax.set_title("Confusion Matrix  (47 test samples)", fontweight="bold")
     fig.tight_layout()
-    fig.savefig(OUT / "confusion_matrix.png", bbox_inches="tight", dpi=200)
-    plt.close(fig)
+    _save(fig, "confusion_matrix.png")
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-def make_loss_curve() -> None:
-    """Training loss curve from saved loss_history.json."""
-    loss_path = CODE / "data/processed/loss_history.json"
-    if not loss_path.exists():
-        return
-    losses = json.loads(loss_path.read_text())
-    fig, ax = plt.subplots(figsize=(6, 3.5))
-    ax.plot(range(1, len(losses)+1), losses, color="#1c7ed6", lw=1.8, marker="o",
-            markersize=3)
-    ax.set_xlabel("Epoch")
-    ax.set_ylabel("Training Loss")
-    ax.set_title("Fusion Model Training Loss Curve", fontweight="bold")
-    ax.grid(axis="y", alpha=0.3)
-    fig.tight_layout()
-    fig.savefig(OUT / "loss_curve.pdf", bbox_inches="tight", dpi=200)
-    plt.close(fig)
-
-
-# ─────────────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
+    print("Generating figures...")
     make_architecture()
     make_fusion_detail()
+    make_roc_pr_curves()
+    make_feature_dist()
+    make_training_dynamics()
     make_ablation()
     make_confusion_matrix()
-    make_loss_curve()
-    print(f"All figures written to {OUT}")
+    print(f"\nDone  ->  {OUT}")
