@@ -38,36 +38,33 @@
 \maketitle
 
 \begin{abstract}
-Financial fraud on Ethereum---encompassing phishing, Ponzi schemes,
-rug-pulls, and smart-contract exploits---inflicts billions of dollars in
-annual losses that single-modality detectors cannot adequately address.
-Graph-based detectors capture transactional relationships but are blind
-to the semantic intent encoded in contract source code; code-based
-detectors expose vulnerabilities in isolation but ignore the behavioural
-context of the broader transaction network.  We present a \emph{hybrid
-GNN-LLM fusion architecture} that couples a two-layer GraphSAGE network
-over a balanced Ethereum transaction graph with a frozen CodeBERT encoder
-over verified Solidity source code.  Node features are enriched beyond
-simple degree counts to include transaction-value statistics and
-unique-counterparty counts, providing eight complementary signals per
-address.  A reproducible four-phase pipeline builds a labelled graph of
-\num{239742} transactions across \num{85680} unique addresses by seeding
-from 660 addresses---156 verified victim contracts from DeFiHackLabs
-proof-of-concept exploits (primary fraud source, 94.5\% of fraud labels)
-and 504 blue-chip protocol contracts (benign)---augmented by Forta
-Network labels and Etherscan verified Solidity source, yielding
-\num{304} contracts with both source code and ground-truth labels.  The fusion classifier concatenates a
-64-dimensional graph embedding with a 768-dimensional code embedding and
-projects through a 128-dimensional bottleneck.  On a held-out test split,
-our model attains an \textbf{accuracy of 93.6\%}, a \textbf{fraud
-F1-score of 0.909}, an \textbf{AUC-ROC of 0.961}, and an
-\textbf{AUC-PR of 0.959}---the highest F1-Fraud and MCC (0.861) across
-all seven evaluated models including GraphSAGE-only (F1\,=\,0.636),
-GCN-only, GAT-only, CodeBERT-only, attention-based fusion, and a
-Random Forest baseline over raw node features.  A comprehensive ablation
-study additionally compares concatenation-based and attention-based
-fusion mechanisms.  We release the full codebase, curated seed arrays,
-and a documented data pipeline to support reproducible research.
+Detecting fraud in Ethereum smart contracts requires both structural and
+semantic analysis: graph methods identify suspicious transaction patterns
+but are blind to malicious code logic, while code methods expose
+vulnerabilities but ignore the network context in which contracts
+operate.  We present a \emph{hybrid GNN-LLM fusion architecture} that
+analyses these two complementary modalities in parallel, coupling a
+two-layer GraphSAGE network over a balanced Ethereum transaction graph
+with a frozen CodeBERT encoder over verified Solidity source code.  Node
+features are enriched beyond simple degree counts to include eight
+signals per address: in/out-degree, total degree, mean in/out transaction
+value, log-total Wei volume, and unique in/out counterparty counts.  A
+reproducible four-phase pipeline seeds from 660 explicitly curated
+addresses---156 verified victim contracts from DeFiHackLabs
+proof-of-concept exploits (94.5\% of fraud labels) and 504 blue-chip
+protocol contracts---and expands through BigQuery balanced sampling to
+a graph of \num{85680} nodes and \num{239742} transactions, of which
+\num{304} contracts carry both verified Solidity source and a
+ground-truth label.  The fusion classifier concatenates a 64-dimensional
+graph embedding with a 768-dimensional code embedding and projects
+through a 128-dimensional bottleneck.  On a held-out test split, our
+model attains \textbf{accuracy 93.6\%}, \textbf{fraud F1-score 0.909},
+\textbf{AUC-ROC 0.961}, and \textbf{AUC-PR 0.959}---the highest
+F1-Fraud and MCC (0.861) across all seven evaluated models.  A
+comprehensive ablation study compares GraphSAGE, GCN, GAT, CodeBERT-only,
+attention-based fusion, and a Random Forest baseline, empirically
+justifying each architectural and feature-engineering choice.  We release
+the full codebase, explicit seed arrays, and a documented pipeline.
 \end{abstract}
 
 \begin{IEEEkeywords}

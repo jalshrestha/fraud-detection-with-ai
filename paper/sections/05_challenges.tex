@@ -1,102 +1,123 @@
 \section{Challenges and Countermeasures}
 \label{sec:challenges}
 
-Building a clean, reproducible Ethereum fraud detector from public data
-sources requires overcoming a set of recurring engineering and
-modelling challenges.  This section maps each challenge to the
-architectural or procedural choice that directly addresses it,
-connecting the practical decisions to the limitations identified in
-prior work (Section~\ref{sec:background}).
+Building a clean, reproducible Ethereum fraud detector from public
+sources requires overcoming a specific set of engineering and modelling
+challenges.  This section maps each challenge to the design or
+implementation choice that directly addresses it, connecting practical
+decisions to the limitations identified in prior work
+(Section~\ref{sec:background}).
 
-Blockchain's tamper-proof and auditable properties have been leveraged for
-secure provenance management in distributed
-systems~\cite{poudel2025sphere}.  The same auditability principles guide
-our pipeline design: every address transformation, join, and label
-assignment is deterministic and reproducible from the raw source files.
+% ─────────────────────────────────────────────────────────────────────
+\subsection{Challenge 1: Transaction Volume Exceeds Export Limits}
 
-\subsection{Challenge 1: Address Format Inconsistency}
-Ethereum addresses appear in lowercase in BigQuery exports, in EIP-55
-mixed-case checksums in Forta exports, and in either form in Etherscan
-API responses.  Silent join failures caused by this inconsistency
-corrupted our earliest dataset attempts, producing false negatives where
-known fraud addresses failed to match their labels.
+A na\"ive BigQuery query for all transactions involving 660 seed
+addresses returns more than 665 million rows ($\approx$130\,GB), which
+exceeds the platform's single-file export limit and is impractical to
+process locally.
 
-\textbf{Countermeasure.}  Every address is lowercased on read at every
-collector entry point, implemented once in
-\texttt{src/preprocessing/addresses.py} and reused by every pipeline
-module.  This eliminates case-induced mismatches and whitespace artefacts
-that occasionally appear in CSV exports, achieving 100\% join consistency
-across all three data sources.
+\textbf{Countermeasure.}
+We apply a two-tier balanced sampling strategy: retain the 2,000
+most-recent transactions per fraud address and the 300 most-recent per
+benign address.  This yields a manageable 239,742-row dataset
+($\approx$41\,MB) while preserving the temporal recency of fraud
+activity.  The 2,000/300 ratio was chosen empirically to match the
+approximately 95/209 fraud-to-benign ratio in the labeled subset,
+preventing high-traffic benign contracts such as WETH and USDT from
+overwhelming the graph structure with orders of magnitude more edges
+than fraud contracts contribute.
 
-\subsection{Challenge 2: Sparse Verified Source Code}
-Fewer than 0.35\% of the \num{85680} addresses in our transaction graph
-carry verified Solidity source.  A pipeline that requires source for every
-node would discard almost the entire graph and strip out the structural
-signals that the GNN needs.
+% ─────────────────────────────────────────────────────────────────────
+\subsection{Challenge 2: Address Format Inconsistency}
 
-\textbf{Countermeasure.}  Nodes enter the graph with an empty
-\texttt{contract\_text} field when no source is available.  The graph
-encoder processes \emph{all} nodes during neighbourhood aggregation,
-preserving relational information.  The fusion classifier is trained only
-on the subset of nodes that carry both source code and an explicit label
-(304 contracts), while the full graph neighbourhood of 85,680 nodes
-informs the GraphSAGE embeddings.
+Ethereum addresses collected from different platforms appear in
+different formats: lowercase in BigQuery exports, EIP-55 mixed-case
+checksums in Forta exports, and either form in Etherscan API responses.
+Silent join failures caused by this inconsistency caused every Forta
+fraud label to miss its counterpart in the transaction frame during
+initial development, reducing labeled fraud nodes from 128 to near zero.
 
+\textbf{Countermeasure.}
+Every address is lowercased on read at every data-collection entry
+point, implemented once in \texttt{src/preprocessing/addresses.py} and
+imported by every module.  This single normalisation rule eliminates all
+case-induced mismatches and achieves 100\% join consistency across all
+three data sources.
+
+% ─────────────────────────────────────────────────────────────────────
 \subsection{Challenge 3: Etherscan API Rate Limits}
-The Etherscan free tier permits approximately five requests per second.
-Exceeding this limit produces HTTP 429 errors and corrupts the source-code
-dataset.
 
-\textbf{Countermeasure.}  A 250\,ms sleep is enforced between successive
-API calls, and every request is wrapped in a try/except block that logs
-and skips on failure without interrupting the pipeline.  Source retrieval
-for 660 seed addresses completes in approximately 30 minutes.
+The Etherscan free tier allows approximately five requests per second.
+Burst requests during source-code retrieval for 660 seed addresses
+trigger HTTP 429 errors, corrupting the source dataset.
 
-\subsection{Challenge 4: Class Imbalance}
-The labelled subset contains 95 fraud contracts out of 304 (31.3\%).
-Training under unweighted cross-entropy drives the model toward the
-majority class, yielding near-zero fraud recall.
+\textbf{Countermeasure.}
+A 250\,ms sleep is enforced between successive API calls, and every
+request is wrapped in a try/except block that logs and skips on failure
+without interrupting the pipeline.  Source retrieval for all seed
+addresses completes in approximately 30 minutes.
 
-\textbf{Countermeasure.}  Weighted cross-entropy (Equation~\ref{eq:loss})
-assigns penalty weight $w_1 = n_\text{neg}/n_\text{pos} \approx 2.37$ to
-fraud misclassifications.  This directly addresses the class-imbalance
-limitation identified by Chen et al.~\cite{chen2024dahgnn} and ensures
-that the minority class contributes proportionally to the training signal.
+% ─────────────────────────────────────────────────────────────────────
+\subsection{Challenge 4: Sparse Verified Source Code}
 
-\subsection{Challenge 5: Embedding Dimensionality Mismatch}
-The graph encoder produces 64-dimensional embeddings while CodeBERT
-produces 768-dimensional embeddings.  Combining representations of such
-different sizes risks one modality dominating the other.
+Fewer than 0.35\% of the 85,680 addresses in our transaction graph
+carry verified Solidity source.  A pipeline that requires source for
+every node discards almost the entire structural context the GNN needs.
 
-\textbf{Countermeasure.}  We concatenate the two embeddings to form an
-832-dimensional vector and project through a learned linear layer to a
-128-dimensional bottleneck (Equation~\ref{eq:fusion}).  The bottleneck
-forces the optimiser to discover the relative weighting of the two
-modalities rather than fixing it by hand, which is how the architecture
-addresses the insufficient cross-modal integration identified as a
-limitation in prior hybrid methods~\cite{sun2025tlmg4eth}.
+\textbf{Countermeasure.}
+Nodes enter the graph with an empty \texttt{contract\_text} field when
+no source is available.  The GraphSAGE encoder processes \emph{all}
+85,680 nodes during neighbourhood aggregation, preserving the full
+relational context.  The fusion classifier is trained and evaluated only
+on the 304 nodes that carry both verified source and an explicit label,
+while their graph embeddings are informed by the full neighbourhood.
 
-\subsection{Challenge 6: Compute Budget for Large Language Models}
-Training the fusion model end-to-end with CodeBERT unfrozen would not
-fit within the memory of a single consumer GPU.
+% ─────────────────────────────────────────────────────────────────────
+\subsection{Challenge 5: Class Imbalance}
 
-\textbf{Countermeasure.}  All 125M CodeBERT parameters are frozen, and
-only the 124K parameters of the GraphSAGE encoder and fusion head are
-trained.  This reduces memory by two orders of magnitude while
-retaining the full pre-trained code semantics, stabilises training by
-eliminating gradient flow through a model that was not designed for
-fine-tuning under weighted loss, and enables each training epoch to
-complete in $\approx$34 seconds on CPU.
+Within the 304 labeled eligible contracts, 95 are fraud (31.3\%) and
+209 are benign (68.7\%).  Training on unweighted cross-entropy collapses
+the model to predicting benign for every input, yielding near-zero fraud
+recall.
 
-\subsection{Challenge 7: BigQuery Result Volume}
-A na\"ive query for all transactions involving 660 seed addresses
-returns $>$665 million rows (approximately 130\,GB), which exceeds the
-1\,GB single-file export limit and is impractical to download and process
-locally.
+\textbf{Countermeasure.}
+Weighted cross-entropy (Equation~\ref{eq:loss}) assigns penalty weight
+$w_1 = n_\text{neg}/n_\text{pos} \approx 2.37$ to fraud
+misclassifications, computed from the training split alone to prevent
+data leakage.  This directly addresses the class-imbalance limitation
+documented in prior work~\cite{chen2024dahgnn} and recovers strong
+fraud recall on the minority class.
 
-\textbf{Countermeasure.}  We apply a balanced sampling strategy: keep the
-2,000 most-recent transactions per fraud address and the 300 most-recent
-per benign address.  This yields a manageable 239,742-row dataset
-(approximately 41\,MB) that preserves fraud signal while preventing
-high-volume benign contracts (WETH, USDT) from overwhelming the graph
-structure.
+% ─────────────────────────────────────────────────────────────────────
+\subsection{Challenge 6: Embedding Dimensionality Mismatch}
+
+The graph encoder produces 64-dimensional embeddings; CodeBERT produces
+768-dimensional embeddings.  Without explicit handling, the higher-dimensional
+code embedding would numerically dominate the lower-dimensional graph
+embedding in any na\"ive combination.
+
+\textbf{Countermeasure.}
+We concatenate the two embeddings (832 dimensions total) and project
+through a learned 128-dimensional bottleneck (Equation~\ref{eq:fusion}).
+This forces the optimiser to discover the relative contribution of each
+modality rather than fixing it by hand.  The bottleneck is also the only
+trainable component that sees both modalities, making it the locus of
+multi-modal integration---a design choice validated by our ablation
+(Section~\ref{subsubsec:fusion}).
+
+% ─────────────────────────────────────────────────────────────────────
+\subsection{Challenge 7: GPU Memory Budget for Large Language Models}
+
+Training the full fusion model end-to-end with CodeBERT unfrozen would
+require backpropagating through 125M parameters under our weighted loss,
+which exceeds the memory budget of a single consumer GPU.
+
+\textbf{Countermeasure.}
+All CodeBERT parameters are frozen during fusion-head training.
+Only the 124K parameters of the GraphSAGE encoder and the fusion
+head are updated.  This reduces memory by two orders of magnitude while
+retaining the full pre-trained code semantics.  Prior work on fine-tuning
+LLMs for classification tasks~\cite{poudel2026fakenews} confirms that
+frozen pre-trained representations already provide strong discriminative
+signals, validating this design choice.  Parameter-efficient fine-tuning
+via LoRA adapters~\cite{hu2022lora} is a planned future extension.

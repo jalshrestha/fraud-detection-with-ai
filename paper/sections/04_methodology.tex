@@ -242,16 +242,18 @@ where $w_0 = 1.0$ and $w_1 = n_{\text{neg}} / n_{\text{pos}} \approx
 \subsubsection{Optimiser and Scheduler}
 We use AdamW~\cite{loshchilov2019adamw} with learning rate $10^{-3}$ and
 weight decay $10^{-4}$.  A cosine annealing
-schedule~\cite{loshchilov2017cosine} decays the learning rate to
-$10^{-5}$ over a 100-epoch budget.  Gradient clipping at norm 1.0
-suppresses early-epoch instability.
+schedule~\cite{loshchilov2017cosine} is configured over a maximum
+100-epoch budget, decaying the learning rate from $10^{-3}$ to
+$10^{-5}$.  In practice, early stopping terminates training well before
+epoch 100.  Gradient clipping at norm 1.0 suppresses the early-epoch
+instability that occurs before the class-weighted loss stabilises.
 
 \subsubsection{Early Stopping and Model Selection}
 Training halts when the validation fraud F1-score fails to improve for
 20 consecutive epochs.  The checkpoint with the highest validation fraud
 F1 is reloaded before test-set evaluation; only this checkpoint is
-reported.  Our fusion model early-stopped at epoch 41 (best checkpoint at epoch 21) with best
-validation F1 = 0.966.
+reported.  Our fusion model achieved its best validation F1 of
+\textbf{0.966} at epoch 21 and early-stopped at epoch 41.
 
 \subsubsection{Data Split}
 The 304 eligible contracts (those with both verified source and an

@@ -4,9 +4,9 @@
 \subsection{Technology Stack}
 
 Table~\ref{tab:stack} summarises the technology stack.  The system is
-implemented entirely in Python 3.12 on both macOS and Linux (x86-64/ARM64), and
-is fully compatible with Linux CUDA environments for GPU-accelerated
-training.
+implemented in Python 3.12 and is compatible with both macOS and Linux
+(x86-64/ARM64) environments; GPU acceleration is supported on any
+CUDA-enabled machine.
 
 \begin{table}[t]
 \centering
@@ -19,61 +19,65 @@ Component & Library / Service \\
 Deep learning       & PyTorch 2.2.2 \\
 Graph neural nets   & PyTorch Geometric 2.5.1 (SAGEConv, GCNConv, GATConv) \\
 Language model      & Hugging Face Transformers 4.41.0 (CodeBERT) \\
-Data integration    & DuckDB 0.10 \\
-Tabular processing  & pandas, NumPy $<$2.0 \\
+Data integration    & DuckDB 1.0 \\
+Tabular processing  & pandas 2.x, NumPy $<$2.0 \\
 ML utilities        & scikit-learn 1.4 \\
-Transaction source  & Google BigQuery (public Ethereum dataset) \\
+Transaction source  & Google BigQuery (public \texttt{crypto\_ethereum} dataset) \\
 Source-code source  & Etherscan API v2 \\
-Fraud labels        & Forta Network labelled-datasets \\
-Visualisation       & Matplotlib, seaborn \\
+Fraud labels        & Forta Network labelled-datasets~\cite{fortalabels} \\
+Visualisation       & Matplotlib 3.x, seaborn \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Dataset Characteristics}
 
-After the full pipeline executes, the resulting graph contains
-\num{85680} unique Ethereum addresses connected by \num{239742}
-transactions.  Of these addresses, \num{304} carry both verified Solidity
-source code and an explicit fraud/benign label---the eligible subset on
-which all models are trained and evaluated.  Within this subset, 95
-contracts are labelled as fraud (31.3\%) and 209 as benign.  The
-70/15/15 stratified split produces 212 training, 45 validation, and 47
-test samples.  Class weights are computed from the training split:
-$w_0 = 1.0$ (benign), $w_1 \approx 2.37$ (fraud).
+The full pipeline produces a graph of \num{85680} unique Ethereum
+addresses connected by \num{239742} transactions.  Of these, \num{304}
+addresses carry both verified Solidity source code and an explicit
+fraud/benign label (Table~\ref{tab:dataset}).  Within this eligible
+subset, 95 contracts are labelled fraud (31.3\%) and 209 are benign.
+The stratified 70/15/15 split yields 212 training, 45 validation, and
+47 test contracts, with class weights $w_0 = 1.0$ (benign) and
+$w_1 \approx 2.37$ (fraud) computed from the training split to prevent
+leakage into validation and test evaluation.
 
 \subsection{Code Structure and Reproducibility}
 
-The codebase is organised into nine top-level modules under \texttt{code/}:
+The codebase under \texttt{code/} is organised into nine library modules
+and one scripts directory:
 
 \begin{enumerate}
-    \item \texttt{config.py}: single source of truth for paths,
-    hyperparameters, and API endpoints.
-    \item \texttt{data/addresses/}: the two seed arrays
-    (\texttt{BENIGN\_ADDRESSES}, \texttt{FRAUD\_ADDRESSES}).
+    \item \texttt{config.py}: single source of truth for all paths,
+    hyperparameters, model names, and API keys.
+    \item \texttt{data/addresses/}: the two explicit seed arrays,
+    \texttt{FRAUD\_ADDRESSES} (156 DeFiHackLabs victim contracts) and
+    \texttt{BENIGN\_ADDRESSES} (504 blue-chip protocol contracts).
     \item \texttt{src/collection/}: Etherscan v2 source-code fetcher,
-    Forta label loader, BigQuery transaction reader.
-    \item \texttt{src/preprocessing/}: address standardiser, DuckDB
-    join engine, PyG graph constructor with eight-dimensional node
-    features.
-    \item \texttt{src/datasets/}: \texttt{ContractDataset} pairing
-    Base64-decoded Solidity tokens with graph node indices.
-    \item \texttt{src/models/}: \texttt{GraphEncoder} (GraphSAGE),
-    frozen \texttt{load\_codebert}, and \texttt{FusionClassifier}.
-    \item \texttt{src/training/}: AdamW + cosine-annealing loop
-    with early stopping on validation fraud F1, gradient clipping,
-    and best-checkpoint persistence.
+    Forta label loader, BigQuery transaction exporter.
+    \item \texttt{src/preprocessing/}: address lowercaser, DuckDB
+    integration engine, PyG graph constructor with eight-dimensional
+    node feature computation.
+    \item \texttt{src/datasets/}: \texttt{ContractDataset}, which
+    pairs Base64-decoded Solidity tokens with graph node indices for
+    the DataLoader.
+    \item \texttt{src/models/}: \texttt{GraphEncoder} (two-layer
+    GraphSAGE), \texttt{load\_codebert} (frozen CodeBERT loader), and
+    \texttt{FusionClassifier} (the full fusion head).
+    \item \texttt{src/training/}: AdamW optimiser with cosine-annealing
+    LR schedule, early stopping on validation fraud F1, gradient
+    clipping, and best-checkpoint persistence.
     \item \texttt{src/evaluation/}: \texttt{evaluate\_model} returning
-    precision, recall, F1, AUC-ROC, AUC-PR, and MCC; ablation
-    classifiers for GraphSAGE-only, GCN-only, GAT-only, CodeBERT-only,
-    attention-based fusion, and Random Forest baseline.
-    \item \texttt{src/visualization/}: confusion-matrix and loss-curve
-    plots for the paper figures.
+    precision, recall, F1, AUC-ROC, AUC-PR, and MCC; all six ablation
+    classifiers; Random Forest baseline.
+    \item \texttt{src/visualization/}: figure generators for the
+    confusion matrix, loss curve, and ablation bar chart.
 \end{enumerate}
 
-A \texttt{scripts/} directory contains eight numbered scripts (01--08),
-one per pipeline step, each writing its outputs to a deterministic path
-under \texttt{data/} so that later steps can be re-run independently.
-The seed value 42 is set at both the Python and PyTorch levels before
-any randomised operation, ensuring full reproducibility given the same
-hardware and library versions.
+A \texttt{scripts/} directory contains seven numbered executable
+scripts (01--07), one per pipeline step, each reading from and writing
+to deterministic paths under \texttt{data/processed/} so that any step
+can be re-run independently after its prerequisites exist.
+The random seed 42 is applied at both the Python and PyTorch levels
+before any stochastic operation, ensuring full reproducibility on the
+same hardware and library versions.

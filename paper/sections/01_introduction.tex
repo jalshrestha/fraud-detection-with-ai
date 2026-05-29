@@ -2,128 +2,127 @@
 \label{sec:introduction}
 
 In July 2023, the Curve Finance exploit drained \$61M in seconds by
-triggering a reentrancy vulnerability buried in three lines of Vyper
-bytecode---a flaw invisible to any transaction-graph detector, yet
-unambiguous in a static analysis of the contract source.  In contrast,
-the 2021 Poly Network attack was invisible to code-only scanners but
-left a distinctive structural footprint: a single address that received
-transfers from hundreds of protocol wallets within one hour.  These
-two incidents encapsulate the core challenge of on-chain fraud
-detection: \emph{neither the graph nor the code alone is sufficient.}
+exploiting a reentrancy flaw buried in three lines of Vyper bytecode---a
+vulnerability invisible to any transaction-graph detector yet unambiguous
+in a static analysis of the contract source~\cite{defihacklabs2024}.
+Two years earlier, the Poly Network attacker moved nearly \$600M across
+chains using an address that received transfers from hundreds of protocol
+wallets within a single hour---a structural anomaly invisible to any
+code-only scanner, yet unmistakable in the transaction graph.
+These two incidents encode the central thesis of this paper:
+\emph{on-chain fraud detection requires both modalities simultaneously.}
+Neither the transaction graph nor the contract source code, examined alone,
+can detect the full spectrum of Ethereum fraud.
 
-Between 2021 and 2022, more than \$1 billion was lost to cryptocurrency
-fraud~\cite{chainalysis2023}, and the annual toll continues to rise as
-adversaries devise increasingly sophisticated attack vectors, including
-phishing campaigns~\cite{coinsmart2023}, Ponzi and rug-pull
-schemes~\cite{agrawal2023,datavisor2022}, and smart-contract exploits that
-drain protocol treasuries in a single transaction~\cite{defihacklabs2024}.
-
-Traditional countermeasures---secure key management~\cite{mosakheil2023,
-huang2024peae}, multi-signature
-wallets~\cite{drijvers2019,xiao2022}, and node
-authentication~\cite{bao2018,a2chain2020}---harden the custody
-layer but cannot detect fraud embedded in contract logic or disguised by
-normal transaction flows.
+Financial fraud on Ethereum---phishing, Ponzi schemes, rug-pulls, and
+smart-contract exploits---inflicts more than \$1 billion in annual
+losses~\cite{chainalysis2023}.
 Supervised classifiers trained on hand-crafted
-features~\cite{ostapowicz2019,blanco2022,ashfaq2022,elmougy2023} and
-graph-learning approaches~\cite{kim2023,zhou2021,ctgcn2024}
-partially close this gap, yet each paradigm remains fundamentally
-single-modal: graph methods capture \emph{who} transacts with \emph{whom}
-but are blind to the semantic intent of contract bytecode, while
-code-analysis methods expose vulnerabilities in isolation, without access
-to the behavioural context in which those contracts operate.
+features~\cite{ostapowicz2019,blanco2022,ashfaq2022,elmougy2023} were
+the first generation of automated defences; they improved on manual
+heuristics but failed to generalise to novel attack patterns.
+The second generation turned to graph neural networks (GNNs), modelling
+blockchains as transaction networks~\cite{kim2023,zhou2021,ctgcn2024}
+and achieving strong results on known fraud typologies.
+Parallel work in smart-contract vulnerability analysis used symbolic
+execution and deep learning on bytecode to detect reentrancy, unchecked
+calls, and honeypots~\cite{luu2016oyente,tsankov2018securify,
+sun2024gptscan}.
+Yet both generations remain single-modal: graph methods are blind to the
+semantic intent hidden in contract bytecode, and code methods ignore the
+network context that reveals whether a contract is acting in isolation or
+coordinating with other fraud infrastructure.
 
-Recent hybrid proposals acknowledge this duality.  The success of
-transformer-based classifiers across high-stakes text-classification
-tasks~\cite{poudel2026fakenews} and AI-driven intrusion-detection
-systems~\cite{miya2024indekx} motivates extending deep neural detection
-to the on-chain domain, where fraud patterns span both code semantics
-and network behaviour.
-BERT4ETH~\cite{hu2023bert4eth} applies Transformer pre-training to
-Ethereum transaction sequences.
+The third generation---hybrid fusion models---has begun to close this
+gap.  BERT4ETH~\cite{hu2023bert4eth} treats Ethereum transaction
+histories as natural-language sentences and pre-trains a Transformer
+encoder over them, capturing sequential behavioural patterns but lacking
+any direct access to contract source semantics.
 TLMG4Eth~\cite{sun2025tlmg4eth} jointly learns from transaction language
-and graph representations, reporting strong fusion gains on its corpus.
-PonziGuard~\cite{liang2025ponziguard} builds contract runtime behaviour
-graphs that couple code logic with fund-flow dynamics, and
-TokenScout~\cite{wu2024tokenscout} integrates graph evolution with token
-attributes for early scam-token detection.
-Despite this progress, these methods remain constrained by limited
-temporal modelling, insufficient cross-modal integration, or evaluation
-on private or narrow benchmarks~\cite{galletta2024ponzi,camino2019honeypot}.
+and graph structure, reporting strong gains on its own corpus.
+PonziGuard~\cite{liang2025ponziguard} couples contract logic with fund-flow
+dynamics in a runtime behaviour graph.
+Each of these advances the frontier, but none combines
+\emph{verified victim-contract source code} with a \emph{reproducible,
+openly seeded transaction graph}, and none reports a comprehensive
+module-level ablation that isolates the contribution of each architectural
+choice.  The success of transformer-based classifiers across
+text-classification tasks~\cite{poudel2026fakenews} and AI-driven
+intrusion detection systems~\cite{miya2024indekx} further motivates
+extending deep neural fusion to the on-chain domain.
 
-\textbf{Our contribution.}
-We present a \emph{multi-modal fusion architecture} that simultaneously
-analyses (i) the Ethereum transaction graph through a two-layer
-GraphSAGE network~\cite{hamilton2017graphsage} and (ii) verified Solidity
-source code through a frozen CodeBERT encoder~\cite{feng2020codebert}.
-The two representations are fused via concatenation and projected through
-a compact 128-dimensional bottleneck classifier.
-The design directly addresses the principal limitations identified in prior
-work:
+\textbf{This paper.}
+We present a \emph{hybrid GNN-LLM fusion architecture} that processes
+the Ethereum transaction graph through a two-layer GraphSAGE
+network~\cite{hamilton2017graphsage} and verified Solidity source code
+through a frozen CodeBERT encoder~\cite{feng2020codebert} in parallel,
+fusing the two 64- and 768-dimensional representations through a learned
+128-dimensional bottleneck.  The architecture directly addresses the
+limitations above:
 
 \begin{itemize}
-    \item \textbf{Behavioural blindness of code-only methods.}
-    GraphSAGE propagates eight engineered per-node features---structural
-    degree counts, transaction-value statistics, and unique-neighbour
-    counts---capturing patterns invisible in source code alone.
+  \item \textbf{Structural blindness of code-only methods.}
+  GraphSAGE aggregates eight per-node features encoding degree,
+  transaction-value flow, and unique-counterparty counts, capturing the
+  network signatures of phishing campaigns and coordinated fund extraction
+  that are absent from source code.
 
-    \item \textbf{Semantic blindness of graph-only methods.}
-    CodeBERT reads the full Solidity source, exposing reentrancy traps,
-    unchecked external calls, and logic vulnerabilities that leave no
-    distinctive on-chain footprint.
+  \item \textbf{Semantic blindness of graph-only methods.}
+  CodeBERT encodes the full Solidity source, surfacing reentrancy traps,
+  unbounded-mint backdoors, and logic vulnerabilities that leave no
+  distinctive transactional footprint.
 
-    \item \textbf{Scalability.}
-    GraphSAGE samples neighbours rather than materialising the full
-    adjacency matrix, making the approach tractable on graphs with tens
-    of thousands of nodes and hundreds of thousands of edges.
+  \item \textbf{Label quality through victim-first seeding.}
+  All 156 primary fraud seeds are \emph{victim contracts} from
+  DeFiHackLabs proof-of-concept exploit files~\cite{defihacklabs2024},
+  each verified to carry Solidity source on Etherscan and confirmed
+  on-chain transaction history.  This strategy, described in
+  Section~\ref{subsec:collection}, produces fraud labels of high
+  confidence and ensures full multi-modal coverage for every labelled
+  address.
 
-    \item \textbf{Label quality.}
-    Our fraud seed list is derived exclusively from \emph{victim}
-    contracts documented in DeFiHackLabs proof-of-concept
-    exploits~\cite{defihacklabs2024}, each with verified Etherscan source
-    code and confirmed on-chain transaction history.
-    This contrasts with attacker-wallet seeds that yield zero verified
-    source and therefore cannot train the code encoder.
+  \item \textbf{Reproducibility through explicit seed arrays.}
+  The two seed arrays (\texttt{FRAUD\_ADDRESSES} and
+  \texttt{BENIGN\_ADDRESSES}) are first-class artefacts of the codebase.
+  Every downstream step---BigQuery sampling, DuckDB integration, graph
+  construction, model training---is deterministic given the same seeds.
 \end{itemize}
 
-On a held-out test set drawn from a graph of \num{85680} nodes and
-\num{239742} transactions, our fusion model attains an
-\textbf{accuracy of 93.6\%}, a \textbf{fraud F1-score of 0.909},
-an \textbf{AUC-ROC of 0.961}, and an \textbf{AUC-PR of 0.959}—a
-substantial improvement over GraphSAGE-only, GCN-only, GAT-only, and
-CodeBERT-only baselines, as well as a Random Forest baseline over raw
-node features, all trained under identical conditions.
+On a held-out test split of 47 contracts drawn from a graph of
+\num{85680} nodes and \num{239742} transactions, the fusion model achieves
+\textbf{accuracy 93.6\%}, \textbf{fraud F1-score 0.909},
+\textbf{AUC-ROC 0.961}, and \textbf{AUC-PR 0.959}---the highest
+F1-Fraud and Matthews Correlation Coefficient (MCC\,=\,0.861) across all
+seven evaluated models.
 
-The paper makes the following contributions:
-
+\textbf{Contributions:}
 \begin{enumerate}
-    \item A reproducible multi-modal data pipeline seeded from
-    \textbf{156 DeFiHackLabs victim contracts} (primary fraud labels) and
-    504 blue-chip benign contracts, augmented with Forta Network labels
-    and Etherscan verified Solidity source, yielding a graph of 85,680
-    nodes with eight engineered node features per address.
+  \item A reproducible multi-modal data pipeline seeding from
+  156 DeFiHackLabs victim contracts and 504 blue-chip benign contracts,
+  expanded via Google BigQuery and augmented with Forta Network fraud
+  labels and Etherscan Solidity source, yielding a labelled graph with
+  eight engineered node features per address.
 
-    \item A hybrid GNN-LLM fusion classifier coupling GraphSAGE structural
-    embeddings with frozen CodeBERT semantic embeddings through a learned
-    concatenation bottleneck, achieving state-of-the-art fraud-detection
-    performance on our curated Ethereum benchmark.
+  \item A hybrid GNN-LLM fusion classifier that couples GraphSAGE
+  structural embeddings with frozen CodeBERT semantic embeddings through
+  a concatenation bottleneck, achieving the best balanced fraud-detection
+  performance on our benchmark.
 
-    \item A comprehensive ablation study comparing five model variants
-    (GraphSAGE, GCN, GAT, CodeBERT-only, attention-based fusion) and a
-    Random Forest baseline, with analysis of feature-engineering choices
-    and fusion mechanisms.
+  \item A comprehensive seven-model ablation study---GraphSAGE, GCN,
+  GAT, CodeBERT-only, attention-based fusion, Random Forest, and the
+  proposed Concat-Fusion---that empirically validates each architectural
+  and feature-engineering choice.
 
-    \item An honest discussion of evaluation limitations---random-split
-    optimism, code-coverage constraints, and minority-class sensitivity---
-    and a concrete roadmap for deployment-grade validation.
+  \item An honest evaluation including explicit discussion of random-split
+  optimism, label-noise sensitivity, and code-coverage constraints, with
+  a concrete roadmap for deployment-grade validation.
 \end{enumerate}
 
-The remainder of this paper is organised as follows.
-Section~\ref{sec:motivation} elaborates the motivation.
+The remainder of the paper is organised as follows.
+Section~\ref{sec:motivation} elaborates the design principles.
 Section~\ref{sec:background} surveys related work.
-Section~\ref{sec:methodology} details the architecture and training
-procedure.  Section~\ref{sec:challenges} discusses engineering challenges
-and countermeasures.  Section~\ref{sec:prototype} describes the
-technology stack.  Section~\ref{sec:results} presents experimental
-results and the ablation study.  Section~\ref{sec:conclusion} concludes
-and outlines future directions.
+Section~\ref{sec:methodology} details the pipeline and architecture.
+Section~\ref{sec:challenges} maps engineering challenges to design choices.
+Section~\ref{sec:prototype} describes the implementation.
+Section~\ref{sec:results} presents experimental results and analysis.
+Section~\ref{sec:conclusion} concludes with a future-work roadmap.
