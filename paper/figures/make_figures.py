@@ -79,68 +79,72 @@ def _arrow(ax, x1, y1, x2, y2):
 # Fig 1  Architecture pipeline
 # ─────────────────────────────────────────────────────────────────────────
 def make_architecture() -> None:
-    # wider canvas so arrows have room
-    fig, ax = plt.subplots(figsize=(14, 4.8))
-    ax.set_xlim(-0.1, 14.1)
-    ax.set_ylim(-0.1, 4.9)
+    """5-column layout that fits fully on one IEEE page width.
+
+    Columns (x ranges):
+      0.1-2.0   Data Sources (3 stacked gray boxes)
+      2.5-4.3   DuckDB Integration
+      4.8-7.2   Encoders  (GraphSAGE top, CodeBERT bottom)
+      8.5-11.0  Fusion Head   ← 1.3-unit arrows carry dim labels
+      11.5-12.7 Output
+    """
+    fig, ax = plt.subplots(figsize=(13, 5.0))
+    ax.set_xlim(0, 13)
+    ax.set_ylim(-0.1, 5.1)
     ax.axis("off")
 
-    # column headers — adjusted to new x positions
-    for cx, lbl in [(1.0, "Data Sources"), (3.1, "Integration"),
-                    (5.3, "Features"),     (7.5, "Encoders"),
-                    (10.8, "Fusion"),      (13.3, "Output")]:
-        ax.text(cx, 4.55, lbl, ha="center", fontsize=8,
+    # ── column headers ────────────────────────────────────────────────────
+    for cx, lbl in [(1.05, "Data Sources"),
+                    (3.4,  "Integration"),
+                    (6.0,  "Encoders"),
+                    (9.75, "Fusion Head"),
+                    (12.1, "Output")]:
+        ax.text(cx, 4.75, lbl, ha="center", fontsize=8.5,
                 color=GRAY, style="italic")
 
-    # ── data sources ─────────────────────────────────────────────────────
-    _box(ax, 0.05, 3.3, 2.0, 0.65, "BigQuery\nTransactions", shade=LGRAY)
-    _box(ax, 0.05, 2.35, 2.0, 0.65, "Forta\nFraud Labels",   shade=LGRAY)
-    _box(ax, 0.05, 1.4,  2.0, 0.65, "Etherscan\nSource Code", shade=LGRAY)
+    # ── data sources  x: 0.1 -> 2.0 ─────────────────────────────────────
+    _box(ax, 0.1, 3.35, 1.9, 0.75, "BigQuery\nTransactions", shade=LGRAY)
+    _box(ax, 0.1, 2.3,  1.9, 0.75, "Forta\nFraud Labels",    shade=LGRAY)
+    _box(ax, 0.1, 1.25, 1.9, 0.75, "Etherscan\nSource Code", shade=LGRAY)
 
-    # ── integration ──────────────────────────────────────────────────────
-    _box(ax, 2.35, 1.7, 1.8, 1.4, ["DuckDB", "Join +", "Normalise"],
+    # ── integration  x: 2.5 -> 4.3 ───────────────────────────────────────
+    _box(ax, 2.5, 1.7, 1.8, 1.6, ["DuckDB", "Join +", "Normalise"],
          shade=LBLUE, border=BLUE)
-    _arrow(ax, 2.05, 3.62, 2.35, 2.75)
-    _arrow(ax, 2.05, 2.67, 2.35, 2.45)
-    _arrow(ax, 2.05, 1.72, 2.35, 2.15)
+    # three source arrows converge into DuckDB
+    _arrow(ax, 2.0, 3.72, 2.5, 2.9)
+    _arrow(ax, 2.0, 2.67, 2.5, 2.6)
+    _arrow(ax, 2.0, 1.62, 2.5, 2.3)
 
-    # ── features ─────────────────────────────────────────────────────────
-    _box(ax, 4.45, 2.7, 1.7, 0.7, ["8-dim Node", "Features"],
+    # ── encoders  x: 4.8 -> 7.2 ──────────────────────────────────────────
+    # top row: graph features → GraphSAGE
+    _box(ax, 4.8, 3.2, 2.4, 0.85, ["GraphSAGE", "8-dim  ->  128  ->  64"],
          shade=LBLUE, border=BLUE)
-    _box(ax, 4.45, 1.7, 1.7, 0.7, ["Tokenised", "Source (512)"],
+    # bottom row: tokenised source → CodeBERT
+    _box(ax, 4.8, 1.85, 2.4, 0.85, ["CodeBERT  (frozen)", "768-dim output"],
          shade=LBLUE, border=BLUE)
-    _arrow(ax, 4.15, 2.6, 4.45, 3.05)
-    _arrow(ax, 4.15, 2.1, 4.45, 2.05)
+    # DuckDB -> encoders (two output arrows)
+    _arrow(ax, 4.3, 2.9, 4.8, 3.62)
+    _arrow(ax, 4.3, 2.2, 4.8, 2.27)
 
-    # ── encoders ─────────────────────────────────────────────────────────
-    _box(ax, 6.4, 2.7, 2.0, 0.7, ["GraphSAGE", "8 -> 128 -> 64"],
-         shade=LBLUE, border=BLUE)
-    _box(ax, 6.4, 1.7, 2.0, 0.7, ["CodeBERT", "(frozen)  768-dim"],
-         shade=LBLUE, border=BLUE)
-    _arrow(ax, 6.15, 3.05, 6.4, 3.05)
-    _arrow(ax, 6.15, 2.05, 6.4, 2.05)
-
-    # ── LONG arrows encoder -> fusion, with dimension labels mid-arrow ──
-    # encoder right edge = 6.4 + 2.0 = 8.4   fusion left edge = 9.6
-    # arrow length = 1.2 units — clearly visible
-    _arrow(ax, 8.4, 3.05, 9.6, 3.05)
-    _arrow(ax, 8.4, 2.05, 9.6, 2.05)
-    # dim labels at midpoint x = 9.0
-    ax.text(9.0, 3.22, "64-dim", fontsize=8.5, color=BLUE,
+    # ── LONG arrows: encoders -> fusion  (1.3 units, encoder right=7.2) ──
+    _arrow(ax, 7.2, 3.62, 8.5, 3.62)
+    _arrow(ax, 7.2, 2.27, 8.5, 2.27)
+    # dim labels sit at midpoint x = 7.85, above each arrow
+    ax.text(7.85, 3.82, "64-dim",  fontsize=9, color=BLUE,
             ha="center", fontweight="bold")
-    ax.text(9.0, 2.22, "768-dim", fontsize=8.5, color=BLUE,
+    ax.text(7.85, 2.47, "768-dim", fontsize=9, color=BLUE,
             ha="center", fontweight="bold")
 
-    # ── fusion ───────────────────────────────────────────────────────────
-    _box(ax, 9.6, 1.75, 2.8, 1.55,
-         ["Concat  [64 || 768] = 832-dim", "", "Linear  832 -> 128",
-          "Linear  128 -> 2"],
+    # ── fusion head  x: 8.5 -> 11.0 ──────────────────────────────────────
+    _box(ax, 8.5, 1.7, 2.5, 2.2,
+         ["Concat  [64 || 768]", "= 832-dim", "",
+          "Linear  832 -> 128", "Linear  128 -> 2"],
          shade=LBLUE, border=BLUE)
 
-    # ── output ───────────────────────────────────────────────────────────
-    _box(ax, 12.65, 2.3, 1.3, 0.75, ["Fraud", "/ Benign"],
+    # ── output  x: 11.4 -> 12.8 ──────────────────────────────────────────
+    _box(ax, 11.4, 2.4, 1.4, 0.85, "Fraud / Benign",
          shade=LGRAY, border=GRAY)
-    _arrow(ax, 12.4, 2.7, 12.65, 2.68)
+    _arrow(ax, 11.0, 2.82, 11.4, 2.82)
 
     fig.tight_layout(pad=0.2)
     _save(fig, "architecture.pdf")
