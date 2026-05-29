@@ -177,21 +177,23 @@ def make_fusion_detail() -> None:
 
     # ── LONG arrows  encoder output -> concat (1.5 unit gap) ─────────────
     # encoder right edge = 4.5,  concat left edge = 6.0
-    _arrow(ax, 4.5, 3.27, 6.0, 3.27)
-    _arrow(ax, 4.5, 1.97, 6.0, 1.97)
-    # dim labels at midpoint x = 5.25, clearly above the arrow lines
+    # concat moved down: box y=1.75, h=1.45 → top=3.2, center=2.475
+    _arrow(ax, 4.5, 3.27, 6.0, 3.05)   # SAGE arrow → upper part of concat
+    _arrow(ax, 4.5, 1.97, 6.0, 1.95)   # BERT arrow → lower part of concat
+    # dim labels at midpoint x = 5.25, clearly above each arrow
     ax.text(5.25, 3.46, "64-dim", fontsize=9, color=BLUE,
             ha="center", fontweight="bold")
-    ax.text(5.25, 2.16, "768-dim", fontsize=9, color=BLUE,
+    ax.text(5.25, 2.15, "768-dim", fontsize=9, color=BLUE,
             ha="center", fontweight="bold")
 
-    # ── concat ───────────────────────────────────────────────────────────
-    _box(ax, 6.0, 2.1, 1.5, 1.45,
+    # ── concat  (moved down 0.35 from previous position) ─────────────────
+    _box(ax, 6.0, 1.75, 1.5, 1.45,
          ["Concat", "[64 || 768]", "= 832-dim"], shade=LBLUE, border=BLUE)
 
     # ── fusion head ──────────────────────────────────────────────────────
     # concat right edge = 7.5,  fusion box starts at 7.9
-    _arrow(ax, 7.5, 2.82, 7.9, 2.82)
+    # concat center_y = 1.75 + 1.45/2 = 2.475
+    _arrow(ax, 7.5, 2.475, 7.9, 2.82)
     _box(ax, 7.9, 2.5, 3.8, 0.65,
          "Linear(832->128)  +  ReLU  +  Dropout(0.5)",
          shade=LBLUE, border=BLUE, fs=8.5)
