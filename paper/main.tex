@@ -1,0 +1,139 @@
+% A Hybrid GNN-LLM Fusion Architecture for Multi-Modal Fraud Detection in Ethereum Smart Contracts
+% Submitted to: IEEE Transactions / Conference (engineering and CS register)
+% Document class: IEEEtran (conference)
+
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+% Packages
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\sisetup{group-separator={,}, group-minimum-digits=4}
+\usepackage{url}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=black, citecolor=black, urlcolor=blue}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+
+% Title block
+\title{A Hybrid GNN-LLM Fusion Architecture for Multi-Modal Fraud Detection in Ethereum Smart Contracts}
+
+\author{
+    \IEEEauthorblockN{Anonymous Author(s)}
+    \IEEEauthorblockA{Department of Computer Science\\
+    Institution Name\\
+    City, Country\\
+    \texttt{anonymous@institution.edu}}
+}
+
+\maketitle
+
+\begin{abstract}
+Detecting fraud in Ethereum smart contracts requires both structural and
+semantic analysis: graph methods identify suspicious transaction patterns
+but are blind to malicious code logic, while code methods expose
+vulnerabilities but ignore the network context in which contracts
+operate.  We present a \emph{hybrid GNN-LLM fusion architecture} that
+analyses these two complementary modalities in parallel, coupling a
+two-layer GraphSAGE network over a balanced Ethereum transaction graph
+with a frozen CodeBERT encoder over verified Solidity source code.  Node
+features are enriched beyond simple degree counts to include eight
+signals per address: in/out-degree, total degree, mean in/out transaction
+value, log-total Wei volume, and unique in/out counterparty counts.  A
+reproducible four-phase pipeline seeds from 660 explicitly curated
+addresses---156 verified victim contracts from DeFiHackLabs
+proof-of-concept exploits (94.5\% of fraud labels) and 504 blue-chip
+protocol contracts---and expands through BigQuery balanced sampling to
+a graph of \num{85680} nodes and \num{239742} transactions, of which
+\num{304} contracts carry both verified Solidity source and a
+ground-truth label.  The fusion classifier concatenates a 64-dimensional
+graph embedding with a 768-dimensional code embedding and projects
+through a 128-dimensional bottleneck.  On a held-out test split, our
+model attains \textbf{accuracy 93.6\%}, \textbf{fraud F1-score 0.909},
+\textbf{AUC-ROC 0.961}, and \textbf{AUC-PR 0.959}---the highest
+F1-Fraud and MCC (0.861) across all seven evaluated models.  A
+comprehensive ablation study compares GraphSAGE, GCN, GAT, CodeBERT-only,
+attention-based fusion, and a Random Forest baseline, empirically
+justifying each architectural and feature-engineering choice.  We release
+the full codebase, explicit seed arrays, and a documented pipeline.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Ethereum, fraud detection, graph neural networks, large language models,
+CodeBERT, GraphSAGE, smart contracts, multi-modal fusion, blockchain
+security, DeFi exploits.
+\end{IEEEkeywords}
+
+% ── Figures referenced in methodology and results ─────────────────────────
+
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=0.95\textwidth]{figures/architecture.pdf}
+    \caption{System pipeline overview.  Left: three public data sources.
+    Centre: data integration and feature engineering.
+    Right: dual-encoder fusion classifier producing a binary fraud/benign
+    prediction.}
+    \label{fig:architecture}
+\end{figure*}
+
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=0.95\textwidth]{figures/fusion_detail.pdf}
+    \caption{Internal architecture of the FusionClassifier.
+    The GraphSAGE encoder processes the full transaction graph to produce
+    64-dimensional structural embeddings; the frozen CodeBERT encoder
+    produces 768-dimensional semantic embeddings from Solidity source.
+    Both are concatenated (832-dim) and projected to two class logits.}
+    \label{fig:fusion}
+\end{figure*}
+
+% Sections (each lives in /paper/sections)
+\input{sections/01_introduction}
+\input{sections/02_motivation}
+\input{sections/03_background}
+\input{sections/04_methodology}
+\input{sections/05_challenges}
+\input{sections/06_prototype}
+\input{sections/07_results}
+\input{sections/08_conclusion}
+
+% Reproducibility, ethics, disclosure
+\section*{Data and Code Availability}
+The full implementation---seed arrays, data-collection pipeline, model
+definitions, training/evaluation scripts, and figure-generation code---is
+available under \texttt{code/} in the project repository.
+Primary fraud labels are the 156 DeFiHackLabs victim-contract addresses
+in \texttt{code/data/addresses/fraud\_addresses.py}; secondary labels
+are drawn from the Forta Network labelled-datasets
+release~\cite{fortalabels}, downloaded automatically at pipeline run time.
+Transaction data is sourced from the Google BigQuery public Ethereum
+dataset using the balanced-sampling SQL query in
+\texttt{code/data/raw/bigquery\_sampled.sql}.
+
+\section*{Ethical Considerations}
+This work investigates publicly attributed fraud activity. No private
+or personally identifiable information is collected. The fusion model
+is intended as a decision-support tool. Production deployment should
+combine its predictions with human review to avoid penalising benign
+addresses that share behavioural signatures with phishing campaigns.
+
+\section*{AI Disclosure}
+The authors used a generative AI coding assistant for refactoring legacy
+notebook code into a modular library and for copy-editing draft text.
+All modelling decisions, dataset definitions, experimental results, and
+the final analysis were produced and verified by the authors.
+
+% Bibliography
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

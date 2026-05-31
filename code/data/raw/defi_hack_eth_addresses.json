@@ -1,0 +1,1814 @@
+[
+  {
+    "address": "0xbec591de75b8699a3ba52f073428822d0bfc0d7e",
+    "year": 2017,
+    "file": "Parity_first_hack_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x55f93985431fc9304077687a35a1ba103dc1e081",
+    "year": 2018,
+    "file": "SmartMesh_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xc5918a927c4fb83fe99e30d6f66707f4b396900e",
+    "year": 2018,
+    "file": "SpankChain_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xf91546835f756da0c10cfa0cda95b15577b84aa7",
+    "year": 2018,
+    "file": "SpankChain_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xb983e01458529665007ff7e0cddecdb74b967eb6",
+    "year": 2020,
+    "file": "bzx_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xde744d544a9d768e96c21b5f087fc54b776e9b25",
+    "year": 2020,
+    "file": "bzx_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xacd43e627e64355f1861cec6d3a6688b31a6f952",
+    "year": 2021,
+    "file": "Yearn_ydai_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xdfb6fab7f4bc9512d5620e679e90d1c91c4eade6",
+    "year": 2021,
+    "file": "Popsicle_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xc4ff55a4329f84f9bf0f5619998ab570481ebb48",
+    "year": 2021,
+    "file": "Popsicle_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x6653d9bcbc28fc5a2f5fb5650af8f2b2e1695a15",
+    "year": 2022,
+    "file": "TecraSpace_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x39360ac1239a0b98cb8076d4135d0f72b7fd9909",
+    "year": 2022,
+    "file": "XCarnival_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xfd51531b26f9be08240f7459eea5be80d5b047d9",
+    "year": 2022,
+    "file": "Circle_exp1.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xae461ca67b15dc8dc81ce7615e0320da1a9ab8d5",
+    "year": 2022,
+    "file": "Circle_exp1.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xe39fd820b58f83205db1d9225f28105971c3d309",
+    "year": 2022,
+    "file": "EFLeverVault_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x4b77c789fa35b54dacb5f6bb2daaa01554299d6c",
+    "year": 2022,
+    "file": "MEVa47b_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x00000000000a47b1298f18cf67de547bbe0d723f",
+    "year": 2022,
+    "file": "MEVa47b_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x007fe7c498a2cf30971ad8f2cbc36bd14ac51156",
+    "year": 2022,
+    "file": "OlympusDao_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x48d118c9185e4dbafe7f3813f8f29ec8a6248359",
+    "year": 2022,
+    "file": "TeamFinance_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x2df9c154fe24d081cfe568645fb4075d725431e0",
+    "year": 2022,
+    "file": "Templedao_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xd2869042e12a3506100af1d192b5b04d65137941",
+    "year": 2022,
+    "file": "Templedao_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xfd4dccd754eaaa8c9196998c5bb06a56df6a1d95",
+    "year": 2022,
+    "file": "Uerii_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x418c24191ae947a78c99fdc0e45a1f96afb254be",
+    "year": 2022,
+    "file": "Uerii_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x8f9036732b9aa9b82d8f35e54b71faeb2f573e2f",
+    "year": 2022,
+    "file": "XaveFinance_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xf682e302f16c9509ffa133029ccf6de55f4e29a8",
+    "year": 2022,
+    "file": "Polynomial_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xed42cb11b9d03c807ed1ba9c2ed1d3ba5bf37340",
+    "year": 2022,
+    "file": "JAY_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xf2919d1d80aff2940274014bef534f7791906ff2",
+    "year": 2022,
+    "file": "JAY_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x0757d02596ef9840048def00eeb8e0f3862cc7ca",
+    "year": 2022,
+    "file": "MEVbot_0x28d9_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x28d949fdfb5d9ea6b604fa6fee3d6548ea779f17",
+    "year": 2022,
+    "file": "MEVbot_0x28d9_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x15d684b4ecdc0ece8bc9aec6bce3398a9a4c7611",
+    "year": 2023,
+    "file": "SHOCO_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x31a4f372aa891b46ba44dc64be1d8947c889e9c6",
+    "year": 2023,
+    "file": "SHOCO_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x7c28e0977f72c5d08d5e1ac7d52a34db378282b3",
+    "year": 2023,
+    "file": "ERC20TokenBank_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x765b8d7cd8ff304f796f4b6fb1bcf78698333f6d",
+    "year": 2023,
+    "file": "ERC20TokenBank_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x6943e74d1109a728f25a2e634ba3d74e9e476aed",
+    "year": 2023,
+    "file": "HODLCapital_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x52d74eb7c01c763219dce713da97ebae8b91728e",
+    "year": 2023,
+    "file": "MultiChainCapital_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x6feac5f3792065b21f85bc118d891b33e0673bd8",
+    "year": 2023,
+    "file": "NOON_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x2d7973177d594237a9b347cd41082af4cbb40f2b",
+    "year": 2023,
+    "file": "CompounderFinance_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xaf274e912243b19b882f02d731dacd7cd13072d0",
+    "year": 2023,
+    "file": "CompounderFinance_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xfe2011dad32ad6dfd128e55490c0fd999f3d2221",
+    "year": 2023,
+    "file": "Contract_0x7657_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x76577603f99eae8320f70b410a350a83d744cb77",
+    "year": 2023,
+    "file": "Contract_0x7657_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x26fe84754a1967d67b7befaa01b10d7b35bbaf0a",
+    "year": 2023,
+    "file": "MIMSpell_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xa5564a2d1190a141cac438c9fde686ac48a18a79",
+    "year": 2023,
+    "file": "MIMSpell_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x85018cf6f53c8bbd03c3137e71f4fca226cda92c",
+    "year": 2023,
+    "file": "Pawnfi_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x0b09c86260c12294e3b967f0d523b4b2bcdfbeab",
+    "year": 2023,
+    "file": "Sturdy_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x9f72dc67cec672bb99e3d02cbea0a21536a2b657",
+    "year": 2023,
+    "file": "Sturdy_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x46bea99d977f269399fb3a4637077bb35f075516",
+    "year": 2023,
+    "file": "Sturdy_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xf73b8ea8838cba9148fb182e267a000f7cfba8dd",
+    "year": 2023,
+    "file": "VINU_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x01a4d9089c243ccaebe40aa224ad0cab573b83c6",
+    "year": 2023,
+    "file": "ArcadiaFi_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x13c0ef5f1996b4f119e9d6c32f5e23e8dc313109",
+    "year": 2023,
+    "file": "ArcadiaFi_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x3ae354d7e49039ccd582f1f3c9e65034ffd17bad",
+    "year": 2023,
+    "file": "ArcadiaFi_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x8189afbe7b0e81dae735ef027cd31371b3974feb",
+    "year": 2023,
+    "file": "AzukiDAO_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x3f99d5cd830203a3027eb0ed6548db7f81c3408f",
+    "year": 2023,
+    "file": "Bao_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xb0f8fe96b4880adbdede0ddf446bd1e7ef122c4e",
+    "year": 2023,
+    "file": "Bao_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x1ae3929e1975043e5443868be91cac12d8cc25ec",
+    "year": 2023,
+    "file": "CIVNFT_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xf169bd68ed72b2fdc3c9234833197171aa000580",
+    "year": 2023,
+    "file": "CIVNFT_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xf466f9f431aea853040ef837626b1c59cc963ce2",
+    "year": 2023,
+    "file": "Civfund_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x7caec5e4a3906d0919895d113f7ed9b3a0cbf826",
+    "year": 2023,
+    "file": "Civfund_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x486cb3f61771ed5483691dd65f4186da9e37c68e",
+    "year": 2023,
+    "file": "Conic02_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x369cbc5c6f139b1132d3b91b87241b37fc5b971f",
+    "year": 2023,
+    "file": "Conic02_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x743599ba5cfa3ce8c59691af5ef279aaafa2e4eb",
+    "year": 2023,
+    "file": "Conic_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xbb787d6243a8d450659e09ea6fd82f1c859691e9",
+    "year": 2023,
+    "file": "Conic_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x466b85b49ec0c5c1eb402d5ea3c4b88864ea0f04",
+    "year": 2023,
+    "file": "Curve_exp01.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x6326debbaa15bcfe603d831e7d75f4fc10d9b43e",
+    "year": 2023,
+    "file": "Curve_exp01.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x83e056ba00beae4d8aa83deb326a90a4e100d0c1",
+    "year": 2023,
+    "file": "Curve_exp02.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x8301ae4fc9c624d1d396cbdaa1ed877821d7c511",
+    "year": 2023,
+    "file": "Curve_exp02.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xb754ebdba9b009113b4cf445a7cb0fc9227648ad",
+    "year": 2023,
+    "file": "USDTStakingContract28_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xb7fbf984a50cd7c66e6da3448d68d9f3b7f24f33",
+    "year": 2023,
+    "file": "BTC20_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x2100dcd8758ab8b89b9b545a43a1e47e8e2944f0",
+    "year": 2023,
+    "file": "Balancer_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x9210f1204b5a24742eba12f710636d76240df3d0",
+    "year": 2023,
+    "file": "Balancer_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x915dff6707bea63daea1b41aa5d37353229066ba",
+    "year": 2023,
+    "file": "CurveBurner_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x786b374b5eef874279f4b7b4de16940e57301a58",
+    "year": 2023,
+    "file": "CurveBurner_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x4ae2cd1f5b8806a973953b76f9ce6d5fab9cdcfd",
+    "year": 2023,
+    "file": "EHIVE_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xfe141c32e36ba7601d128f0c39dedbe0f6abb983",
+    "year": 2023,
+    "file": "EarningFram_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x863e572b215fd67c855d973f870266cf827aea5e",
+    "year": 2023,
+    "file": "EarningFram_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x6dd61c69415c8ecab3fefd80d079435ead1a5b4d",
+    "year": 2023,
+    "file": "Exactly_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x16748cb753a68329ca2117a7647aa590317ebf41",
+    "year": 2023,
+    "file": "Exactly_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xda2ccfc4557ba55eada3cbebd0aeffcf97fc14ca",
+    "year": 2023,
+    "file": "Uwerx_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x4306b12f8e824ce1fa9604bbd88f2ad4f0fe3c54",
+    "year": 2023,
+    "file": "Uwerx_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xa21a2b59d80dc42d332f778cbb9ea127100e5d75",
+    "year": 2023,
+    "file": "Zunami_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xb40b6608b2743e691c9b54ddbdee7bf03cd79f1c",
+    "year": 2023,
+    "file": "Zunami_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x29d2bcf0d70f95ce16697e645e2b76d218d66109",
+    "year": 2023,
+    "file": "0x0DEX_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x8c425ee62d18b65cc975767c27c42de548d133a1",
+    "year": 2023,
+    "file": "CEXISWAP_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xb8a5890d53df78dee6182a6c0968696e827e3305",
+    "year": 2023,
+    "file": "CEXISWAP_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xe897c0f9443785f8d4f0fa6e92a81066b3fbfee2",
+    "year": 2023,
+    "file": "DAppSocial_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xa8c6e7352b13815f6bfa87c7ffaaa6e3a7bfa849",
+    "year": 2023,
+    "file": "DAppSocial_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x319ec3ad98cf8b12a8be5719fec6e0a9bb1ad0d1",
+    "year": 2023,
+    "file": "DAppSocial_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x6ce5a85cff4c70591da82de5eb91c3fa38b40595",
+    "year": 2023,
+    "file": "FloorDAO_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x8faa53a742fc732b04db4090a21e955fe5c230be",
+    "year": 2023,
+    "file": "HeavensGate_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x38702e5c98ba4ad4b786d5a075a5c74694cd616d",
+    "year": 2023,
+    "file": "HeavensGate_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x154863eb71de4a34f88ea57450840eab1c71aba6",
+    "year": 2023,
+    "file": "JumpFarm_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xd3c41c85be295607e8ea5c58487ec5894300ee67",
+    "year": 2023,
+    "file": "uniclyNFT_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xb2e855411f67378c08f47401eacff37461e16188",
+    "year": 2023,
+    "file": "Astrid_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xbaa87546cf87b5de1b0b52353a86792d40b8ba70",
+    "year": 2023,
+    "file": "Astrid_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xba2aa7426ec6529c25a38679478645b2db5fa19b",
+    "year": 2023,
+    "file": "DePayRouter_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xae60ac8e69414c2dc362d0e6a03af643d1d85b92",
+    "year": 2023,
+    "file": "DePayRouter_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xc74b72bbf904bac9fac880303922fc76a69f0bb4",
+    "year": 2023,
+    "file": "Hopelend_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x53fbcada1201a465740f2d64ecdf6fac425f9030",
+    "year": 2023,
+    "file": "Hopelend_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xe6c6e86e04de96c4e3a29ad480c94e7a471969ab",
+    "year": 2023,
+    "file": "MaestroRouter2_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x2b326a17b5ef826fa4e17d3836364ae1f0231a6f",
+    "year": 2023,
+    "file": "UniBot_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x3aa228a80f50763045bdfc45012da124bd0a6809",
+    "year": 2023,
+    "file": "WiseLending_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x84524baa1951247b3a2617a843e6ece915bb9674",
+    "year": 2023,
+    "file": "WiseLending_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xa6d35c97bd00b99a962393408aaa9eb275a45c5e",
+    "year": 2023,
+    "file": "kTAF_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xf88d1d6d9db9a39dbbfc4b101cecc495bb0636f8",
+    "year": 2023,
+    "file": "pSeudoEth_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x2033b54b6789a963a02bfcbd40a46816770f1161",
+    "year": 2023,
+    "file": "pSeudoEth_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x4bc691601b50b3e107b89d5ea172b40a9dbc6251",
+    "year": 2023,
+    "file": "Burntbubba_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xa44e79a2c9a8965e7a6fa77bf0ca8faf50e6c73e",
+    "year": 2023,
+    "file": "Burntbubba_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xfd7b111aa83b9b6f547e617c7601efd997f64703",
+    "year": 2023,
+    "file": "KyberSwap_exp.eth.1.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x3763b7f83358171b1660ee209f327954cc463129",
+    "year": 2023,
+    "file": "MEV_0xa247_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xf5836e292f716a7979f9bc5c2d3ed59913e07962",
+    "year": 2023,
+    "file": "MahaLend_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xfd11aba71c06061f446ade4eec057179f19c23c4",
+    "year": 2023,
+    "file": "MahaLend_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x80a6419cb8e7d1ef1af074368f7eace1ae2358ca",
+    "year": 2023,
+    "file": "MetaLend_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x5578f2e245e932a599c46215a0ca88707230f17b",
+    "year": 2023,
+    "file": "MetaLend_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x526e8e98356194b64eae4c2d443cc8aad367336f",
+    "year": 2023,
+    "file": "OnyxProtocol_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x9c52c485edd3d22847a1614b8988fbf520b33047",
+    "year": 2023,
+    "file": "RBalancer_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x0a3340129816a86b62b7eafd61427f743c315ef8",
+    "year": 2023,
+    "file": "Raft_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x9ab6b21cdf116f611110b048987e58894786c244",
+    "year": 2023,
+    "file": "Raft_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xeadf72fd4733665854c76926f4473389ff1b78b1",
+    "year": 2023,
+    "file": "bot_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x03e7b13bcd9b8383f403696c1494845560607eca",
+    "year": 2023,
+    "file": "grok_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x7e5433f02f4bf07c4f2a2d341c450e07d7531428",
+    "year": 2023,
+    "file": "FloorProtocol_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xc538d17a6aacc5271be5f51b891e2e92c8187edd",
+    "year": 2023,
+    "file": "FloorProtocol_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x2d89fb83c66b6c7c35818382517959e33a655b13",
+    "year": 2023,
+    "file": "GoodCompound_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x3d9819210a31b4961b30ef54be2aed79b9c9cd3b",
+    "year": 2023,
+    "file": "GoodCompound_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xf06ab383528f51da67e2b2407327731770156ed6",
+    "year": 2023,
+    "file": "GoodDollar_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xba6fa6e8500cd8eeda8ebb9dfbcc554ff4a3eb77",
+    "year": 2023,
+    "file": "HYPR_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x40c31236b228935b0329eff066b1ad96e319595e",
+    "year": 2023,
+    "file": "HYPR_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xc310e760778ecbca4c65b6c559874757a4c4ece0",
+    "year": 2023,
+    "file": "NFTTrader_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x2405913d54fc46eeaf3fb092bfb099f46803872f",
+    "year": 2023,
+    "file": "PineProtocol_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x6980a47bee930a4584b09ee79ebe46484fbdbdd0",
+    "year": 2023,
+    "file": "TIME_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x4b0e9a7da8bab813efae92a6651019b8bd6c0a29",
+    "year": 2023,
+    "file": "TIME_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x03b7bb750a974e0bd34795013f66b669f4110e54",
+    "year": 2023,
+    "file": "bZx_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x7f3fe9d492a9a60aebb06d82cba23c6f32cad10b",
+    "year": 2023,
+    "file": "bZx_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x356e7481b957be0165d6751a49b4b7194aef18d5",
+    "year": 2024,
+    "file": "BarleyFinance_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xae5919160a646f5d80d89f7aae35a2ca74738440",
+    "year": 2024,
+    "file": "Bmizapper_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xd129d8c12f0e7aa51157d9e6cc3f7ece2dc84ecd",
+    "year": 2024,
+    "file": "DAO_SoulMate_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xe1091d17473b049cccd65c54f71677da85b77a45",
+    "year": 2024,
+    "file": "MIMSpell2_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x193e045bee45c7573ff89b12601c745af739ce67",
+    "year": 2024,
+    "file": "MIMSpell2_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xe4d41bdd6459198b33cc795ff280cee02d91087b",
+    "year": 2024,
+    "file": "NBLGAME_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x1bf68a9d1eaee7826b3593c20a0ca93293cb489a",
+    "year": 2024,
+    "file": "OrbitChain_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xbed4fbf7c3e36727ccdab4c6706c3c0e17b10397",
+    "year": 2024,
+    "file": "PeapodsFinance_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xf2d5951bb0a4d14bdcc37b66f919f9a1009c05d1",
+    "year": 2024,
+    "file": "SocketGateway_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xd2bc9a9c2c39b8693ed4b2b72469032e87ed7f4a",
+    "year": 2024,
+    "file": "SocketGateway_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x3a23f943181408eac424116af7b7790c94cb97a5",
+    "year": 2024,
+    "file": "SocketGateway_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xcc5fda5e3ca925bd0bb428c8b2669496ee43067e",
+    "year": 2024,
+    "file": "SocketGateway_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x91c49cc7fbfe8f70aceeb075952cd64817f9d82c",
+    "year": 2024,
+    "file": "WiseLending02_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x37e49bf3749513a02fa535f0cbc383796e8107e4",
+    "year": 2024,
+    "file": "WiseLending02_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x2ffdce5f0c09a8ee3a568bc01f35894b2d77a6d6",
+    "year": 2024,
+    "file": "ADC_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x12d85e5869258a80d4bebe70d176d0f58b2d68e4",
+    "year": 2024,
+    "file": "AffineDeFi_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xffadb0bba4379dfabfb20ca6823f6ec439429ec2",
+    "year": 2024,
+    "file": "BlueberryProtocol_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x50ce56a3239671ab62f185704caedf626352741e",
+    "year": 2024,
+    "file": "CompoundUni_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x2c7112245fc4af701ebf90399264a7e89205dad4",
+    "year": 2024,
+    "file": "DN404_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xb57e874082417b66877429481473cf9fcd8e0b8a",
+    "year": 2024,
+    "file": "DeezNutz404_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xfb35de57b117fa770761c1a344784075745f84f9",
+    "year": 2024,
+    "file": "EGGX_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x9a4b9fd32054bfe2099f2a0db24932a4d5f38d0f",
+    "year": 2024,
+    "file": "GAIN_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x8d4de2bc1a566b266bd4b387f62c21e15474d12a",
+    "year": 2024,
+    "file": "Game_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xbff51c9c3d50d6168dfef72133f5dbda453ebf29",
+    "year": 2024,
+    "file": "Miner_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x732276168b421d4792e743711e1a48172ea574a2",
+    "year": 2024,
+    "file": "Miner_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xe55607b2967ddbe5fa9a6a921991545b8277ef8f",
+    "year": 2024,
+    "file": "ParticleTrade_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xe4764f9cd8ecc9659d3abf35259638b20ac536e4",
+    "year": 2024,
+    "file": "ParticleTrade_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x9bb0ca1e54025232e18f3874f972a851a910e9cb",
+    "year": 2024,
+    "file": "RuggedArt_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xfe380fe1db07e531e3519b9ae3ea9f7888ce20c6",
+    "year": 2024,
+    "file": "RuggedArt_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x2b9dc65253c035eb21778cb3898eab5a0ada0cce",
+    "year": 2024,
+    "file": "SwarmMarkets_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xa4854022f4c16f0abc3fdec300427f6179a3043b",
+    "year": 2024,
+    "file": "Zoomer_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xf5610cf8c27454b6d7c86fccf1830734501425c5",
+    "year": 2024,
+    "file": "BBT_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x1e791527aea32cddbd7ceb7f04612db536816545",
+    "year": 2024,
+    "file": "CGT_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xcc5159b5538268f45afda7b5756fa8769ce3e21f",
+    "year": 2024,
+    "file": "GHT_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xa8b45dee8306b520465f1f8da7e11cd8cfd1bbc4",
+    "year": 2024,
+    "file": "Juice_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x8584ddbd1e28bca4bc6fb96bafe39f850301940e",
+    "year": 2024,
+    "file": "Juice_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xd3f64baa732061f8b3626ee44bab354f854877ac",
+    "year": 2024,
+    "file": "UnizenIO_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xc793113f1548b97e37c409f39244ee44241bf2b3",
+    "year": 2024,
+    "file": "HedgeyFinance_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xbc452fdc8f851d7c5b72e1fe74dfb63bb793d511",
+    "year": 2024,
+    "file": "HedgeyFinance_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xc976ed4b25e1e7019ff34fb54f4e63b1550b70c3",
+    "year": 2024,
+    "file": "HoppyFrogERC_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x1da4bc596bfb1087f2f7999b0340fcba03c47fbd",
+    "year": 2024,
+    "file": "PikeFinance_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xfc7599cffea9de127a9f9c748ccb451a34d2f063",
+    "year": 2024,
+    "file": "PikeFinance_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x354cca2f55dde182d36fe34d673430e226a3cb8c",
+    "year": 2024,
+    "file": "XBridge_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x86c68d9e13d8d6a70b6423ceb2aedb19b59f2aa5",
+    "year": 2024,
+    "file": "GFOX_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x47c4b3144de2c87a458d510c0c0911d1903d1686",
+    "year": 2024,
+    "file": "GFOX_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xe51d3de9b81916d383ef97855c271250852ec7b7",
+    "year": 2024,
+    "file": "SCROLL_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xa78aefd483ce3919c0ad55c8a2e5c97cbac1caf8",
+    "year": 2024,
+    "file": "Sonne_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x02fa2625825917e9b1f8346a465de1bbc150c5b9",
+    "year": 2024,
+    "file": "Sonne_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xe3b81318b1b6776f0877c3770afddff97b9f5fe5",
+    "year": 2024,
+    "file": "Sonne_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x3e1c5ddd39801c1e72e5ab7e19c614fd398747f8",
+    "year": 2024,
+    "file": "TGC_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x8de6314058c0b7eea809881d73e69b425c01f0b5",
+    "year": 2024,
+    "file": "APEMAGA_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x56ff4afd909aa66a1530fe69bf94c74e6d44500c",
+    "year": 2024,
+    "file": "APEMAGA_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x9d3425d45df30183fda059c586543dcdeb5993e6",
+    "year": 2024,
+    "file": "JokInTheBox_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xf19d66e82ffe8e203b30df9e81359f8a201517ad",
+    "year": 2024,
+    "file": "UwuLend_First_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x2409af0251dcb89ee3dee572629291f9b087c668",
+    "year": 2024,
+    "file": "UwuLend_First_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x0935c185494cc9abee8890d01e67ddcc00b66f8c",
+    "year": 2024,
+    "file": "UwuLend_Second_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x93d4f6f84d242c7959f8d1f1917ddbc9fb925ada",
+    "year": 2024,
+    "file": "WIFCOIN_ETH_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xa4e8969bba1e1d48c30c948de0884cdff43e2d54",
+    "year": 2024,
+    "file": "DeFiPlaza_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x11a8dc866c5d03ff06bb74565b6575537b215978",
+    "year": 2024,
+    "file": "DoughFina_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x986aca5f2ca6b120f4361c519d7a49c5ac50c240",
+    "year": 2024,
+    "file": "Lifiprotocol_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xe10b2cfa421d0ecd5153c7a9d53dad949e1990dd",
+    "year": 2024,
+    "file": "MEVbot_0xdd7c_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x8a2f54b649d22bfd2a6ba23adab7dfd2d72eed9f",
+    "year": 2024,
+    "file": "MEVbot_0xdd7c_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xba8ce86147ded54c0879c9a954f9754a472704aa",
+    "year": 2024,
+    "file": "Spectra_finance_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x27b27842771df79af6a69795f6fca0948c8333c0",
+    "year": 2024,
+    "file": "UnverifiedContr_0x452E25_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x5e2fff7bbc7c634992170ff18240b8f10c4d48c6",
+    "year": 2024,
+    "file": "AAVE_Repay_Adapter.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x78b0168a18ef61d7460fabb4795e5f1a9226583e",
+    "year": 2024,
+    "file": "AAVE_Repay_Adapter.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x02e7b8511831b1b02d9018215a0f8f500ea5c6b3",
+    "year": 2024,
+    "file": "AAVE_Repay_Adapter.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xee45384d4861b6fb422dfa03fbdcc6e29d7beb69",
+    "year": 2024,
+    "file": "Convergence_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xfaddf57d079b01e53d1fe3476cc83e9bcc705854",
+    "year": 2024,
+    "file": "OMPxContract_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x09a80172ed7335660327cd664876b5df6fe06108",
+    "year": 2024,
+    "file": "OMPxContract_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xb7f221e373e3f44409f91c233477ec2859261758",
+    "year": 2024,
+    "file": "VOW_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x1bbf25e71ec48b84d773809b4ba55b6f4be946fb",
+    "year": 2024,
+    "file": "VOW_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x802cfff8d7cb27879e00496843bb69361ff09ab3",
+    "year": 2024,
+    "file": "YodlRouter_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xe3a0bc3483ae5a04db7ef2954315133a6f7d228e",
+    "year": 2024,
+    "file": "YodlRouter_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x0c8da4f8b823bee4d5dab73367d45b5135b50fab",
+    "year": 2024,
+    "file": "Bedrock_DeFi_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x1e1d02d663228e5d47f1de64030b39632a3b787d",
+    "year": 2024,
+    "file": "Bedrock_DeFi_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x047d41f2544b7f63a8e991af2068a363d210d6da",
+    "year": 2024,
+    "file": "Bedrock_DeFi_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x702696b2aa47fd1d4feaaf03ce273009dc47d901",
+    "year": 2024,
+    "file": "Bedrock_DeFi_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xbdb0bc0941ba81672593cd8b3f9281789f2754d1",
+    "year": 2024,
+    "file": "DOGGO_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x240cd7b53d364a208ed41f8ced4965d11f571b7a",
+    "year": 2024,
+    "file": "DOGGO_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xb3912b20b3abc78c15e85e13ec0bf334fbb924f7",
+    "year": 2024,
+    "file": "HANAToken_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xdb27d4ff4be1cd04c34a7cb6f47402c37cb73459",
+    "year": 2024,
+    "file": "INUMI_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xf2c8e860ca12cde3f3195423ecf54427a4f30916",
+    "year": 2024,
+    "file": "OTSeaStaking_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xf10bc5be84640236c71173d1809038af4ee19002",
+    "year": 2024,
+    "file": "OnyxDAO_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xbe01c53ad466ef011e3f8a67f6e23c34e2e9976c",
+    "year": 2024,
+    "file": "PLN_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xe0c218e1633a5c76d57ff4f11149f07bfff16aea",
+    "year": 2024,
+    "file": "PLN_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x542533536e314180e1b9f00b2c046f6282eb3647",
+    "year": 2024,
+    "file": "Pythia_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xe2910b29252f97bb6f3cc5e66bfa0551821c7461",
+    "year": 2024,
+    "file": "Pythia_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xed4b3d468ded53a322a8b8280b6f35aae8bc499c",
+    "year": 2024,
+    "file": "Shezmu_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x641249db01d5c9a04d1a223765ffd15f95167924",
+    "year": 2024,
+    "file": "Shezmu_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xd683b81c2608980db90a6fd730153e04629ff1a3",
+    "year": 2024,
+    "file": "unverified_03f9_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x03f911aedc25c770e701b8f563e8102cfacd62c0",
+    "year": 2024,
+    "file": "unverified_03f9_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x0bf3ceaef75e4904ca08ff42f0d83e89b16c30b2",
+    "year": 2024,
+    "file": "unverified_16d0.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x16d0dc96c1bdf283ce1ff10e01924ac76b06c95c",
+    "year": 2024,
+    "file": "unverified_16d0.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xa826dacf14a462bca2a6e4de4c27f20ed7b43b1d",
+    "year": 2024,
+    "file": "unverified_a89f_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xb3094734fe249a7b0110dc12d66f6c404ada28cb",
+    "year": 2024,
+    "file": "unverified_a89f_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x43dc865e916914fd93540461fde124484fbf8faa",
+    "year": 2024,
+    "file": "Erc20transfer_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x9776c0abe8ae3c9ca958875128f1ae1d5afafcb8",
+    "year": 2024,
+    "file": "FireToken_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x18775475f50557b96c63e8bbf7d75bfeb412082d",
+    "year": 2024,
+    "file": "FireToken_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x4095f064b8d3c3548a3bebfd0bbfd04750e30077",
+    "year": 2024,
+    "file": "MorphoBlue_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xbbbbbbbbbb9cc5e90e3b3af64bdaf62c37eeffcb",
+    "year": 2024,
+    "file": "MorphoBlue_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x991493900674b10bdf54bdfe95b4e043257798cf",
+    "year": 2024,
+    "file": "SASHAToken_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x050163597d9905ba66400f7b3ca8f2ef23df702d",
+    "year": 2024,
+    "file": "ChiSale_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x67004e26f800c5eb050000200075f049aa0090c3",
+    "year": 2024,
+    "file": "CoW_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x9008d19f58aabd9ed0d60971565aa8510560ab41",
+    "year": 2024,
+    "file": "CoW_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x285d37b0480910f977cd43c9bd228527bfad816e",
+    "year": 2024,
+    "file": "MainnetSettler_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x351d38733de3f1e73468d24401c59f63677000c9",
+    "year": 2024,
+    "file": "vETH_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x280a8955a11fcd81d72ba1f99d265a48ce39ac2e",
+    "year": 2024,
+    "file": "vETH_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x4e258f1705822c2565d54ec8795d303fdf9f768e",
+    "year": 2024,
+    "file": "Moonhacker_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x3a6eaaf2b1b02ceb2da4a768cfeda86cff89b287",
+    "year": 2024,
+    "file": "Moonhacker_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xd9b45e2c389b6ad55dd3631abc1de6f2d2229847",
+    "year": 2024,
+    "file": "Moonhacker_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x22d22134612c0741ebdb3b74a58842d6e74e3b16",
+    "year": 2025,
+    "file": "IdolsNFT_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x439cac149b935ae1d726569800972e1669d17094",
+    "year": 2025,
+    "file": "IdolsNFT_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x2cad84c3d2e31bc6d630229901f421e6da5557ef",
+    "year": 2025,
+    "file": "LAURAToken_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x55877cf2f24286dba2acb64311beca39728fbd10",
+    "year": 2025,
+    "file": "LAURAToken_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x05641e33fd15baf819729df55500b07b82eb8e89",
+    "year": 2025,
+    "file": "LAURAToken_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x3f814e5fae74cd73a70a0ea38d85971dfa6fda21",
+    "year": 2025,
+    "file": "Unilend_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x4e34dd25dbd367b1bf82e1b5527dbbe799fad0d0",
+    "year": 2025,
+    "file": "Unilend_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x96221423681a6d52e184d440a8efcebb105c7242",
+    "year": 2025,
+    "file": "Bybit_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xbdd077f651ebe7f7b3ce16fe5f2b025be2969516",
+    "year": 2025,
+    "file": "Bybit_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x1db92e2eebc8e0c075a02bea49a2935bcd2dfcf4",
+    "year": 2025,
+    "file": "Bybit_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x34cfac646f301356faa8b21e94227e3583fe3f5f",
+    "year": 2025,
+    "file": "Bybit_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xf51e888616a123875eaf7afd4417fbc4111750f7",
+    "year": 2025,
+    "file": "HegicOptions_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x7094e706e75e13d1e0ea237f71a7c4511e9d270b",
+    "year": 2025,
+    "file": "HegicOptions_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x80bf7db69556d9521c03461978b8fc731dbbd4e4",
+    "year": 2025,
+    "file": "Alkimiya_io_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xf3f84ce038442ae4c4dcb6a8ca8bacd7f28c9bde",
+    "year": 2025,
+    "file": "Alkimiya_io_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xea55fffae1937e47eba2d854ab7bd29a9cc29170",
+    "year": 2025,
+    "file": "LeverageSIR_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x341c853c09b3691b434781078572f9d3ab9e3cbb",
+    "year": 2025,
+    "file": "LeverageSIR_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x00000000001271551295307acc16ba1e7e0d4281",
+    "year": 2025,
+    "file": "LeverageSIR_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xb91ae2c8365fd45030aba84a4666c4db074e53e7",
+    "year": 2025,
+    "file": "LeverageSIR_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x019bfc71d43c3492926d4a9a6c781f36706970c9",
+    "year": 2025,
+    "file": "OneInchFusionV1SettlementHack.sol_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xa88800cd213da5ae406ce248380802bd53b47647",
+    "year": 2025,
+    "file": "OneInchFusionV1SettlementHack.sol_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x9926796371e0107abe406128fa801fda0e436f44",
+    "year": 2025,
+    "file": "SBRToken_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x2901c8b8e6d9f2c9f848987ded74b776ab1f973e",
+    "year": 2025,
+    "file": "UNI_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x76ea342bc038d665e8a116392c82552d2605eda1",
+    "year": 2025,
+    "file": "UNI_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x2e95cfc93ebb0a2aace603ed3474d451e4161578",
+    "year": 2025,
+    "file": "Laundromat_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x934cbbe5377358e6712b5f041d90313d935c501c",
+    "year": 2025,
+    "file": "Laundromat_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x9af3dce0813fd7428c47f57a39da2f6dd7c9bb09",
+    "year": 2025,
+    "file": "Corkprotocol_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xf195b8800b729aee5e57851dd4330fcbb69f07ea",
+    "year": 2025,
+    "file": "UsualMoney_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x35d8949372d46b7a3d5a56006ae77b215fc69bc0",
+    "year": 2025,
+    "file": "UsualMoney_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x8fa5cf0aa8af0e5adc7b43746ea033ca1b8e68de",
+    "year": 2025,
+    "file": "AAVEBoost_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xcb4059bb021f4cf9d90267b7961125210cedb792",
+    "year": 2025,
+    "file": "GradientMakerPool_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x37ea5f691bce8459c66ffceeb9cf34ffa32fdadc",
+    "year": 2025,
+    "file": "GradientMakerPool_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xff13d5899aa7d84c10e4cd6fb030b80554424136",
+    "year": 2025,
+    "file": "MetaPool_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xc3d10bd8e051a2be6408d18be8464654f699a25a",
+    "year": 2025,
+    "file": "MetaPool_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x48afbbd342f64ef8a9ab1c143719b63c2ad81710",
+    "year": 2025,
+    "file": "MetaPool_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xf90da523a7c19a0a3d8d4606242c46f1ee459dc7",
+    "year": 2025,
+    "file": "ResupplyFi_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x151aa63dbb7c605e7b0a173ab7375e1450e79238",
+    "year": 2025,
+    "file": "ResupplyFi_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x6e90c85a495d54c6d7e1f3400fef1f6e59f86bd6",
+    "year": 2025,
+    "file": "ResupplyFi_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xc59d50e26aee2ca34ae11f08924c0bc619728e7c",
+    "year": 2025,
+    "file": "unverified_8490_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x7f1f536223d6a84ad4897a675f04886ce1c3b7a1",
+    "year": 2025,
+    "file": "SWAPPStaking_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x245a551ee0f55005e510b239c917fa34b41b3461",
+    "year": 2025,
+    "file": "SWAPPStaking_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x08947cedf35f9669012bda6fda9d03c399b017ab",
+    "year": 2025,
+    "file": "SuperRare_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xffb512b9176d527c5d32189c3e310ed4ab2bb9ec",
+    "year": 2025,
+    "file": "SuperRare_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x1a61249f6f4f9813c55aa3b02c69438607272ed3",
+    "year": 2025,
+    "file": "unverified_54cd_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x54cd23460df45559fd5feeaada7ba25f89c13525",
+    "year": 2025,
+    "file": "unverified_54cd_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xd76c5305d0672ce5a2cdd1e8419b900410ea1d36",
+    "year": 2025,
+    "file": "0xf340_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xf340bd3eb3e82994cff5b8c3493245edbce63436",
+    "year": 2025,
+    "file": "0xf340_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x6e0113c4f1de65b98381baa6443b20834b70d4c5",
+    "year": 2025,
+    "file": "Hexotic_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xa6dc1fc33c03513a762cdf2810f163b9b0fd3a71",
+    "year": 2025,
+    "file": "SizeCredit_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xf4a21ac7e51d17a0e1c8b59f7a98bb7a97806f14",
+    "year": 2025,
+    "file": "SizeCredit_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xf0d539955974b248d763d60c3663ef272dfc6971",
+    "year": 2025,
+    "file": "coinbase_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xb8e0a4758df2954063ca4ba3d094f2d6eda9b993",
+    "year": 2025,
+    "file": "MIMSpell3_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x46f54d434063e5f1a2b2cc6d9aaa657b1b9ff82c",
+    "year": 2025,
+    "file": "MIMSpell3_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x54b53503c0e2173df29f8da735fbd45ee8aba30d",
+    "year": 2025,
+    "file": "BalancerV2_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0xe08d97e151473a848c3d9ca3f323cb720472d015",
+    "year": 2025,
+    "file": "DRLVaultV3_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x6a06707ab339bee00c6663db17ddb422301ff5e8",
+    "year": 2025,
+    "file": "DRLVaultV3_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x1de399967b206e446b4e9aeeb3cb0a0991bf11b8",
+    "year": 2026,
+    "file": "Truebit_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x764c64b2a09b09acb100b80d8c505aa6a0302ef2",
+    "year": 2026,
+    "file": "Truebit_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0xe408b52aefb27a2fb4f1cd760a76daa4bf23794b",
+    "year": 2026,
+    "file": "AlkemiEarn_exp.sol",
+    "type": "attacker"
+  },
+  {
+    "address": "0x4822d9172e5b76b9db37b75f5552f9988f98a888",
+    "year": 2026,
+    "file": "AlkemiEarn_exp.sol",
+    "type": "victim"
+  },
+  {
+    "address": "0x5b5a0580bcfd3673820bb249514234afad33e209",
+    "year": 0,
+    "file": "IUNMI_db27_exp.sol",
+    "type": "attacker"
+  }
+]

@@ -1,0 +1,88 @@
+\section{Motivation}
+\label{sec:motivation}
+
+The core motivation of this work is both empirical and methodological:
+empirically, because blockchain fraud continues to inflict large-scale
+financial harm that existing single-modal detectors cannot fully address;
+methodologically, because the research community lacks an openly seeded,
+multi-modal baseline against which future detectors can be honestly
+compared.
+
+\subsection{The Multi-Modal Nature of On-Chain Fraud}
+
+Ethereum fraud is not a single phenomenon.  It manifests in at least two
+distinct and complementary signatures.
+
+\emph{Behavioural signatures} emerge in the transaction graph.
+A phishing contract receives funds from hundreds of victims before routing
+them to a handful of cashout addresses---a star-shaped in-flow that is
+anomalous regardless of what the contract code says.
+A rug-pull token accretes liquidity from many investors and then drains it
+to a single deployer wallet in one block.
+These patterns are detectable purely from the structure of who sent what
+to whom.
+
+\emph{Semantic signatures} emerge in the contract source code.
+A flash-loan exploit embeds a reentrancy callback that steals funds
+before a balance update---a logic vulnerability invisible in the on-chain
+footprint of a single malicious transaction, yet unambiguous to a code
+analyser.
+A honeypot contract contains a hidden owner function that prevents
+withdrawals from non-deployer addresses; its transaction pattern may
+appear entirely normal.
+
+The key insight is that these two signature types are complementary, not
+redundant.
+A contract that mimics the transaction behaviour of a legitimate exchange
+while embedding a backdoor in its source code cannot be caught by a
+graph-only detector.
+A contract whose source code is a clean fork of a legitimate template but
+whose transaction neighbourhood includes known fraud addresses cannot be
+caught by a code-only detector.
+Only a detector with access to both modalities simultaneously can
+disambiguate such cases---a claim our ablation study validates
+empirically (Section~\ref{subsec:ablation_module}).
+
+\subsection{The Data Pipeline Determines the Ceiling}
+
+The quality of a fraud detector is bounded by the quality of its training
+data.  Two pipeline decisions have an outsized effect.
+
+First, \emph{label provenance}.
+Using attacker-wallet addresses as fraud seeds---as is common in Forta-based
+pipelines---produces addresses with no verified source code, because
+attackers rarely publish their tools on Etherscan.  The fusion model
+cannot be trained on such samples.  We instead seed from
+\emph{victim contracts}: real protocol contracts that were exploited, each
+with verified Solidity source and confirmed on-chain transaction history.
+This ``victim-first'' strategy is what makes multi-modal training
+tractable on real Ethereum data.
+
+Second, \emph{collection strategy}.
+Random sampling across the Ethereum blockchain produces a dataset in which
+fewer than 0.002\% of addresses are labelled as fraud.
+Training on such data teaches a classifier to predict benign for
+everything.  Our needle-first approach---retrieving the transaction
+neighbourhood of known fraud and benign seed contracts---produces a dense,
+label-rich subgraph in which every transaction is connected to at least
+one seed address.
+
+\subsection{Reproducibility as a Scientific Requirement}
+
+Blockchain fraud detection is an applied field with real financial stakes.
+A model that exists only as an entangled notebook cannot be audited by a
+regulator, extended by a competitor, or retrained against new exploit
+signatures by a practitioner.
+
+We therefore treat reproducibility as a first-class design constraint.
+The two seed arrays are explicit Python lists committed to the repository.
+Every pipeline step is a numbered script that reads from deterministic
+inputs and writes to deterministic outputs.
+The train/val/test split is seeded and serialised before any model
+training occurs.
+These design choices are not merely hygienic---they make the experimental
+claims of this paper verifiable.
+
+The three motivations above are tightly coupled: the right architecture
+can only be trained on the right data, and its scientific value depends
+on reproducibility.  The remainder of the paper develops each dimension.

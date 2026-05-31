@@ -1,0 +1,118 @@
+\section{Background and Related Work}
+\label{sec:background}
+
+Blockchain fraud detection has progressed through three intellectual
+generations.  The first applied hand-crafted heuristics and tabular
+classifiers to transaction statistics~\cite{ostapowicz2019,blanco2022,
+ashfaq2022,elmougy2023}.  The second exploited the graph structure of
+the blockchain, treating addresses as nodes and transactions as
+edges~\cite{kim2023,zhou2021,ctgcn2024}.  The third, now emerging,
+combines multiple modalities to capture both structural and semantic
+dimensions of fraud.  We survey each generation, identify the residual
+gaps, and position our contribution.
+
+\subsection{Graph-Centric Detection: Behavioural Forensics at Scale}
+
+The foundational insight of graph-centric detection is that illicit
+activity manifests as detectable anomalies in the topology of the
+transaction network.  Weber \emph{et al.}~\cite{weber2019} established
+this on the Elliptic Bitcoin dataset with graph convolutional networks,
+showing that local topological features---degree, clustering
+coefficient, temporal velocity---distinguish laundering rings from
+benign transfers.  Huang \emph{et al.}~\cite{huang2024peae} scaled this
+to Ethereum with PEAE-GNN, constructing augmentation ego-graphs around
+known accounts to make GNN-based detection tractable at chain
+scale.
+
+Subsequent work addressed the two most pressing practical
+limitations.  Chen \emph{et al.}~\cite{chen2024dahgnn} tackled class
+imbalance---fraud addresses are rare even in seeded datasets---with
+DA-HGNN, which combines data augmentation with temporal and structural
+learning.  Li \emph{et al.}~\cite{li2025global,li2022ttagn} added
+global context by introducing Transformer-style attention over transaction
+graphs, enabling the model to detect distributed money-laundering schemes
+that span multiple hops.  Ouyang \emph{et al.}~\cite{ouyang2024bitchetg}
+extended graph analysis to subgraph-level contrastive learning for
+identifying \emph{coordinated} laundering groups, while Kanezashi
+\emph{et al.}~\cite{kanezashi2022hetero} showed that heterogeneous
+graphs---which encode different node and edge types explicitly---
+consistently outperform homogeneous alternatives on Ethereum phishing.
+
+\textbf{Residual gap.}
+Graph-centric methods are blind to what contracts \emph{do}.
+Two contracts that appear structurally indistinguishable---similar
+degrees, similar value flows, similar counterparty sets---can differ
+categorically in intent: one may contain a hidden backdoor that drains
+every depositor's balance on a single owner call.
+This flaw is undetectable without analysing the source code.
+
+\subsection{Code-Centric Detection: Semantic Vulnerability Analysis}
+
+A parallel tradition treats smart contracts as executable artefacts and
+analyses their bytecode or source for vulnerabilities.
+Luu \emph{et al.}~\cite{luu2016oyente} introduced Oyente, a symbolic
+execution engine that identifies reentrancy and transaction-ordering
+vulnerabilities.  Tsankov \emph{et al.}~\cite{tsankov2018securify}
+formalised compliance checking with Securify.  Qian \emph{et
+al.}~\cite{qian2020reentrancy} showed that reentrancy can be learned
+directly from opcode sequences with a bidirectional LSTM, eliminating
+hand-crafted rules.  Torres \emph{et al.}~\cite{torres2019honeypots}
+specialised in honeypot detection.  Zhang \emph{et
+al.}~\cite{zhang2020txspector} replayed historical transaction traces
+for forensic post-mortem analysis.  Sun \emph{et
+al.}~\cite{sun2024gptscan} hybridised large language models with static
+analysis in GPTScan, reducing false positives for logic vulnerabilities.
+Kong \emph{et al.}~\cite{kong2025uechecker} applied graph learning to
+call graphs within contracts, detecting unchecked external-call patterns.
+
+\textbf{Residual gap.}
+Code-centric methods are blind to the network context in which a
+contract operates.  A contract whose source code is a clean, verified
+fork of a legitimate DeFi protocol can still be a fraud instrument if
+its transaction neighbourhood connects it to known exploit infrastructure.
+Source analysis cannot detect this.
+
+\subsection{Hybrid Detection: Towards Holistic Fusion}
+
+The recognition that neither structural nor semantic analysis alone is
+sufficient has driven the emergence of hybrid approaches.
+Hu \emph{et al.}~\cite{hu2023bert4eth} introduced BERT4ETH, pre-training
+a Transformer encoder over Ethereum transaction sequences treated as
+sentences.  This captures behavioural patterns but remains limited to
+transaction metadata---it does not ingest contract source code.
+Liang \emph{et al.}~\cite{liang2025ponziguard} proposed PonziGuard,
+constructing Contract Runtime Behaviour Graphs that couple bytecode
+call sequences with fund-flow dynamics, achieving strong Ponzi detection
+but targeting a narrow fraud subtype.
+Sun \emph{et al.}~\cite{sun2025tlmg4eth} developed TLMG4Eth, one of
+the first systems to jointly learn from transaction language and graph
+representations, reporting fusion gains over isolated modalities.
+Wu \emph{et al.}~\cite{wu2024tokenscout} extended graph evolution with
+token attributes for early scam-token detection.
+Galletta and Pinelli~\cite{galletta2024ponzi} emphasised
+interpretability, using XAI techniques to show that features from both
+transaction and code domains make fraud classifiers more transparent.
+
+\textbf{Residual gap.}
+Existing hybrid methods share three limitations that our work addresses.
+First, none seeds their dataset from \emph{victim contracts with verified
+source code}; most rely on attacker-wallet labels from Forta or
+Ethereum phishing benchmarks, which provide no source for the LLM
+encoder to analyse.
+Second, no published system reports a module-level ablation that
+compares alternative graph encoders (GCN, GAT) and fusion mechanisms
+(concatenation vs.\ attention) on the same split.
+Third, reproducibility varies: several systems were developed in private
+notebooks on private datasets, making independent verification impossible.
+
+\subsection{Positioning This Work}
+
+Our system sits within the hybrid stream.  Relative to TLMG4Eth and
+PonziGuard, it is intentionally minimal---two GraphSAGE layers and a
+single frozen CodeBERT encoder, concatenated through a 128-dimensional
+bottleneck---because minimality makes every design choice ablatable.
+The primary novelty is not the fusion mechanism per se, but the
+combination of (1) victim-contract seeding that enables authentic
+multi-modal labelling, (2) enriched eight-dimensional node features
+covering both degree and value-flow statistics, and (3) a full
+seven-model ablation that independently justifies each choice.

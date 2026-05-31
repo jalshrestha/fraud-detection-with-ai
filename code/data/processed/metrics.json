@@ -1,0 +1,25 @@
+{
+  "report": "              precision    recall  f1-score   support\n\n      Benign       0.94      0.97      0.95        30\n       Fraud       0.94      0.88      0.91        17\n\n    accuracy                           0.94        47\n   macro avg       0.94      0.92      0.93        47\nweighted avg       0.94      0.94      0.94        47\n",
+  "confusion_matrix": [
+    [
+      29,
+      1
+    ],
+    [
+      2,
+      15
+    ]
+  ],
+  "accuracy": 0.9361702127659575,
+  "mcc": 0.8609183606953775,
+  "precision_fraud": 0.9375,
+  "recall_fraud": 0.8823529411764706,
+  "f1_fraud": 0.9090909090909091,
+  "support_fraud": 17,
+  "precision_benign": 0.9354838709677419,
+  "recall_benign": 0.9666666666666667,
+  "f1_benign": 0.9508196721311475,
+  "support_benign": 30,
+  "auc_roc": 0.9607843137254902,
+  "auc_pr": 0.958515104606436
+}

@@ -1,0 +1,807 @@
+[
+  {
+    "address": "0xbec591de75b8699a3ba52f073428822d0bfc0d7e",
+    "year": 2017,
+    "file": "Parity_first_hack_exp.sol",
+    "type": "victim",
+    "contract_name": "Wallet"
+  },
+  {
+    "address": "0x55f93985431fc9304077687a35a1ba103dc1e081",
+    "year": 2018,
+    "file": "SmartMesh_exp.sol",
+    "type": "victim",
+    "contract_name": "SMT"
+  },
+  {
+    "address": "0xf91546835f756da0c10cfa0cda95b15577b84aa7",
+    "year": 2018,
+    "file": "SpankChain_exp.sol",
+    "type": "victim",
+    "contract_name": "LedgerChannel"
+  },
+  {
+    "address": "0xb983e01458529665007ff7e0cddecdb74b967eb6",
+    "year": 2020,
+    "file": "bzx_exp.sol",
+    "type": "victim",
+    "contract_name": "LoanToken"
+  },
+  {
+    "address": "0xde744d544a9d768e96c21b5f087fc54b776e9b25",
+    "year": 2020,
+    "file": "bzx_exp.sol",
+    "type": "victim",
+    "contract_name": "LoanTokenLogicWeth"
+  },
+  {
+    "address": "0xacd43e627e64355f1861cec6d3a6688b31a6f952",
+    "year": 2021,
+    "file": "Yearn_ydai_exp.sol",
+    "type": "victim",
+    "contract_name": "yVault"
+  },
+  {
+    "address": "0xc4ff55a4329f84f9bf0f5619998ab570481ebb48",
+    "year": 2021,
+    "file": "Popsicle_exp.sol",
+    "type": "victim",
+    "contract_name": "SorbettoFragola"
+  },
+  {
+    "address": "0x39360ac1239a0b98cb8076d4135d0f72b7fd9909",
+    "year": 2022,
+    "file": "XCarnival_exp.sol",
+    "type": "victim",
+    "contract_name": "XNFT"
+  },
+  {
+    "address": "0xae461ca67b15dc8dc81ce7615e0320da1a9ab8d5",
+    "year": 2022,
+    "file": "Circle_exp1.sol",
+    "type": "victim",
+    "contract_name": "UniswapV2Pair"
+  },
+  {
+    "address": "0xe39fd820b58f83205db1d9225f28105971c3d309",
+    "year": 2022,
+    "file": "EFLeverVault_exp.sol",
+    "type": "victim",
+    "contract_name": "EFLeverVault"
+  },
+  {
+    "address": "0x007fe7c498a2cf30971ad8f2cbc36bd14ac51156",
+    "year": 2022,
+    "file": "OlympusDao_exp.sol",
+    "type": "victim",
+    "contract_name": "BondFixedExpiryTeller"
+  },
+  {
+    "address": "0x48d118c9185e4dbafe7f3813f8f29ec8a6248359",
+    "year": 2022,
+    "file": "TeamFinance_exp.sol",
+    "type": "victim",
+    "contract_name": "LockToken"
+  },
+  {
+    "address": "0xd2869042e12a3506100af1d192b5b04d65137941",
+    "year": 2022,
+    "file": "Templedao_exp.sol",
+    "type": "victim",
+    "contract_name": "StaxLPStaking"
+  },
+  {
+    "address": "0x418c24191ae947a78c99fdc0e45a1f96afb254be",
+    "year": 2022,
+    "file": "Uerii_exp.sol",
+    "type": "victim",
+    "contract_name": "Token"
+  },
+  {
+    "address": "0x8f9036732b9aa9b82d8f35e54b71faeb2f573e2f",
+    "year": 2022,
+    "file": "XaveFinance_exp.sol",
+    "type": "victim",
+    "contract_name": "DaoModule"
+  },
+  {
+    "address": "0xf2919d1d80aff2940274014bef534f7791906ff2",
+    "year": 2022,
+    "file": "JAY_exp.sol",
+    "type": "victim",
+    "contract_name": "JAY"
+  },
+  {
+    "address": "0x31a4f372aa891b46ba44dc64be1d8947c889e9c6",
+    "year": 2023,
+    "file": "SHOCO_exp.sol",
+    "type": "victim",
+    "contract_name": "Shoco"
+  },
+  {
+    "address": "0x765b8d7cd8ff304f796f4b6fb1bcf78698333f6d",
+    "year": 2023,
+    "file": "ERC20TokenBank_exp.sol",
+    "type": "victim",
+    "contract_name": "ExchangeBetweenPools"
+  },
+  {
+    "address": "0xaf274e912243b19b882f02d731dacd7cd13072d0",
+    "year": 2023,
+    "file": "CompounderFinance_exp.sol",
+    "type": "victim",
+    "contract_name": "StrategyDAICurve"
+  },
+  {
+    "address": "0xa5564a2d1190a141cac438c9fde686ac48a18a79",
+    "year": 2023,
+    "file": "MIMSpell_exp.sol",
+    "type": "victim",
+    "contract_name": "ZeroXStargateLPSwapper"
+  },
+  {
+    "address": "0x85018cf6f53c8bbd03c3137e71f4fca226cda92c",
+    "year": 2023,
+    "file": "Pawnfi_exp.sol",
+    "type": "victim",
+    "contract_name": "ApeStaking"
+  },
+  {
+    "address": "0x9f72dc67cec672bb99e3d02cbea0a21536a2b657",
+    "year": 2023,
+    "file": "Sturdy_exp.sol",
+    "type": "victim",
+    "contract_name": "InitializableImmutableAdminUpgradeabilityProxy"
+  },
+  {
+    "address": "0x46bea99d977f269399fb3a4637077bb35f075516",
+    "year": 2023,
+    "file": "Sturdy_exp.sol",
+    "type": "victim",
+    "contract_name": "LendingPool"
+  },
+  {
+    "address": "0x3ae354d7e49039ccd582f1f3c9e65034ffd17bad",
+    "year": 2023,
+    "file": "ArcadiaFi_exp.sol",
+    "type": "victim",
+    "contract_name": "Vault"
+  },
+  {
+    "address": "0x8189afbe7b0e81dae735ef027cd31371b3974feb",
+    "year": 2023,
+    "file": "AzukiDAO_exp.sol",
+    "type": "victim",
+    "contract_name": "Bean"
+  },
+  {
+    "address": "0xb0f8fe96b4880adbdede0ddf446bd1e7ef122c4e",
+    "year": 2023,
+    "file": "Bao_exp.sol",
+    "type": "victim",
+    "contract_name": "CErc20Delegator"
+  },
+  {
+    "address": "0xf169bd68ed72b2fdc3c9234833197171aa000580",
+    "year": 2023,
+    "file": "CIVNFT_exp.sol",
+    "type": "victim",
+    "contract_name": "TransparentUpgradeableProxy"
+  },
+  {
+    "address": "0x369cbc5c6f139b1132d3b91b87241b37fc5b971f",
+    "year": 2023,
+    "file": "Conic02_exp.sol",
+    "type": "victim",
+    "contract_name": "ConicPoolV2"
+  },
+  {
+    "address": "0xbb787d6243a8d450659e09ea6fd82f1c859691e9",
+    "year": 2023,
+    "file": "Conic_exp.sol",
+    "type": "victim",
+    "contract_name": "ConicEthPool"
+  },
+  {
+    "address": "0x6326debbaa15bcfe603d831e7d75f4fc10d9b43e",
+    "year": 2023,
+    "file": "Curve_exp01.sol",
+    "type": "victim",
+    "contract_name": "Vyper_contract"
+  },
+  {
+    "address": "0x8301ae4fc9c624d1d396cbdaa1ed877821d7c511",
+    "year": 2023,
+    "file": "Curve_exp02.sol",
+    "type": "victim",
+    "contract_name": "Vyper_contract"
+  },
+  {
+    "address": "0x9210f1204b5a24742eba12f710636d76240df3d0",
+    "year": 2023,
+    "file": "Balancer_exp.sol",
+    "type": "victim",
+    "contract_name": "AaveLinearPool"
+  },
+  {
+    "address": "0x786b374b5eef874279f4b7b4de16940e57301a58",
+    "year": 2023,
+    "file": "CurveBurner_exp.sol",
+    "type": "victim",
+    "contract_name": "Vyper_contract"
+  },
+  {
+    "address": "0x4ae2cd1f5b8806a973953b76f9ce6d5fab9cdcfd",
+    "year": 2023,
+    "file": "EHIVE_exp.sol",
+    "type": "victim",
+    "contract_name": "EHIVE"
+  },
+  {
+    "address": "0x863e572b215fd67c855d973f870266cf827aea5e",
+    "year": 2023,
+    "file": "EarningFram_exp.sol",
+    "type": "victim",
+    "contract_name": "EFVault"
+  },
+  {
+    "address": "0x4306b12f8e824ce1fa9604bbd88f2ad4f0fe3c54",
+    "year": 2023,
+    "file": "Uwerx_exp.sol",
+    "type": "victim",
+    "contract_name": "Uwerx"
+  },
+  {
+    "address": "0xb40b6608b2743e691c9b54ddbdee7bf03cd79f1c",
+    "year": 2023,
+    "file": "Zunami_exp.sol",
+    "type": "victim",
+    "contract_name": "UZD"
+  },
+  {
+    "address": "0x29d2bcf0d70f95ce16697e645e2b76d218d66109",
+    "year": 2023,
+    "file": "0x0DEX_exp.sol",
+    "type": "victim",
+    "contract_name": "OxODexPool"
+  },
+  {
+    "address": "0xd3c41c85be295607e8ea5c58487ec5894300ee67",
+    "year": 2023,
+    "file": "uniclyNFT_exp.sol",
+    "type": "victim",
+    "contract_name": "PointFarm"
+  },
+  {
+    "address": "0xbaa87546cf87b5de1b0b52353a86792d40b8ba70",
+    "year": 2023,
+    "file": "Astrid_exp.sol",
+    "type": "victim",
+    "contract_name": "ERC1967Proxy"
+  },
+  {
+    "address": "0xae60ac8e69414c2dc362d0e6a03af643d1d85b92",
+    "year": 2023,
+    "file": "DePayRouter_exp.sol",
+    "type": "victim",
+    "contract_name": "DePayRouterV1"
+  },
+  {
+    "address": "0x53fbcada1201a465740f2d64ecdf6fac425f9030",
+    "year": 2023,
+    "file": "Hopelend_exp.sol",
+    "type": "victim",
+    "contract_name": "InitializableImmutableAdminUpgradeabilityProxy"
+  },
+  {
+    "address": "0x84524baa1951247b3a2617a843e6ece915bb9674",
+    "year": 2023,
+    "file": "WiseLending_exp.sol",
+    "type": "victim",
+    "contract_name": "WiseLending"
+  },
+  {
+    "address": "0x2033b54b6789a963a02bfcbd40a46816770f1161",
+    "year": 2023,
+    "file": "pSeudoEth_exp.sol",
+    "type": "victim",
+    "contract_name": "UniswapV2Pair"
+  },
+  {
+    "address": "0xa44e79a2c9a8965e7a6fa77bf0ca8faf50e6c73e",
+    "year": 2023,
+    "file": "Burntbubba_exp.sol",
+    "type": "victim",
+    "contract_name": "FarmingLPToken"
+  },
+  {
+    "address": "0xfd7b111aa83b9b6f547e617c7601efd997f64703",
+    "year": 2023,
+    "file": "KyberSwap_exp.eth.1.sol",
+    "type": "victim",
+    "contract_name": "Pool"
+  },
+  {
+    "address": "0xfd11aba71c06061f446ade4eec057179f19c23c4",
+    "year": 2023,
+    "file": "MahaLend_exp.sol",
+    "type": "victim",
+    "contract_name": "Pool"
+  },
+  {
+    "address": "0x9ab6b21cdf116f611110b048987e58894786c244",
+    "year": 2023,
+    "file": "Raft_exp.sol",
+    "type": "victim",
+    "contract_name": "InterestRatePositionManager"
+  },
+  {
+    "address": "0xc538d17a6aacc5271be5f51b891e2e92c8187edd",
+    "year": 2023,
+    "file": "FloorProtocol_exp.sol",
+    "type": "victim",
+    "contract_name": "FlooringPeriphery"
+  },
+  {
+    "address": "0x3d9819210a31b4961b30ef54be2aed79b9c9cd3b",
+    "year": 2023,
+    "file": "GoodCompound_exp.sol",
+    "type": "victim",
+    "contract_name": "Unitroller"
+  },
+  {
+    "address": "0x40c31236b228935b0329eff066b1ad96e319595e",
+    "year": 2023,
+    "file": "HYPR_exp.sol",
+    "type": "victim",
+    "contract_name": "L1ChugSplashProxy"
+  },
+  {
+    "address": "0xc310e760778ecbca4c65b6c559874757a4c4ece0",
+    "year": 2023,
+    "file": "NFTTrader_exp.sol",
+    "type": "victim",
+    "contract_name": "BatchSwap"
+  },
+  {
+    "address": "0x2405913d54fc46eeaf3fb092bfb099f46803872f",
+    "year": 2023,
+    "file": "PineProtocol_exp.sol",
+    "type": "victim",
+    "contract_name": "ERC721LendingPool02"
+  },
+  {
+    "address": "0x4b0e9a7da8bab813efae92a6651019b8bd6c0a29",
+    "year": 2023,
+    "file": "TIME_exp.sol",
+    "type": "victim",
+    "contract_name": "TokenERC20"
+  },
+  {
+    "address": "0x7f3fe9d492a9a60aebb06d82cba23c6f32cad10b",
+    "year": 2023,
+    "file": "bZx_exp.sol",
+    "type": "victim",
+    "contract_name": "LoanToken"
+  },
+  {
+    "address": "0x1bf68a9d1eaee7826b3593c20a0ca93293cb489a",
+    "year": 2024,
+    "file": "OrbitChain_exp.sol",
+    "type": "victim",
+    "contract_name": "EthVault"
+  },
+  {
+    "address": "0x3a23f943181408eac424116af7b7790c94cb97a5",
+    "year": 2024,
+    "file": "SocketGateway_exp.sol",
+    "type": "victim",
+    "contract_name": "SocketGateway"
+  },
+  {
+    "address": "0xcc5fda5e3ca925bd0bb428c8b2669496ee43067e",
+    "year": 2024,
+    "file": "SocketGateway_exp.sol",
+    "type": "victim",
+    "contract_name": "WrappedTokenSwapperImpl"
+  },
+  {
+    "address": "0x37e49bf3749513a02fa535f0cbc383796e8107e4",
+    "year": 2024,
+    "file": "WiseLending02_exp.sol",
+    "type": "victim",
+    "contract_name": "WiseLending"
+  },
+  {
+    "address": "0xffadb0bba4379dfabfb20ca6823f6ec439429ec2",
+    "year": 2024,
+    "file": "BlueberryProtocol_exp.sol",
+    "type": "victim",
+    "contract_name": "Comptroller"
+  },
+  {
+    "address": "0x50ce56a3239671ab62f185704caedf626352741e",
+    "year": 2024,
+    "file": "CompoundUni_exp.sol",
+    "type": "victim",
+    "contract_name": "UniswapAnchoredView"
+  },
+  {
+    "address": "0x2c7112245fc4af701ebf90399264a7e89205dad4",
+    "year": 2024,
+    "file": "DN404_exp.sol",
+    "type": "victim",
+    "contract_name": "TransparentUpgradeableProxy"
+  },
+  {
+    "address": "0xb57e874082417b66877429481473cf9fcd8e0b8a",
+    "year": 2024,
+    "file": "DeezNutz404_exp.sol",
+    "type": "victim",
+    "contract_name": "DeezNutz"
+  },
+  {
+    "address": "0x732276168b421d4792e743711e1a48172ea574a2",
+    "year": 2024,
+    "file": "Miner_exp.sol",
+    "type": "victim",
+    "contract_name": "UniswapV3Pool"
+  },
+  {
+    "address": "0xe4764f9cd8ecc9659d3abf35259638b20ac536e4",
+    "year": 2024,
+    "file": "ParticleTrade_exp.sol",
+    "type": "victim",
+    "contract_name": "ParticleExchange"
+  },
+  {
+    "address": "0xfe380fe1db07e531e3519b9ae3ea9f7888ce20c6",
+    "year": 2024,
+    "file": "RuggedArt_exp.sol",
+    "type": "victim",
+    "contract_name": "RuggedMarket"
+  },
+  {
+    "address": "0x2b9dc65253c035eb21778cb3898eab5a0ada0cce",
+    "year": 2024,
+    "file": "SwarmMarkets_exp.sol",
+    "type": "victim",
+    "contract_name": "XTokenWrapper"
+  },
+  {
+    "address": "0x8584ddbd1e28bca4bc6fb96bafe39f850301940e",
+    "year": 2024,
+    "file": "Juice_exp.sol",
+    "type": "victim",
+    "contract_name": "JuiceStaking"
+  },
+  {
+    "address": "0xd3f64baa732061f8b3626ee44bab354f854877ac",
+    "year": 2024,
+    "file": "UnizenIO_exp.sol",
+    "type": "victim",
+    "contract_name": "TransparentUpgradeableProxy"
+  },
+  {
+    "address": "0xbc452fdc8f851d7c5b72e1fe74dfb63bb793d511",
+    "year": 2024,
+    "file": "HedgeyFinance_exp.sol",
+    "type": "victim",
+    "contract_name": "ClaimCampaigns"
+  },
+  {
+    "address": "0x354cca2f55dde182d36fe34d673430e226a3cb8c",
+    "year": 2024,
+    "file": "XBridge_exp.sol",
+    "type": "victim",
+    "contract_name": "XBridge"
+  },
+  {
+    "address": "0x56ff4afd909aa66a1530fe69bf94c74e6d44500c",
+    "year": 2024,
+    "file": "APEMAGA_exp.sol",
+    "type": "victim",
+    "contract_name": "Tonken"
+  },
+  {
+    "address": "0x2409af0251dcb89ee3dee572629291f9b087c668",
+    "year": 2024,
+    "file": "UwuLend_First_exp.sol",
+    "type": "victim",
+    "contract_name": "InitializableImmutableAdminUpgradeabilityProxy"
+  },
+  {
+    "address": "0x02e7b8511831b1b02d9018215a0f8f500ea5c6b3",
+    "year": 2024,
+    "file": "AAVE_Repay_Adapter.sol",
+    "type": "victim",
+    "contract_name": "ParaSwapRepayAdapter"
+  },
+  {
+    "address": "0x09a80172ed7335660327cd664876b5df6fe06108",
+    "year": 2024,
+    "file": "OMPxContract_exp.sol",
+    "type": "victim",
+    "contract_name": "OMPxContract"
+  },
+  {
+    "address": "0x1bbf25e71ec48b84d773809b4ba55b6f4be946fb",
+    "year": 2024,
+    "file": "VOW_exp.sol",
+    "type": "victim",
+    "contract_name": "VOWToken"
+  },
+  {
+    "address": "0xe3a0bc3483ae5a04db7ef2954315133a6f7d228e",
+    "year": 2024,
+    "file": "YodlRouter_exp.sol",
+    "type": "victim",
+    "contract_name": "YodlRouter"
+  },
+  {
+    "address": "0x047d41f2544b7f63a8e991af2068a363d210d6da",
+    "year": 2024,
+    "file": "Bedrock_DeFi_exp.sol",
+    "type": "victim",
+    "contract_name": "TransparentUpgradeableProxy"
+  },
+  {
+    "address": "0x702696b2aa47fd1d4feaaf03ce273009dc47d901",
+    "year": 2024,
+    "file": "Bedrock_DeFi_exp.sol",
+    "type": "victim",
+    "contract_name": "Vault"
+  },
+  {
+    "address": "0x240cd7b53d364a208ed41f8ced4965d11f571b7a",
+    "year": 2024,
+    "file": "DOGGO_exp.sol",
+    "type": "victim",
+    "contract_name": "DOGGO"
+  },
+  {
+    "address": "0xb3912b20b3abc78c15e85e13ec0bf334fbb924f7",
+    "year": 2024,
+    "file": "HANAToken_exp.sol",
+    "type": "victim",
+    "contract_name": "HANA"
+  },
+  {
+    "address": "0xf2c8e860ca12cde3f3195423ecf54427a4f30916",
+    "year": 2024,
+    "file": "OTSeaStaking_exp.sol",
+    "type": "victim",
+    "contract_name": "OTSeaStaking"
+  },
+  {
+    "address": "0xf10bc5be84640236c71173d1809038af4ee19002",
+    "year": 2024,
+    "file": "OnyxDAO_exp.sol",
+    "type": "victim",
+    "contract_name": "NFTLiquidation"
+  },
+  {
+    "address": "0xe0c218e1633a5c76d57ff4f11149f07bfff16aea",
+    "year": 2024,
+    "file": "PLN_exp.sol",
+    "type": "victim",
+    "contract_name": "PLNTOKEN"
+  },
+  {
+    "address": "0xe2910b29252f97bb6f3cc5e66bfa0551821c7461",
+    "year": 2024,
+    "file": "Pythia_exp.sol",
+    "type": "victim",
+    "contract_name": "PythiaTokenStaking"
+  },
+  {
+    "address": "0x18775475f50557b96c63e8bbf7d75bfeb412082d",
+    "year": 2024,
+    "file": "FireToken_exp.sol",
+    "type": "victim",
+    "contract_name": "FireToken"
+  },
+  {
+    "address": "0xbbbbbbbbbb9cc5e90e3b3af64bdaf62c37eeffcb",
+    "year": 2024,
+    "file": "MorphoBlue_exp.sol",
+    "type": "victim",
+    "contract_name": "Morpho"
+  },
+  {
+    "address": "0x050163597d9905ba66400f7b3ca8f2ef23df702d",
+    "year": 2024,
+    "file": "ChiSale_exp.sol",
+    "type": "victim",
+    "contract_name": "ChiSale"
+  },
+  {
+    "address": "0x9008d19f58aabd9ed0d60971565aa8510560ab41",
+    "year": 2024,
+    "file": "CoW_exp.sol",
+    "type": "victim",
+    "contract_name": "GPv2Settlement"
+  },
+  {
+    "address": "0x280a8955a11fcd81d72ba1f99d265a48ce39ac2e",
+    "year": 2024,
+    "file": "vETH_exp.sol",
+    "type": "victim",
+    "contract_name": "VirtualToken"
+  },
+  {
+    "address": "0x439cac149b935ae1d726569800972e1669d17094",
+    "year": 2025,
+    "file": "IdolsNFT_exp.sol",
+    "type": "victim",
+    "contract_name": "IdolMain"
+  },
+  {
+    "address": "0x05641e33fd15baf819729df55500b07b82eb8e89",
+    "year": 2025,
+    "file": "LAURAToken_exp.sol",
+    "type": "victim",
+    "contract_name": "PumpToken"
+  },
+  {
+    "address": "0x4e34dd25dbd367b1bf82e1b5527dbbe799fad0d0",
+    "year": 2025,
+    "file": "Unilend_exp.sol",
+    "type": "victim",
+    "contract_name": "UnilendV2Pool"
+  },
+  {
+    "address": "0x1db92e2eebc8e0c075a02bea49a2935bcd2dfcf4",
+    "year": 2025,
+    "file": "Bybit_exp.sol",
+    "type": "victim",
+    "contract_name": "Proxy"
+  },
+  {
+    "address": "0x34cfac646f301356faa8b21e94227e3583fe3f5f",
+    "year": 2025,
+    "file": "Bybit_exp.sol",
+    "type": "victim",
+    "contract_name": "GnosisSafe"
+  },
+  {
+    "address": "0x7094e706e75e13d1e0ea237f71a7c4511e9d270b",
+    "year": 2025,
+    "file": "HegicOptions_exp.sol",
+    "type": "victim",
+    "contract_name": "HegicPUT"
+  },
+  {
+    "address": "0xf3f84ce038442ae4c4dcb6a8ca8bacd7f28c9bde",
+    "year": 2025,
+    "file": "Alkimiya_io_exp.sol",
+    "type": "victim",
+    "contract_name": "SilicaPools"
+  },
+  {
+    "address": "0xb91ae2c8365fd45030aba84a4666c4db074e53e7",
+    "year": 2025,
+    "file": "LeverageSIR_exp.sol",
+    "type": "victim",
+    "contract_name": "Vault"
+  },
+  {
+    "address": "0xa88800cd213da5ae406ce248380802bd53b47647",
+    "year": 2025,
+    "file": "OneInchFusionV1SettlementHack.sol_exp.sol",
+    "type": "victim",
+    "contract_name": "Settlement"
+  },
+  {
+    "address": "0x76ea342bc038d665e8a116392c82552d2605eda1",
+    "year": 2025,
+    "file": "UNI_exp.sol",
+    "type": "victim",
+    "contract_name": "UniswapV2Pair"
+  },
+  {
+    "address": "0x934cbbe5377358e6712b5f041d90313d935c501c",
+    "year": 2025,
+    "file": "Laundromat_exp.sol",
+    "type": "victim",
+    "contract_name": "Laundromat"
+  },
+  {
+    "address": "0x35d8949372d46b7a3d5a56006ae77b215fc69bc0",
+    "year": 2025,
+    "file": "UsualMoney_exp.sol",
+    "type": "victim",
+    "contract_name": "TransparentUpgradeableProxy"
+  },
+  {
+    "address": "0x37ea5f691bce8459c66ffceeb9cf34ffa32fdadc",
+    "year": 2025,
+    "file": "GradientMakerPool_exp.sol",
+    "type": "victim",
+    "contract_name": "GradientMarketMakerPool"
+  },
+  {
+    "address": "0x48afbbd342f64ef8a9ab1c143719b63c2ad81710",
+    "year": 2025,
+    "file": "MetaPool_exp.sol",
+    "type": "victim",
+    "contract_name": "TransparentUpgradeableProxy"
+  },
+  {
+    "address": "0x6e90c85a495d54c6d7e1f3400fef1f6e59f86bd6",
+    "year": 2025,
+    "file": "ResupplyFi_exp.sol",
+    "type": "victim",
+    "contract_name": "ResupplyPair"
+  },
+  {
+    "address": "0x245a551ee0f55005e510b239c917fa34b41b3461",
+    "year": 2025,
+    "file": "SWAPPStaking_exp.sol",
+    "type": "victim",
+    "contract_name": "Staking"
+  },
+  {
+    "address": "0xffb512b9176d527c5d32189c3e310ed4ab2bb9ec",
+    "year": 2025,
+    "file": "SuperRare_exp.sol",
+    "type": "victim",
+    "contract_name": "RareStakingV1"
+  },
+  {
+    "address": "0x54cd23460df45559fd5feeaada7ba25f89c13525",
+    "year": 2025,
+    "file": "unverified_54cd_exp.sol",
+    "type": "victim",
+    "contract_name": "ERC1967Proxy"
+  },
+  {
+    "address": "0xf4a21ac7e51d17a0e1c8b59f7a98bb7a97806f14",
+    "year": 2025,
+    "file": "SizeCredit_exp.sol",
+    "type": "victim",
+    "contract_name": "LeverageUp"
+  },
+  {
+    "address": "0x46f54d434063e5f1a2b2cc6d9aaa657b1b9ff82c",
+    "year": 2025,
+    "file": "MIMSpell3_exp.sol",
+    "type": "victim",
+    "contract_name": "PrivilegedCheckpointCauldronV4"
+  },
+  {
+    "address": "0x6a06707ab339bee00c6663db17ddb422301ff5e8",
+    "year": 2025,
+    "file": "DRLVaultV3_exp.sol",
+    "type": "victim",
+    "contract_name": "DRLVaultV3"
+  },
+  {
+    "address": "0x764c64b2a09b09acb100b80d8c505aa6a0302ef2",
+    "year": 2026,
+    "file": "Truebit_exp.sol",
+    "type": "victim",
+    "contract_name": "AdminUpgradeabilityProxy"
+  },
+  {
+    "address": "0x4822d9172e5b76b9db37b75f5552f9988f98a888",
+    "year": 2026,
+    "file": "AlkemiEarn_exp.sol",
+    "type": "victim",
+    "contract_name": "AdminUpgradeabilityProxy"
+  },
+  {
+    "address": "0x1e791527aea32cddbd7ceb7f04612db536816545",
+    "year": 2024,
+    "file": "CGT_exp.sol",
+    "type": "attacker",
+    "contract_name": "Action"
+  },
+  {
+    "address": "0x4095f064b8d3c3548a3bebfd0bbfd04750e30077",
+    "year": 2024,
+    "file": "MorphoBlue_exp.sol",
+    "type": "attacker",
+    "contract_name": "EthereumBundlerV2"
+  }
+]
