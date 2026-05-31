@@ -150,6 +150,20 @@ These features encode complementary fraud signals: phishing addresses
 typically exhibit high $d^{\text{in}}_v$ (many victims) relative to
 $d^{\text{out}}_v$ (few recipients), whereas Ponzi contracts show
 characteristic value-flow patterns~\cite{liang2025ponziguard}.
+Figure~\ref{fig:featdist} confirms that several features are
+statistically distinguishable between fraud and benign contracts in
+our labelled subset.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{figures/feature_dist.pdf}
+    \caption{Box-plot distributions of all eight node features for
+    labelled fraud (red) and benign (blue) contracts (304 samples).
+    In-degree, mean in-value, and unique in-counterparties show the
+    largest separation, validating the importance of value-flow and
+    counterparty features beyond simple degree counts.}
+    \label{fig:featdist}
+\end{figure}
 
 \subsubsection{Source-Code Preprocessing}
 Solidity source strings are decoded from Base64 and tokenised using the

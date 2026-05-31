@@ -26,15 +26,26 @@ across all three data sources.
 % ─────────────────────────────────────────────────────────────────────────
 \subsection{Training Behaviour}
 
-The fusion model trains under AdamW with $\mathrm{lr}=10^{-3}$,
-cosine-annealing schedule, and early stopping on validation fraud F1.
-Training loss decreases from 6.66 in epoch 1 to below 0.50 by epoch 25,
-and no NaN losses are observed at any point.  The model early-stops at
-epoch 41 (best checkpoint at epoch 21) with the best validation fraud
-F1 of \textbf{0.966}, and that checkpoint is reloaded for test-set
-evaluation.
-Each epoch takes approximately 34 seconds on a CPU; GPU acceleration
-would reduce this to under five seconds per epoch.
+Figure~\ref{fig:training} shows the training loss and validation fraud
+F1 over 41 epochs.  Training loss falls monotonically from 6.66 in
+epoch 1 to below 0.50 by epoch 25.  Validation fraud F1 first surpasses
+0.90 at epoch 9, stabilises near 0.93 through the middle of training,
+and peaks at \textbf{0.966 at epoch 21}---the checkpoint reloaded for
+all test-set evaluations.  No NaN losses occur at any point, confirming
+the numerical stability of weighted cross-entropy under gradient
+clipping.  Each epoch takes approximately 34 seconds on CPU; GPU
+acceleration would reduce this to under 5 seconds per epoch.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{figures/training_dynamics.pdf}
+    \caption{Training dynamics of the Concat-Fusion model over 41 epochs
+    (early stopped with patience 20).  Orange: training loss (left axis).
+    Blue dashed: validation fraud F1 (right axis).  Red dot marks the
+    best checkpoint at epoch 21 (val F1\,=\,0.966), which is reloaded
+    for test evaluation.}
+    \label{fig:training}
+\end{figure}
 
 % ─────────────────────────────────────────────────────────────────────────
 \subsection{Classification Performance}
@@ -72,9 +83,24 @@ Accuracy & \multicolumn{6}{c}{\textbf{93.6\%}} \\
 
 The confusion matrix (Fig.~\ref{fig:confusion}) shows only two false
 negatives (fraud missed) and one false positive (benign flagged) out of
-47 test samples.  The AUC-ROC of 0.961 and AUC-PR of 0.959 confirm
-strong ranking performance well above the random baseline, while the
-MCC of 0.861 indicates robust detection independent of class balance.
+47 test samples.  Figure~\ref{fig:roc_pr} presents the ROC and
+Precision-Recall curves, showing the operating point (TPR\,=\,0.882,
+FPR\,=\,0.033) and confirming strong ranking performance far above the
+random baseline.  The AUC-PR of 0.959---computed on a dataset with 36\%
+fraud prevalence---demonstrates that the model maintains high precision
+across the full recall range, a critical property for reducing alert
+fatigue in production fraud screening.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{figures/roc_pr_curves.pdf}
+    \caption{(a) ROC curve (AUC\,=\,0.961) and (b) Precision-Recall
+    curve (AUC-PR\,=\,0.959) for the Concat-Fusion model on the held-out
+    test split.  The dashed line in (a) is the random baseline; in (b)
+    it is the fraud prevalence (36.2\%).  Red dot marks the
+    operating point (threshold 0.5).}
+    \label{fig:roc_pr}
+\end{figure}
 
 % ─────────────────────────────────────────────────────────────────────────
 \subsection{Comprehensive Ablation Study}
