@@ -6,16 +6,8 @@ __pycache__/
 venv/
 .env
 
-# # Data artefacts (large, regenerable)
-# code/data/raw/*.csv
-# code/data/raw/forta/*.csv
-# code/data/interim/*.csv
-# code/data/interim/*.json
-# code/data/processed/*.parquet
-# code/data/processed/*.pt
-# code/data/processed/*.json
-# code/data/processed/figures/*.png
-# code/data/processed/checkpoints/*.pt
+# Data artefacts (large, regenerable)
+code/data/processed/checkpoints/
 
 # Jupyter
 .ipynb_checkpoints/
